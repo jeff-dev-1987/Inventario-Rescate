@@ -6,6 +6,7 @@
     <title>Inventario de Rescate | Minera Chinalco</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://www.gstatic.com/firebasejs/10.13.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.13.1/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.13.1/firebase-firestore-compat.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <style>
@@ -14,205 +15,253 @@
     </style>
 </head>
 <body class="bg-slate-100 min-h-screen font-sans">
-    <nav class="bg-[#003366] text-white shadow-md sticky top-0 z-50 border-b-4 border-[#0099cc]">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex justify-between h-16">
-                <div class="flex items-center space-x-4">
-                    <div class="bg-white p-1.5 rounded">
-                        <svg class="w-8 h-8 text-[#003366]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path></svg>
-                    </div>
-                    <div>
-                        <h1 class="text-xl font-bold tracking-wide">INVENTARIO DE RESCATE</h1>
-                        <p class="text-xs text-[#0099cc] font-semibold tracking-wider uppercase">Minera Chinalco Perú</p>
-                    </div>
-                </div>
-                <div class="flex items-center space-x-4">
-                    <span id="userCount" class="px-3 py-1 bg-[#002244] text-white border border-[#0099cc] rounded text-sm font-medium">0 en línea</span>
-                </div>
-            </div>
-        </div>
-    </nav>
 
-    <div class="max-w-7xl mx-auto px-4 py-8 sm:px-6 lg:px-8">
-        <div class="flex flex-wrap bg-white rounded-lg shadow-sm border border-gray-200 p-1 mb-8">
-            <button class="tab-btn px-6 py-3 font-semibold text-sm uppercase tracking-wide flex-1 min-w-[120px] rounded transition-colors text-[#003366] bg-slate-100" data-tab="dashboard">
-                📊 Resumen e Historial
-            </button>
-            <button class="tab-btn px-6 py-3 font-semibold text-sm uppercase tracking-wide flex-1 min-w-[120px] rounded transition-colors text-gray-500 hover:bg-slate-50" data-tab="movements">
-                🔄 Ingresos / Salidas
-            </button>
-            <button class="tab-btn px-6 py-3 font-semibold text-sm uppercase tracking-wide flex-1 min-w-[120px] rounded transition-colors text-gray-500 hover:bg-slate-50" data-tab="catalog">
-                📦 Catálogo y Excel
-            </button>
-            <button class="tab-btn px-6 py-3 font-semibold text-sm uppercase tracking-wide flex-1 min-w-[120px] rounded transition-colors text-gray-500 hover:bg-slate-50" data-tab="users">
-                👥 Personal
-            </button>
-        </div>
-
-        <div id="dashboard" class="tab-content fade-in">
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-                <div class="bg-white rounded-lg p-6 shadow-sm border-l-4 border-[#003366]">
-                    <p class="text-sm font-medium text-gray-500 uppercase tracking-wide">Total Equipos</p>
-                    <p class="text-3xl font-bold text-[#003366] mt-2" id="totalItems">0</p>
-                </div>
-                <div class="bg-white rounded-lg p-6 shadow-sm border-l-4 border-[#0099cc]">
-                    <p class="text-sm font-medium text-gray-500 uppercase tracking-wide">Movimientos Hoy</p>
-                    <p class="text-3xl font-bold text-[#0099cc] mt-2" id="todayMovements">0</p>
-                </div>
-                <div class="bg-white rounded-lg p-6 shadow-sm border-l-4 border-red-600">
-                    <p class="text-sm font-medium text-gray-500 uppercase tracking-wide">Stock Crítico</p>
-                    <p class="text-3xl font-bold text-red-600 mt-2" id="alertCount">0</p>
-                </div>
-                <div class="bg-white rounded-lg p-6 shadow-sm border-l-4 border-green-600">
-                    <p class="text-sm font-medium text-gray-500 uppercase tracking-wide">Personal Autorizado</p>
-                    <p class="text-3xl font-bold text-green-600 mt-2" id="staffCount">0</p>
-                </div>
+    <div id="authScreen" class="min-h-screen flex items-center justify-center bg-[#003366] px-4 absolute inset-0 z-[100] fade-in">
+        <div class="bg-white p-8 rounded-lg shadow-2xl w-full max-w-md">
+            <div class="text-center mb-8">
+                <svg class="w-16 h-16 text-[#0099cc] mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path></svg>
+                <h1 class="text-2xl font-bold text-[#003366]">INVENTARIO DE RESCATE</h1>
+                <p class="text-sm text-gray-500 uppercase tracking-widest mt-1">Minera Chinalco Perú</p>
             </div>
 
-            <div class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
-                <div class="p-6 border-b border-gray-200 flex justify-between items-center bg-slate-50">
-                    <h2 class="text-lg font-bold text-[#003366] uppercase">📋 Historial de Ingresos y Salidas</h2>
-                    <select id="movementFilter" class="px-3 py-1.5 border border-gray-300 rounded text-sm focus:outline-none focus:border-[#003366]">
-                        <option value="all">Todos los movimientos</option>
-                        <option value="ingreso">Solo Ingresos (+)</option>
-                        <option value="salida">Solo Salidas (-)</option>
-                    </select>
+            <form id="loginForm" class="space-y-4">
+                <div>
+                    <label class="block text-sm font-bold text-gray-700 mb-1">Correo Electrónico</label>
+                    <input type="email" id="loginEmail" class="w-full px-4 py-2 border border-gray-300 rounded focus:ring-1 focus:ring-[#003366]" required>
                 </div>
-                <div class="overflow-x-auto">
-                    <table class="w-full">
-                        <thead class="bg-gray-100 border-b border-gray-200">
-                            <tr>
-                                <th class="px-6 py-3 text-left text-xs font-bold text-gray-600 uppercase tracking-wider">Fecha / Hora</th>
-                                <th class="px-6 py-3 text-left text-xs font-bold text-gray-600 uppercase tracking-wider">Equipo</th>
-                                <th class="px-6 py-3 text-left text-xs font-bold text-gray-600 uppercase tracking-wider">Cant.</th>
-                                <th class="px-6 py-3 text-left text-xs font-bold text-gray-600 uppercase tracking-wider">Operación</th>
-                                <th class="px-6 py-3 text-left text-xs font-bold text-gray-600 uppercase tracking-wider">Responsable</th>
-                            </tr>
-                        </thead>
-                        <tbody id="movementsTable" class="divide-y divide-gray-200 bg-white">
-                            <tr><td colspan="5" class="px-6 py-8 text-center text-gray-500" id="loadingText">Conectando con la base de datos... (Si esto demora, revisa las reglas de Firebase)</td></tr>
-                        </tbody>
-                    </table>
+                <div>
+                    <label class="block text-sm font-bold text-gray-700 mb-1">Contraseña</label>
+                    <input type="password" id="loginPassword" class="w-full px-4 py-2 border border-gray-300 rounded focus:ring-1 focus:ring-[#003366]" required>
                 </div>
-            </div>
-        </div>
+                <button type="submit" class="w-full bg-[#003366] hover:bg-[#002244] text-white py-2 px-4 rounded font-bold transition-colors">Ingresar</button>
+                <div class="text-center mt-4">
+                    <button type="button" onclick="toggleAuthMode()" class="text-[#0099cc] text-sm hover:underline font-semibold">¿No tienes cuenta? Solicitar acceso</button>
+                </div>
+            </form>
 
-        <div id="movements" class="tab-content hidden fade-in">
-            <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-8 max-w-2xl mx-auto">
-                <h2 class="text-2xl font-bold text-[#003366] mb-6 border-b pb-4">Registrar Ingreso o Salida</h2>
-                <form id="movementForm" class="space-y-5">
-                    <div>
-                        <label class="block text-sm font-bold text-gray-700 mb-1">Tipo de Operación</label>
-                        <select id="movementType" class="w-full px-4 py-2.5 border border-gray-300 rounded focus:ring-1 focus:ring-[#003366] focus:border-[#003366] bg-slate-50" required>
-                            <option value="">Seleccione el tipo...</option>
-                            <option value="ingreso">🟢 INGRESO (Sumar al almacén)</option>
-                            <option value="salida">🔴 SALIDA (Asignar a terreno/persona)</option>
-                        </select>
-                    </div>
-                    <div>
-                        <label class="block text-sm font-bold text-gray-700 mb-1">Equipo / Existencia</label>
-                        <select id="articleSelect" class="w-full px-4 py-2.5 border border-gray-300 rounded focus:ring-1 focus:ring-[#003366] bg-slate-50 disabled:bg-gray-100" disabled required>
-                            <option value="">Primero seleccione tipo de operación...</option>
-                        </select>
-                    </div>
-                    <div>
-                        <label class="block text-sm font-bold text-gray-700 mb-1">Cantidad</label>
-                        <input type="number" id="quantity" min="1" class="w-full px-4 py-2.5 border border-gray-300 rounded focus:ring-1 focus:ring-[#003366]" placeholder="Ej. 5" required>
-                    </div>
-                    <div>
-                        <label class="block text-sm font-bold text-gray-700 mb-1">Personal Responsable</label>
-                        <select id="responsible" class="w-full px-4 py-2.5 border border-gray-300 rounded focus:ring-1 focus:ring-[#003366] bg-slate-50" required>
-                            <option value="">Seleccione personal...</option>
-                        </select>
-                    </div>
-                    <div>
-                        <label class="block text-sm font-bold text-gray-700 mb-1">Observaciones</label>
-                        <textarea id="observations" rows="2" class="w-full px-4 py-2.5 border border-gray-300 rounded focus:ring-1 focus:ring-[#003366]" placeholder="Motivo o destino..."></textarea>
-                    </div>
-                    <button type="submit" class="w-full bg-[#003366] hover:bg-[#002244] text-white py-3 px-4 rounded font-bold uppercase transition-colors disabled:opacity-50" disabled>
-                        Guardar Registro
-                    </button>
-                </form>
-            </div>
+            <form id="registerForm" class="space-y-4 hidden">
+                <div>
+                    <label class="block text-sm font-bold text-gray-700 mb-1">Nombre y Apellido</label>
+                    <input type="text" id="regName" class="w-full px-4 py-2 border border-gray-300 rounded focus:ring-1 focus:ring-[#003366]" required>
+                </div>
+                <div>
+                    <label class="block text-sm font-bold text-gray-700 mb-1">Correo Electrónico</label>
+                    <input type="email" id="regEmail" class="w-full px-4 py-2 border border-gray-300 rounded focus:ring-1 focus:ring-[#003366]" required>
+                </div>
+                <div>
+                    <label class="block text-sm font-bold text-gray-700 mb-1">Contraseña (Mín. 6 caracteres)</label>
+                    <input type="password" id="regPassword" class="w-full px-4 py-2 border border-gray-300 rounded focus:ring-1 focus:ring-[#003366]" required>
+                </div>
+                <button type="submit" class="w-full bg-[#0099cc] hover:bg-[#007799] text-white py-2 px-4 rounded font-bold transition-colors">Crear Cuenta</button>
+                <div class="text-center mt-4">
+                    <button type="button" onclick="toggleAuthMode()" class="text-gray-500 text-sm hover:underline font-semibold">Volver al inicio de sesión</button>
+                </div>
+            </form>
         </div>
+    </div>
 
-        <div id="catalog" class="tab-content hidden fade-in">
-            <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6 mb-6">
-                <h2 class="text-lg font-bold text-[#003366] mb-4 border-b pb-2">📊 Importación Masiva mediante Excel</h2>
-                <div class="flex flex-col md:flex-row gap-4 items-center">
-                    <button onclick="downloadTemplate()" class="bg-green-600 hover:bg-green-700 text-white py-2 px-4 rounded font-bold text-sm transition-colors flex-1 text-center w-full">
-                        ⬇️ 1. Descargar Plantilla Excel
-                    </button>
-                    <div class="flex-1 w-full relative">
-                        <input type="file" id="excelUpload" accept=".xlsx, .xls" class="hidden" onchange="importExcel(event)">
-                        <button onclick="document.getElementById('excelUpload').click()" class="bg-[#0099cc] hover:bg-[#007799] text-white py-2 px-4 rounded font-bold text-sm transition-colors w-full">
-                            ⬆️ 2. Subir Archivo Llenado
+    <div id="pendingScreen" class="min-h-screen flex items-center justify-center bg-slate-100 px-4 hidden absolute inset-0 z-[90]">
+        <div class="bg-white p-8 rounded-lg shadow-xl w-full max-w-lg text-center border-t-4 border-orange-500">
+            <h2 class="text-2xl font-bold text-gray-800 mb-4">⏳ Cuenta en Revisión</h2>
+            <p class="text-gray-600 mb-6">Tu cuenta ha sido creada exitosamente, pero requiere autorización para acceder a los datos de la minera.</p>
+            <div class="bg-orange-50 border border-orange-200 rounded p-4 mb-6 text-sm text-orange-800">
+                Por favor, envía un correo solicitando tu habilitación a:<br>
+                <a href="mailto:supervision.rescate@gmail.com" class="font-bold text-blue-600 underline text-lg">supervision.rescate@gmail.com</a>
+            </div>
+            <button onclick="logout()" class="bg-gray-200 hover:bg-gray-300 text-gray-800 py-2 px-6 rounded font-bold transition-colors">Cerrar Sesión</button>
+        </div>
+    </div>
+
+    <div id="mainApp" class="hidden fade-in">
+        <nav class="bg-[#003366] text-white shadow-md sticky top-0 z-50 border-b-4 border-[#0099cc]">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="flex justify-between h-16">
+                    <div class="flex items-center space-x-4">
+                        <div class="bg-white p-1.5 rounded hidden sm:block">
+                            <svg class="w-8 h-8 text-[#003366]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path></svg>
+                        </div>
+                        <div>
+                            <h1 class="text-lg sm:text-xl font-bold tracking-wide">INVENTARIO DE RESCATE</h1>
+                            <p class="text-xs text-[#0099cc] font-semibold tracking-wider uppercase">Minera Chinalco Perú</p>
+                        </div>
+                    </div>
+                    <div class="flex items-center space-x-3">
+                        <span id="userRoleBadge" class="hidden sm:inline-block px-2 py-1 bg-[#0099cc] text-white rounded text-xs font-bold uppercase tracking-wider">Lector</span>
+                        <span id="userCount" class="px-2 sm:px-3 py-1 bg-[#002244] text-white border border-[#0099cc] rounded text-sm font-medium">0 en línea</span>
+                        <button onclick="logout()" class="p-1.5 bg-red-600 hover:bg-red-700 rounded text-white transition-colors" title="Cerrar Sesión">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path></svg>
                         </button>
                     </div>
                 </div>
             </div>
+        </nav>
 
-            <div class="flex flex-col lg:flex-row gap-6">
-                <div class="lg:w-1/3 bg-white rounded-lg shadow-sm border border-gray-200 p-6 h-fit">
-                    <h2 class="text-xl font-bold text-[#003366] mb-6 border-b pb-4" id="catalogFormTitle">Agregar 1 Equipo</h2>
-                    <form id="catalogForm" class="space-y-4">
-                        <input type="hidden" id="articleId">
-                        <div>
-                            <label class="block text-xs font-bold text-gray-700 mb-1">Nombre de Equipo *</label>
-                            <input type="text" id="articleName" class="w-full px-3 py-2 border border-gray-300 rounded focus:border-[#003366]" required>
-                        </div>
-                        <div class="grid grid-cols-2 gap-3">
-                            <div><label class="block text-xs font-bold text-gray-700 mb-1">Marca</label><input type="text" id="brand" class="w-full px-3 py-2 border border-gray-300 rounded"></div>
-                            <div><label class="block text-xs font-bold text-gray-700 mb-1">Modelo</label><input type="text" id="model" class="w-full px-3 py-2 border border-gray-300 rounded"></div>
-                        </div>
-                        <div class="grid grid-cols-2 gap-3">
-                            <div><label class="block text-xs font-bold text-gray-700 mb-1">Nº Serie</label><input type="text" id="series" class="w-full px-3 py-2 border border-gray-300 rounded"></div>
-                            <div><label class="block text-xs font-bold text-gray-700 mb-1">Nº SAP</label><input type="text" id="sapNumber" class="w-full px-3 py-2 border border-gray-300 rounded"></div>
-                        </div>
-                        <div class="grid grid-cols-2 gap-3">
-                            <div><label class="block text-xs font-bold text-gray-700 mb-1">Stock Actual *</label><input type="number" id="initialStock" min="0" class="w-full px-3 py-2 border border-gray-300 rounded" required></div>
-                            <div><label class="block text-xs font-bold text-gray-700 mb-1">Alerta Mínima *</label><input type="number" id="minStock" min="0" class="w-full px-3 py-2 border border-gray-300 rounded" required></div>
-                        </div>
-                        <div class="flex gap-2 pt-4">
-                            <button type="submit" class="flex-1 bg-[#003366] hover:bg-[#002244] text-white py-2 px-4 rounded font-bold text-sm">Guardar Manual</button>
-                            <button type="button" id="cancelEdit" class="flex-1 bg-gray-200 text-gray-800 rounded font-bold hidden text-sm" onclick="resetArticleForm()">Cancelar</button>
-                        </div>
-                    </form>
-                </div>
-                <div class="lg:w-2/3 bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
-                    <div class="p-6 border-b border-gray-200 bg-slate-50">
-                        <h3 class="text-xl font-bold text-[#003366]">Base de Datos de Equipos</h3>
+        <div class="max-w-7xl mx-auto px-4 py-8 sm:px-6 lg:px-8">
+            <div class="flex flex-wrap bg-white rounded-lg shadow-sm border border-gray-200 p-1 mb-8">
+                <button class="tab-btn px-6 py-3 font-semibold text-sm uppercase tracking-wide flex-1 min-w-[120px] rounded transition-colors text-[#003366] bg-slate-100" data-tab="dashboard">
+                    📊 Resumen e Historial
+                </button>
+                <button id="tabMovements" class="tab-btn admin-only hidden px-6 py-3 font-semibold text-sm uppercase tracking-wide flex-1 min-w-[120px] rounded transition-colors text-gray-500 hover:bg-slate-50" data-tab="movements">
+                    🔄 Ingresos / Salidas
+                </button>
+                <button class="tab-btn px-6 py-3 font-semibold text-sm uppercase tracking-wide flex-1 min-w-[120px] rounded transition-colors text-gray-500 hover:bg-slate-50" data-tab="catalog">
+                    📦 Catálogo
+                </button>
+                <button id="tabUsers" class="tab-btn admin-only hidden px-6 py-3 font-semibold text-sm uppercase tracking-wide flex-1 min-w-[120px] rounded transition-colors text-gray-500 hover:bg-slate-50" data-tab="users">
+                    👥 Personal
+                </button>
+            </div>
+
+            <div id="dashboard" class="tab-content fade-in">
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+                    <div class="bg-white rounded-lg p-6 shadow-sm border-l-4 border-[#003366]">
+                        <p class="text-sm font-medium text-gray-500 uppercase tracking-wide">Total Equipos</p>
+                        <p class="text-3xl font-bold text-[#003366] mt-2" id="totalItems">0</p>
                     </div>
-                    <div class="p-6"><div id="catalogList" class="grid grid-cols-1 md:grid-cols-2 gap-4 max-h-[500px] overflow-y-auto"></div></div>
+                    <div class="bg-white rounded-lg p-6 shadow-sm border-l-4 border-[#0099cc]">
+                        <p class="text-sm font-medium text-gray-500 uppercase tracking-wide">Movimientos Hoy</p>
+                        <p class="text-3xl font-bold text-[#0099cc] mt-2" id="todayMovements">0</p>
+                    </div>
+                    <div class="bg-white rounded-lg p-6 shadow-sm border-l-4 border-red-600">
+                        <p class="text-sm font-medium text-gray-500 uppercase tracking-wide">Stock Crítico</p>
+                        <p class="text-3xl font-bold text-red-600 mt-2" id="alertCount">0</p>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
+                    <div class="p-6 border-b border-gray-200 flex flex-col sm:flex-row justify-between items-center bg-slate-50 gap-4">
+                        <h2 class="text-lg font-bold text-[#003366] uppercase">📋 Historial de Movimientos</h2>
+                        <select id="movementFilter" class="px-3 py-1.5 border border-gray-300 rounded text-sm focus:outline-none focus:border-[#003366] w-full sm:w-auto">
+                            <option value="all">Todos los movimientos</option>
+                            <option value="ingreso">Solo Ingresos (+)</option>
+                            <option value="salida">Solo Salidas (-)</option>
+                        </select>
+                    </div>
+                    <div class="overflow-x-auto">
+                        <table class="w-full">
+                            <thead class="bg-gray-100 border-b border-gray-200">
+                                <tr>
+                                    <th class="px-6 py-3 text-left text-xs font-bold text-gray-600 uppercase tracking-wider">Fecha / Hora</th>
+                                    <th class="px-6 py-3 text-left text-xs font-bold text-gray-600 uppercase tracking-wider">Equipo</th>
+                                    <th class="px-6 py-3 text-left text-xs font-bold text-gray-600 uppercase tracking-wider">Cant.</th>
+                                    <th class="px-6 py-3 text-left text-xs font-bold text-gray-600 uppercase tracking-wider">Operación</th>
+                                    <th class="px-6 py-3 text-left text-xs font-bold text-gray-600 uppercase tracking-wider">Responsable</th>
+                                </tr>
+                            </thead>
+                            <tbody id="movementsTable" class="divide-y divide-gray-200 bg-white">
+                                <tr><td colspan="5" class="px-6 py-8 text-center text-gray-500">Cargando base de datos...</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
-        </div>
 
-        <div id="users" class="tab-content hidden fade-in">
-            <div class="flex flex-col lg:flex-row gap-6">
-                <div class="lg:w-1/3 bg-white rounded-lg shadow-sm border border-gray-200 p-6 h-fit">
-                    <h2 class="text-xl font-bold text-[#003366] mb-6 border-b pb-4">Autorizar Personal</h2>
-                    <form id="personnelForm" class="space-y-4">
+            <div id="movements" class="tab-content hidden fade-in admin-only">
+                <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-8 max-w-2xl mx-auto">
+                    <h2 class="text-2xl font-bold text-[#003366] mb-6 border-b pb-4">Registrar Ingreso o Salida</h2>
+                    <form id="movementForm" class="space-y-5">
                         <div>
-                            <label class="block text-sm font-bold text-gray-700 mb-1">Nombre Completo *</label>
-                            <input type="text" id="personnelName" class="w-full px-3 py-2 border border-gray-300 rounded focus:border-[#003366]" required>
+                            <label class="block text-sm font-bold text-gray-700 mb-1">Tipo de Operación</label>
+                            <select id="movementType" class="w-full px-4 py-2.5 border border-gray-300 rounded focus:ring-1 focus:ring-[#003366] bg-slate-50" required>
+                                <option value="">Seleccione el tipo...</option>
+                                <option value="ingreso">🟢 INGRESO (Sumar al almacén)</option>
+                                <option value="salida">🔴 SALIDA (Asignar a terreno/persona)</option>
+                            </select>
                         </div>
                         <div>
-                            <label class="block text-sm font-bold text-gray-700 mb-1">Cargo / Fotocheck</label>
-                            <input type="text" id="personnelRole" class="w-full px-3 py-2 border border-gray-300 rounded focus:border-[#003366]" placeholder="Ej. Rescatista / F-1234">
+                            <label class="block text-sm font-bold text-gray-700 mb-1">Equipo / Existencia</label>
+                            <select id="articleSelect" class="w-full px-4 py-2.5 border border-gray-300 rounded focus:ring-1 focus:ring-[#003366] bg-slate-50 disabled:bg-gray-100" disabled required></select>
                         </div>
-                        <button type="submit" class="w-full bg-[#0099cc] hover:bg-[#007799] text-white py-2 px-4 rounded font-bold mt-4">Agregar Autorizado</button>
+                        <div>
+                            <label class="block text-sm font-bold text-gray-700 mb-1">Cantidad</label>
+                            <input type="number" id="quantity" min="1" class="w-full px-4 py-2.5 border border-gray-300 rounded focus:ring-1 focus:ring-[#003366]" required>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-bold text-gray-700 mb-1">Responsable del Movimiento</label>
+                            <select id="responsible" class="w-full px-4 py-2.5 border border-gray-300 rounded focus:ring-1 focus:ring-[#003366] bg-slate-50" required></select>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-bold text-gray-700 mb-1">Observaciones</label>
+                            <textarea id="observations" rows="2" class="w-full px-4 py-2.5 border border-gray-300 rounded focus:ring-1 focus:ring-[#003366]"></textarea>
+                        </div>
+                        <button type="submit" class="w-full bg-[#003366] hover:bg-[#002244] text-white py-3 px-4 rounded font-bold uppercase disabled:opacity-50" disabled>Guardar Registro</button>
                     </form>
                 </div>
-                <div class="lg:w-2/3 bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
-                    <div class="p-6 border-b border-gray-200 bg-slate-50"><h3 class="text-xl font-bold text-[#003366]">Lista de Personal</h3></div>
-                    <table class="w-full"><tbody id="personnelList" class="divide-y divide-gray-200"></tbody></table>
+            </div>
+
+            <div id="catalog" class="tab-content hidden fade-in">
+                
+                <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6 mb-6 admin-only hidden">
+                    <h2 class="text-lg font-bold text-[#003366] mb-4 border-b pb-2">📊 Importación Masiva mediante Excel</h2>
+                    <div class="flex flex-col md:flex-row gap-4 items-center">
+                        <button onclick="downloadTemplate()" class="bg-green-600 hover:bg-green-700 text-white py-2 px-4 rounded font-bold text-sm transition-colors flex-1 w-full">⬇️ 1. Descargar Plantilla Excel</button>
+                        <div class="flex-1 w-full relative">
+                            <input type="file" id="excelUpload" accept=".xlsx, .xls" class="hidden" onchange="importExcel(event)">
+                            <button onclick="document.getElementById('excelUpload').click()" class="bg-[#0099cc] hover:bg-[#007799] text-white py-2 px-4 rounded font-bold text-sm transition-colors w-full">⬆️ 2. Subir Archivo Llenado</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="flex flex-col lg:flex-row gap-6">
+                    <div class="lg:w-1/3 bg-white rounded-lg shadow-sm border border-gray-200 p-6 h-fit admin-only hidden">
+                        <h2 class="text-xl font-bold text-[#003366] mb-6 border-b pb-4" id="catalogFormTitle">Agregar / Editar Equipo</h2>
+                        <form id="catalogForm" class="space-y-4">
+                            <input type="hidden" id="articleId">
+                            <div><label class="block text-xs font-bold text-gray-700 mb-1">Nombre *</label><input type="text" id="articleName" class="w-full px-3 py-2 border rounded" required></div>
+                            <div class="grid grid-cols-2 gap-3">
+                                <div><label class="block text-xs font-bold text-gray-700 mb-1">Marca</label><input type="text" id="brand" class="w-full px-3 py-2 border rounded"></div>
+                                <div><label class="block text-xs font-bold text-gray-700 mb-1">Modelo</label><input type="text" id="model" class="w-full px-3 py-2 border rounded"></div>
+                            </div>
+                            <div class="grid grid-cols-2 gap-3">
+                                <div><label class="block text-xs font-bold text-gray-700 mb-1">Nº Serie</label><input type="text" id="series" class="w-full px-3 py-2 border rounded"></div>
+                                <div><label class="block text-xs font-bold text-gray-700 mb-1">Nº SAP</label><input type="text" id="sapNumber" class="w-full px-3 py-2 border rounded"></div>
+                            </div>
+                            <div class="grid grid-cols-2 gap-3">
+                                <div><label class="block text-xs font-bold text-gray-700 mb-1">Stock *</label><input type="number" id="initialStock" class="w-full px-3 py-2 border rounded" required></div>
+                                <div><label class="block text-xs font-bold text-gray-700 mb-1">Alerta Mín. *</label><input type="number" id="minStock" class="w-full px-3 py-2 border rounded" required></div>
+                            </div>
+                            <div class="flex gap-2 pt-4">
+                                <button type="submit" class="flex-1 bg-[#003366] text-white py-2 px-4 rounded font-bold text-sm">Guardar</button>
+                                <button type="button" id="cancelEdit" class="flex-1 bg-gray-200 text-gray-800 rounded font-bold hidden text-sm" onclick="resetArticleForm()">Cancelar</button>
+                            </div>
+                        </form>
+                    </div>
+                    
+                    <div id="catalogContainerClass" class="w-full bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
+                        <div class="p-6 border-b border-gray-200 bg-slate-50 flex justify-between items-center">
+                            <h3 class="text-xl font-bold text-[#003366]">Base de Datos de Equipos</h3>
+                        </div>
+                        <div class="p-6"><div id="catalogList" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 max-h-[600px] overflow-y-auto"></div></div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="users" class="tab-content hidden fade-in admin-only">
+                <div class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
+                    <div class="p-6 border-b border-gray-200 bg-slate-50">
+                        <h3 class="text-xl font-bold text-[#003366]">Gestión de Accesos y Personal</h3>
+                        <p class="text-sm text-gray-500 mt-1">Aquí puedes aprobar cuentas pendientes o cambiar sus permisos.</p>
+                    </div>
+                    <div class="overflow-x-auto">
+                        <table class="w-full">
+                            <thead class="bg-gray-100">
+                                <tr>
+                                    <th class="px-6 py-3 text-left text-xs font-bold text-gray-600 uppercase">Nombre</th>
+                                    <th class="px-6 py-3 text-left text-xs font-bold text-gray-600 uppercase">Correo</th>
+                                    <th class="px-6 py-3 text-left text-xs font-bold text-gray-600 uppercase">Rol Actual</th>
+                                    <th class="px-6 py-3 text-left text-xs font-bold text-gray-600 uppercase">Cambiar Rol</th>
+                                </tr>
+                            </thead>
+                            <tbody id="personnelList" class="divide-y divide-gray-200 bg-white"></tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 
     <script>
+        // --- 1. CONFIGURACIÓN FIREBASE ---
         const firebaseConfig = {
             apiKey: "AIzaSyCJPSncnUWIua1CiAceFbv1tmClpRKjj2U",
             authDomain: "gestion-de-inventarios-rescate.firebaseapp.com",
@@ -223,74 +272,147 @@
         };
 
         firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
         const db = firebase.firestore();
 
-        let articles = [], movements = [], personnel = [];
+        let currentUser = null;
+        let currentUserRole = 'lector'; // por defecto
+        let articles = [], movements = [], usersData = [];
 
-        async function init() {
+        // --- 2. SISTEMA DE AUTENTICACIÓN ---
+        auth.onAuthStateChanged(async (user) => {
+            if (user) {
+                currentUser = user;
+                // Buscar rol del usuario en la base de datos
+                const userDoc = await db.collection('usuarios').doc(user.uid).get();
+                
+                if (!userDoc.exists) {
+                    // Si no existe, es su primer inicio de sesión tras registrarse
+                    await db.collection('usuarios').doc(user.uid).set({
+                        nombre: user.displayName || 'Usuario Nuevo',
+                        email: user.email,
+                        rol: 'pendiente',
+                        creado: firebase.firestore.FieldValue.serverTimestamp()
+                    });
+                    showPendingScreen();
+                } else {
+                    const data = userDoc.data();
+                    if (data.rol === 'pendiente') {
+                        showPendingScreen();
+                    } else {
+                        currentUserRole = data.rol;
+                        startApp(data);
+                    }
+                }
+            } else {
+                showAuthScreen();
+            }
+        });
+
+        function showAuthScreen() {
+            document.getElementById('authScreen').classList.remove('hidden');
+            document.getElementById('pendingScreen').classList.add('hidden');
+            document.getElementById('mainApp').classList.add('hidden');
+        }
+
+        function showPendingScreen() {
+            document.getElementById('authScreen').classList.add('hidden');
+            document.getElementById('pendingScreen').classList.remove('hidden');
+            document.getElementById('mainApp').classList.add('hidden');
+        }
+
+        function toggleAuthMode() {
+            const loginForm = document.getElementById('loginForm');
+            const regForm = document.getElementById('registerForm');
+            loginForm.classList.toggle('hidden');
+            regForm.classList.toggle('hidden');
+        }
+
+        // Login
+        document.getElementById('loginForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const email = document.getElementById('loginEmail').value;
+            const pass = document.getElementById('loginPassword').value;
+            try {
+                await auth.signInWithEmailAndPassword(email, pass);
+            } catch (error) {
+                alert("Error al ingresar: Verifica tu correo o contraseña.");
+            }
+        });
+
+        // Registro
+        document.getElementById('registerForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const name = document.getElementById('regName').value;
+            const email = document.getElementById('regEmail').value;
+            const pass = document.getElementById('regPassword').value;
+            try {
+                const userCredential = await auth.createUserWithEmailAndPassword(email, pass);
+                await userCredential.user.updateProfile({ displayName: name });
+                // El onAuthStateChanged se disparará y creará el doc 'pendiente'
+            } catch (error) {
+                if(error.code === 'auth/email-already-in-use') alert("Este correo ya está registrado.");
+                else if(error.code === 'auth/weak-password') alert("La contraseña debe tener mínimo 6 caracteres.");
+                else alert("Error al registrarse: " + error.message);
+            }
+        });
+
+        function logout() { auth.signOut(); }
+
+        // --- 3. INICIO DE LA APP Y GESTIÓN DE ROLES ---
+        function startApp(userData) {
+            document.getElementById('authScreen').classList.add('hidden');
+            document.getElementById('pendingScreen').classList.add('hidden');
+            document.getElementById('mainApp').classList.remove('hidden');
+            
+            document.getElementById('userRoleBadge').textContent = userData.rol;
+            if(userData.rol === 'admin') {
+                document.getElementById('userRoleBadge').classList.replace('bg-[#0099cc]', 'bg-red-600');
+            }
+
+            // Aplicar permisos en la Interfaz
+            const adminElements = document.querySelectorAll('.admin-only');
+            if (userData.rol === 'admin') {
+                adminElements.forEach(el => el.classList.remove('hidden'));
+                document.getElementById('catalogContainerClass').classList.replace('w-full', 'lg:w-2/3');
+            } else {
+                adminElements.forEach(el => el.classList.add('hidden'));
+                document.getElementById('catalogContainerClass').classList.replace('lg:w-2/3', 'w-full');
+            }
+
+            // Iniciar contadores y datos
+            trackOnlineStatus();
             loadArticles();
             loadMovements();
-            loadPersonnel();
+            if (userData.rol === 'admin') loadUsersList();
             setupTabs();
-            
-            // Listeners de Formularios
+
+            // Listeners
             document.getElementById('movementForm').addEventListener('submit', handleMovement);
             document.getElementById('catalogForm').addEventListener('submit', handleArticle);
-            document.getElementById('personnelForm').addEventListener('submit', handlePersonnel);
             document.getElementById('movementFilter').addEventListener('change', updateMovementsTable);
             document.getElementById('movementType').addEventListener('change', updateArticleSelect);
         }
 
-        // --- SISTEMA EXCEL ---
-        function downloadTemplate() {
-            const ws = XLSX.utils.aoa_to_sheet([
-                ["Nombre", "Marca", "Modelo", "Serie", "SAP", "Stock Inicial", "Alerta Minima"],
-                ["Arnes Anticaidas", "Petzl", "Newton Fast", "12345", "987654", "10", "3"],
-                ["Mosqueton", "Black Diamond", "Oval", "", "", "50", "15"]
-            ]);
-            const wb = XLSX.utils.book_new();
-            XLSX.utils.book_append_sheet(wb, ws, "Inventario");
-            XLSX.writeFile(wb, "Plantilla_Inventario_Chinalco.xlsx");
-        }
+        // --- SISTEMA "EN LÍNEA" REAL ---
+        function trackOnlineStatus() {
+            if(!currentUser) return;
+            const presenceRef = db.collection('online_users').doc(currentUser.uid);
+            
+            // Actualizar cada 20 segundos
+            const updatePresence = () => presenceRef.set({ timestamp: Date.now() });
+            updatePresence();
+            setInterval(updatePresence, 20000);
 
-        function importExcel(event) {
-            const file = event.target.files[0];
-            if(!file) return;
-            const reader = new FileReader();
-            reader.onload = async function(e) {
-                try {
-                    const data = new Uint8Array(e.target.result);
-                    const workbook = XLSX.read(data, {type: 'array'});
-                    const sheet = workbook.Sheets[workbook.SheetNames[0]];
-                    const json = XLSX.utils.sheet_to_json(sheet);
-                    
-                    if(json.length === 0) return alert("El archivo está vacío.");
-                    if(!confirm(`¿Estás seguro de importar ${json.length} equipos?`)) return;
-
-                    let count = 0;
-                    for(let row of json) {
-                        if(row.Nombre) {
-                            await db.collection('articles').add({
-                                name: row.Nombre,
-                                brand: row.Marca || '',
-                                model: row.Modelo || '',
-                                series: row.Serie || '',
-                                sapNumber: row.SAP || '',
-                                stock: parseInt(row['Stock Inicial']) || 0,
-                                minStock: parseInt(row['Alerta Minima']) || 0,
-                                createdAt: firebase.firestore.FieldValue.serverTimestamp()
-                            });
-                            count++;
-                        }
-                    }
-                    alert(`✅ Excel procesado. Se guardaron ${count} equipos correctamente.`);
-                    document.getElementById('excelUpload').value = '';
-                } catch(error) {
-                    alert("Error al leer el archivo. Asegúrate de usar la plantilla descargada.");
-                    console.error(error);
-                }
-            };
-            reader.readAsArrayBuffer(file);
+            // Escuchar conectados (activos en los últimos 40 seg)
+            db.collection('online_users').onSnapshot(snapshot => {
+                const now = Date.now();
+                let count = 0;
+                snapshot.forEach(doc => {
+                    if (now - doc.data().timestamp < 40000) count++;
+                });
+                document.getElementById('userCount').textContent = `${count} en línea`;
+            });
         }
 
         // --- CARGA DE DATOS ---
@@ -298,10 +420,9 @@
             db.collection('articles').orderBy('name').onSnapshot(snapshot => {
                 articles = [];
                 snapshot.forEach(doc => articles.push({ id: doc.id, ...doc.data() }));
-                updateArticleSelect(); updateCatalogList(); updateDashboard();
-            }, error => {
-                console.error("Fallo lectura de Artículos:", error);
-                document.getElementById('loadingText').textContent = "❌ ERROR: Permisos denegados en Firebase. Cambia las reglas a 'if true'.";
+                if(currentUserRole === 'admin') updateArticleSelect(); 
+                updateCatalogList(); 
+                updateDashboard();
             });
         }
 
@@ -310,33 +431,55 @@
                 movements = [];
                 snapshot.forEach(doc => movements.push({ id: doc.id, ...doc.data() }));
                 updateMovementsTable(); updateDashboard();
-            }, error => console.error(error));
-        }
-
-        function loadPersonnel() {
-            db.collection('personnel').orderBy('name').onSnapshot(snapshot => {
-                personnel = [];
-                snapshot.forEach(doc => personnel.push({ id: doc.id, ...doc.data() }));
-                document.getElementById('staffCount').textContent = personnel.length;
-                document.getElementById('personnelList').innerHTML = personnel.map(p => `
-                    <tr class="border-b hover:bg-slate-50"><td class="px-6 py-3 font-bold">${p.name}</td><td class="px-6 py-3">${p.role || '-'}</td><td class="px-6 py-3 text-right"><button onclick="db.collection('personnel').doc('${p.id}').delete()" class="text-red-600 font-bold text-sm">Quitar</button></td></tr>
-                `).join('');
-                document.getElementById('responsible').innerHTML = '<option value="">Seleccione personal...</option>' + personnel.map(p => `<option value="${p.name}">${p.name}</option>`).join('');
             });
         }
 
-        // --- MOVIMIENTOS E HISTORIAL ---
+        // Solo Admin: Cargar lista de usuarios para cambiar roles
+        function loadUsersList() {
+            db.collection('usuarios').orderBy('nombre').onSnapshot(snapshot => {
+                usersData = [];
+                snapshot.forEach(doc => usersData.push({ id: doc.id, ...doc.data() }));
+                
+                // Llenar tabla de administración
+                document.getElementById('personnelList').innerHTML = usersData.map(u => `
+                    <tr class="border-b hover:bg-slate-50">
+                        <td class="px-6 py-4 font-bold text-sm">${u.nombre}</td>
+                        <td class="px-6 py-4 text-sm text-gray-600">${u.email}</td>
+                        <td class="px-6 py-4 text-sm font-bold uppercase ${u.rol==='admin'?'text-red-600':u.rol==='lector'?'text-blue-600':'text-orange-500'}">${u.rol}</td>
+                        <td class="px-6 py-4">
+                            <select onchange="changeUserRole('${u.id}', this.value)" class="border border-gray-300 rounded px-2 py-1 text-sm bg-white cursor-pointer focus:outline-none">
+                                <option value="" disabled selected>Cambiar a...</option>
+                                <option value="admin">Administrador</option>
+                                <option value="lector">Lector</option>
+                                <option value="pendiente">Pendiente (Bloquear)</option>
+                            </select>
+                        </td>
+                    </tr>
+                `).join('');
+
+                // Llenar select de responsables en movimientos (solo usuarios aprobados)
+                const approvedUsers = usersData.filter(u => u.rol !== 'pendiente');
+                document.getElementById('responsible').innerHTML = '<option value="">Seleccione personal...</option>' + 
+                    approvedUsers.map(u => `<option value="${u.nombre}">${u.nombre}</option>`).join('');
+            });
+        }
+
+        async function changeUserRole(uid, newRole) {
+            if(!newRole) return;
+            if(confirm(`¿Estás seguro de cambiar el rol a ${newRole}?`)) {
+                await db.collection('usuarios').doc(uid).update({ rol: newRole });
+                alert("Rol actualizado correctamente.");
+            }
+        }
+
+        // --- FUNCIONES DEL SISTEMA ---
         function updateArticleSelect() {
             const select = document.getElementById('articleSelect');
             const type = document.getElementById('movementType').value;
             const btn = document.querySelector('#movementForm button');
-            
             select.innerHTML = '<option value="">Seleccione el equipo...</option>';
             select.disabled = !type; btn.disabled = !type;
-
-            if (type) {
-                articles.forEach(a => select.innerHTML += `<option value="${a.id}">${a.name} (Stock Actual: ${a.stock || 0})</option>`);
-            }
+            if (type) articles.forEach(a => select.innerHTML += `<option value="${a.id}">${a.name} (Stock: ${a.stock || 0})</option>`);
         }
 
         async function handleMovement(e) {
@@ -344,40 +487,34 @@
             const data = Object.fromEntries(new FormData(e.target));
             const article = articles.find(a => a.id === data.articleSelect);
             const qty = parseInt(data.quantity);
-            
-            if (data.movementType === 'salida' && (article.stock || 0) < qty) {
-                return alert('⚠️ Error: No hay suficiente cantidad en el almacén para sacar esos equipos.');
-            }
+            if (data.movementType === 'salida' && (article.stock || 0) < qty) return alert('Error: No hay stock suficiente.');
 
             try {
-                await db.collection('articles').doc(data.articleSelect).update({
-                    stock: firebase.firestore.FieldValue.increment(data.movementType === 'ingreso' ? qty : -qty)
-                });
+                await db.collection('articles').doc(data.articleSelect).update({ stock: firebase.firestore.FieldValue.increment(data.movementType === 'ingreso' ? qty : -qty) });
                 await db.collection('movements').add({
                     articleId: data.articleSelect, articleName: article.name, type: data.movementType,
                     quantity: qty, responsible: data.responsible, observations: data.observations || '',
-                    timestamp: firebase.firestore.FieldValue.serverTimestamp()
+                    timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+                    registeredBy: currentUser.email // Registro de auditoría
                 });
-                e.target.reset(); updateArticleSelect();
-                alert('✅ Ingreso/Salida registrado correctamente en el historial.');
-            } catch (error) { alert('❌ Error al guardar en base de datos.'); }
+                e.target.reset(); updateArticleSelect(); alert('Movimiento guardado.');
+            } catch (error) { alert('Error al guardar.'); }
         }
 
         function updateMovementsTable() {
             const filter = document.getElementById('movementFilter').value;
             const filtered = movements.filter(m => filter === 'all' || m.type === filter);
             document.getElementById('movementsTable').innerHTML = filtered.map(m => `
-                <tr class="hover:bg-slate-50 transition-colors border-b">
-                    <td class="px-6 py-3 text-sm">${m.timestamp ? m.timestamp.toDate().toLocaleString() : 'Guardando...'}</td>
+                <tr class="hover:bg-slate-50 border-b">
+                    <td class="px-6 py-3 text-sm">${m.timestamp ? m.timestamp.toDate().toLocaleString() : '...'}</td>
                     <td class="px-6 py-3 font-bold text-gray-900 text-sm">${m.articleName}</td>
                     <td class="px-6 py-3 font-bold ${m.type==='ingreso'?'text-green-600':'text-red-600'}">${m.type==='ingreso'?'+':'-'}${m.quantity}</td>
                     <td class="px-6 py-3 text-sm"><span class="px-2 py-1 rounded text-xs font-bold ${m.type==='ingreso'?'bg-green-100 text-green-800':'bg-red-100 text-red-800'} uppercase">${m.type}</span></td>
                     <td class="px-6 py-3 text-sm text-gray-700">${m.responsible}</td>
                 </tr>
-            `).join('') || '<tr><td colspan="5" class="px-6 py-8 text-center text-gray-500">No hay registros aún</td></tr>';
+            `).join('') || '<tr><td colspan="5" class="px-6 py-8 text-center text-gray-500">No hay registros</td></tr>';
         }
 
-        // --- CATALOGO ---
         async function handleArticle(e) {
             e.preventDefault();
             const data = Object.fromEntries(new FormData(e.target));
@@ -389,26 +526,33 @@
             try {
                 if(id) await db.collection('articles').doc(id).update(payload);
                 else await db.collection('articles').add({...payload, createdAt: firebase.firestore.FieldValue.serverTimestamp()});
-                resetArticleForm(); alert('✅ Guardado con éxito');
+                resetArticleForm(); alert('Guardado con éxito');
             } catch(e) { alert('Error al guardar'); }
         }
 
         function updateCatalogList() {
+            // El lector no ve los botones de editar/borrar
+            const adminButtons = (id) => currentUserRole === 'admin' ? `
+                <div class="flex gap-2 mt-2 pt-2 border-t border-gray-100">
+                    <button onclick="editArticle('${id}')" class="px-3 py-1 bg-gray-100 text-gray-700 text-xs font-bold rounded">Editar</button>
+                    <button onclick="if(confirm('¿Eliminar?')) db.collection('articles').doc('${id}').delete()" class="px-3 py-1 bg-red-50 text-red-600 text-xs font-bold rounded">Borrar</button>
+                </div>` : '';
+
             document.getElementById('catalogList').innerHTML = articles.map(a => `
-                <div class="border border-gray-200 p-4 rounded bg-white shadow-sm">
-                    <div class="flex justify-between items-start mb-2">
-                        <h4 class="font-bold text-[#003366] text-sm">${a.name}</h4>
-                        <div class="text-right">
-                            <span class="block text-sm font-bold ${a.stock < a.minStock ? 'text-red-600' : 'text-green-600'}">${a.stock || 0} Und</span>
+                <div class="border border-gray-200 p-4 rounded bg-white shadow-sm flex flex-col justify-between">
+                    <div>
+                        <div class="flex justify-between items-start mb-2">
+                            <h4 class="font-bold text-[#003366] text-sm">${a.name}</h4>
+                            <div class="text-right">
+                                <span class="block text-sm font-bold ${a.stock < a.minStock ? 'text-red-600' : 'text-green-600'}">${a.stock || 0} Und</span>
+                            </div>
+                        </div>
+                        <div class="text-xs text-gray-500 space-y-1">
+                            <div>M/M: ${a.brand||'-'} ${a.model||'-'}</div>
+                            <div>SAP: ${a.sapNumber||'-'} | Serie: ${a.series||'-'}</div>
                         </div>
                     </div>
-                    <div class="text-xs text-gray-500 mb-3 space-y-1">
-                        <div>M/M: ${a.brand||'-'} ${a.model||'-'} | SAP: ${a.sapNumber||'-'}</div>
-                    </div>
-                    <div class="flex gap-2">
-                        <button onclick="editArticle('${a.id}')" class="px-3 py-1 bg-gray-100 text-gray-700 text-xs font-bold rounded">Editar</button>
-                        <button onclick="if(confirm('¿Eliminar?')) db.collection('articles').doc('${a.id}').delete()" class="px-3 py-1 bg-red-50 text-red-600 text-xs font-bold rounded">Borrar</button>
-                    </div>
+                    ${adminButtons(a.id)}
                 </div>
             `).join('');
         }
@@ -416,23 +560,16 @@
         function editArticle(id) {
             const a = articles.find(x => x.id === id);
             if(!a) return;
-            document.getElementById('articleId').value = id;
-            document.getElementById('articleName').value = a.name; document.getElementById('brand').value = a.brand;
-            document.getElementById('model').value = a.model; document.getElementById('series').value = a.series;
-            document.getElementById('sapNumber').value = a.sapNumber; document.getElementById('initialStock').value = a.stock;
-            document.getElementById('minStock').value = a.minStock;
+            document.getElementById('articleId').value = id; document.getElementById('articleName').value = a.name; 
+            document.getElementById('brand').value = a.brand; document.getElementById('model').value = a.model; 
+            document.getElementById('series').value = a.series; document.getElementById('sapNumber').value = a.sapNumber;
+            document.getElementById('initialStock').value = a.stock; document.getElementById('minStock').value = a.minStock;
             document.getElementById('cancelEdit').classList.remove('hidden'); document.getElementById('catalogFormTitle').textContent = 'Editar Equipo';
         }
 
         function resetArticleForm() {
             document.getElementById('catalogForm').reset(); document.getElementById('articleId').value = '';
-            document.getElementById('cancelEdit').classList.add('hidden'); document.getElementById('catalogFormTitle').textContent = 'Agregar 1 Equipo';
-        }
-
-        async function handlePersonnel(e) {
-            e.preventDefault();
-            await db.collection('personnel').add({name: document.getElementById('personnelName').value, role: document.getElementById('personnelRole').value});
-            e.target.reset();
+            document.getElementById('cancelEdit').classList.add('hidden'); document.getElementById('catalogFormTitle').textContent = 'Agregar / Editar Equipo';
         }
 
         function updateDashboard() {
@@ -451,8 +588,29 @@
                 });
             });
         }
+        
+        // Función Excel (Solo Admin)
+        function downloadTemplate() {
+            const ws = XLSX.utils.aoa_to_sheet([["Nombre", "Marca", "Modelo", "Serie", "SAP", "Stock Inicial", "Alerta Minima"]]);
+            const wb = XLSX.utils.book_new(); XLSX.utils.book_append_sheet(wb, ws, "Inventario");
+            XLSX.writeFile(wb, "Plantilla_Inventario_Chinalco.xlsx");
+        }
 
-        window.onload = init;
+        function importExcel(event) {
+            const file = event.target.files[0]; if(!file) return;
+            const reader = new FileReader();
+            reader.onload = async function(e) {
+                try {
+                    const json = XLSX.utils.sheet_to_json(XLSX.read(new Uint8Array(e.target.result), {type: 'array'}).Sheets[XLSX.read(new Uint8Array(e.target.result), {type: 'array'}).SheetNames[0]]);
+                    if(json.length === 0) return alert("Archivo vacío.");
+                    if(!confirm(`¿Importar ${json.length} equipos?`)) return;
+                    for(let row of json) {
+                        if(row.Nombre) await db.collection('articles').add({ name: row.Nombre, brand: row.Marca||'', model: row.Modelo||'', series: row.Serie||'', sapNumber: row.SAP||'', stock: parseInt(row['Stock Inicial'])||0, minStock: parseInt(row['Alerta Minima'])||0, createdAt: firebase.firestore.FieldValue.serverTimestamp() });
+                    }
+                    alert(`✅ Excel procesado.`); document.getElementById('excelUpload').value = '';
+                } catch(error) { alert("Error al leer Excel."); }
+            }; reader.readAsArrayBuffer(file);
+        }
     </script>
 </body>
 </html>
