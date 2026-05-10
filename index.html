@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inventario de Rescate | Minera Chinalco</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.13.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.13.1/firebase-firestore-compat.js"></script>
+    <style>
+        .fade-in { animation: fadeIn 0.4s ease-out; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
+    </style>
+</head>
+<body class="bg-slate-100 min-h-screen font-sans">
+    <nav class="bg-[#003366] text-white shadow-md sticky top-0 z-50 border-b-4 border-[#0099cc]">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16">
+                <div class="flex items-center space-x-4">
+                    <div class="bg-white p-1.5 rounded">
+                        <svg class="w-8 h-8 text-[#003366]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path></svg>
+                    </div>
+                    <div>
+                        <h1 class="text-xl font-bold tracking-wide">INVENTARIO DE RESCATE</h1>
+                        <p class="text-xs text-[#0099cc] font-semibold tracking-wider uppercase">Minera Chinalco Perú</p>
+                    </div>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <span id="userCount" class="px-3 py-1 bg-[#002244] text-white border border-[#0099cc] rounded text-sm font-medium">0 en línea</span>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="max-w-7xl mx-auto px-4 py-8 sm:px-6 lg:px-8">
+        <div class="flex flex-wrap bg-white rounded-lg shadow-sm border border-gray-200 p-1 mb-8">
+            <button class="tab-btn px-6 py-3 font-semibold text-sm uppercase tracking-wide flex-1 min-w-[120px] rounded transition-colors text-[#003366] bg-slate-100" data-tab="dashboard" id="dashboardTab">
+                📊 Dashboard
+            </button>
+            <button class="tab-btn px-6 py-3 font-semibold text-sm uppercase tracking-wide flex-1 min-w-[120px] rounded transition-colors text-gray-500 hover:bg-slate-50" data-tab="movements">
+                🔄 Movimientos
+            </button>
+            <button class="tab-btn px-6 py-3 font-semibold text-sm uppercase tracking-wide flex-1 min-w-[120px] rounded transition-colors text-gray-500 hover:bg-slate-50" data-tab="catalog">
+                📦 Catálogo
+            </button>
+            <button class="tab-btn px-6 py-3 font-semibold text-sm uppercase tracking-wide flex-1 min-w-[120px] rounded transition-colors text-gray-500 hover:bg-slate-50" data-tab="users">
+                👥 Personal
+            </button>
+        </div>
+
+        <div id="dashboard" class="tab-content fade-in">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+                <div class="bg-white rounded-lg p-6 shadow-sm border-l-4 border-[#003366]">
+                    <p class="text-sm font-medium text-gray-500 uppercase tracking-wide">Total Equipos</p>
+                    <p class="text-3xl font-bold text-[#003366] mt-2" id="totalItems">0</p>
+                </div>
+                <div class="bg-white rounded-lg p-6 shadow-sm border-l-4 border-[#0099cc]">
+                    <p class="text-sm font-medium text-gray-500 uppercase tracking-wide">Movimientos Hoy</p>
+                    <p class="text-3xl font-bold text-[#0099cc] mt-2" id="todayMovements">0</p>
+                </div>
+                <div class="bg-white rounded-lg p-6 shadow-sm border-l-4 border-red-600">
+                    <p class="text-sm font-medium text-gray-500 uppercase tracking-wide">Stock Crítico</p>
+                    <p class="text-3xl font-bold text-red-600 mt-2" id="alertCount">0</p>
+                </div>
+                <div class="bg-white rounded-lg p-6 shadow-sm border-l-4 border-green-600">
+                    <p class="text-sm font-medium text-gray-500 uppercase tracking-wide">Personal Autorizado</p>
+                    <p class="text-3xl font-bold text-green-600 mt-2" id="staffCount">0</p>
+                </div>
+            </div>
+
+            <div id="alertsSection" class="bg-red-50 border border-red-200 rounded-lg p-6 mb-8 hidden">
+                <div class="flex items-center mb-4">
+                    <svg class="w-6 h-6 text-red-600 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
+                    <h2 class="text-lg font-bold text-red-900 uppercase">Equipos que requieren reposición</h2>
+                </div>
+                <div id="alertsList" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"></div>
+            </div>
+
+            <div class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
+                <div class="p-6 border-b border-gray-200 flex justify-between items-center bg-slate-50">
+                    <h2 class="text-lg font-bold text-[#003366] uppercase">Historial General</h2>
+                    <select id="movementFilter" class="px-3 py-1.5 border border-gray-300 rounded text-sm focus:outline-none focus:border-[#003366]">
+                        <option value="all">Todos los movimientos</option>
+                        <option value="ingreso">Solo Ingresos</option>
+                        <option value="salida">Solo Salidas</option>
+                    </select>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="w-full">
+                        <thead class="bg-gray-100 border-b border-gray-200">
+                            <tr>
+                                <th class="px-6 py-3 text-left text-xs font-bold text-gray-600 uppercase tracking-wider">Fecha / Hora</th>
+                                <th class="px-6 py-3 text-left text-xs font-bold text-gray-600 uppercase tracking-wider">Equipo</th>
+                                <th class="px-6 py-3 text-left text-xs font-bold text-gray-600 uppercase tracking-wider">Cant.</th>
+                                <th class="px-6 py-3 text-left text-xs font-bold text-gray-600 uppercase tracking-wider">Operación</th>
+                                <th class="px-6 py-3 text-left text-xs font-bold text-gray-600 uppercase tracking-wider">Responsable</th>
+                            </tr>
+                        </thead>
+                        <tbody id="movementsTable" class="divide-y divide-gray-200 bg-white">
+                            <tr><td colspan="5" class="px-6 py-8 text-center text-gray-500">Cargando base de datos...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div id="movements" class="tab-content hidden fade-in">
+            <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-8 max-w-2xl mx-auto">
+                <h2 class="text-2xl font-bold text-[#003366] mb-6 border-b pb-4">Registrar Operación</h2>
+                <form id="movementForm" class="space-y-5">
+                    <div>
+                        <label class="block text-sm font-bold text-gray-700 mb-1">Tipo de Operación</label>
+                        <select id="movementType" class="w-full px-4 py-2.5 border border-gray-300 rounded focus:ring-1 focus:ring-[#003366] focus:border-[#003366] bg-slate-50">
+                            <option value="">Seleccione el tipo...</option>
+                            <option value="ingreso">Entrada / Devolución al almacén (+)</option>
+                            <option value="salida">Salida / Asignación a terreno (-)</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-bold text-gray-700 mb-1">Equipo / Existencia</label>
+                        <select id="articleSelect" class="w-full px-4 py-2.5 border border-gray-300 rounded focus:ring-1 focus:ring-[#003366] focus:border-[#003366] bg-slate-50 disabled:bg-gray-100" disabled>
+                            <option value="">Primero seleccione tipo de operación...</option>
+                        </select>
+                        <div id="stockInfo" class="mt-1 text-xs font-semibold text-gray-500"></div>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-bold text-gray-700 mb-1">Cantidad</label>
+                        <input type="number" id="quantity" min="1" class="w-full px-4 py-2.5 border border-gray-300 rounded focus:ring-1 focus:ring-[#003366] focus:border-[#003366]" placeholder="Ingrese cantidad numérica" required>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-bold text-gray-700 mb-1">Personal Responsable</label>
+                        <select id="responsible" class="w-full px-4 py-2.5 border border-gray-300 rounded focus:ring-1 focus:ring-[#003366] focus:border-[#003366] bg-slate-50" required>
+                            <option value="">Seleccione personal autorizado...</option>
+                        </select>
+                        <p class="text-xs text-gray-500 mt-1">Si no aparece en la lista, agréguelo en la pestaña "Personal".</p>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-bold text-gray-700 mb-1">Observaciones / Motivo</label>
+                        <textarea id="observations" rows="2" class="w-full px-4 py-2.5 border border-gray-300 rounded focus:ring-1 focus:ring-[#003366] focus:border-[#003366]" placeholder="Ej. Rescate en tajo, Mantenimiento preventivo..."></textarea>
+                    </div>
+                    <button type="submit" class="w-full bg-[#003366] hover:bg-[#002244] text-white py-3 px-4 rounded font-bold uppercase tracking-wider transition-colors disabled:opacity-50" disabled>
+                        Guardar Registro
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        <div id="catalog" class="tab-content hidden fade-in">
+            <div class="flex flex-col lg:flex-row gap-6">
+                <div class="lg:w-1/3 bg-white rounded-lg shadow-sm border border-gray-200 p-6 h-fit">
+                    <h2 class="text-xl font-bold text-[#003366] mb-6 border-b pb-4" id="catalogFormTitle">Nuevo Equipo</h2>
+                    <form id="catalogForm" class="space-y-4">
+                        <input type="hidden" id="articleId">
+                        <div>
+                            <label class="block text-xs font-bold text-gray-700 mb-1">Nombre de Equipo *</label>
+                            <input type="text" id="articleName" class="w-full px-3 py-2 border border-gray-300 rounded focus:border-[#003366] focus:outline-none" required placeholder="Ej. Arnés anticaídas">
+                        </div>
+                        <div class="grid grid-cols-2 gap-3">
+                            <div>
+                                <label class="block text-xs font-bold text-gray-700 mb-1">Marca</label>
+                                <input type="text" id="brand" class="w-full px-3 py-2 border border-gray-300 rounded focus:border-[#003366] focus:outline-none" placeholder="Ej. Petzl">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold text-gray-700 mb-1">Modelo</label>
+                                <input type="text" id="model" class="w-full px-3 py-2 border border-gray-300 rounded focus:border-[#003366] focus:outline-none">
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-2 gap-3">
+                            <div>
+                                <label class="block text-xs font-bold text-gray-700 mb-1">Nº Serie</label>
+                                <input type="text" id="series" class="w-full px-3 py-2 border border-gray-300 rounded focus:border-[#003366] focus:outline-none">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold text-gray-700 mb-1">Nº SAP</label>
+                                <input type="text" id="sapNumber" class="w-full px-3 py-2 border border-gray-300 rounded focus:border-[#003366] focus:outline-none">
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-2 gap-3">
+                            <div>
+                                <label class="block text-xs font-bold text-gray-700 mb-1">Stock Actual *</label>
+                                <input type="number" id="initialStock" min="0" class="w-full px-3 py-2 border border-gray-300 rounded focus:border-[#003366] focus:outline-none" required>
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold text-gray-700 mb-1">Alerta Mínima *</label>
+                                <input type="number" id="minStock" min="0" class="w-full px-3 py-2 border border-gray-300 rounded focus:border-[#003366] focus:outline-none" required>
+                            </div>
+                        </div>
+                        <div class="flex gap-2 pt-4">
+                            <button type="submit" class="flex-1 bg-[#0099cc] hover:bg-[#007799] text-white py-2 px-4 rounded font-bold transition-colors text-sm">
+                                Guardar
+                            </button>
+                            <button type="button" id="cancelEdit" class="flex-1 bg-gray-200 text-gray-800 rounded font-bold hover:bg-gray-300 transition-colors hidden text-sm">
+                                Cancelar
+                            </button>
+                        </div>
+                    </form>
+                </div>
+                <div class="lg:w-2/3 bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
+                    <div class="p-6 border-b border-gray-200 bg-slate-50">
+                        <h3 class="text-xl font-bold text-[#003366]">Base de Datos de Equipos</h3>
+                    </div>
+                    <div class="p-6">
+                        <div id="catalogList" class="grid grid-cols-1 md:grid-cols-2 gap-4 max-h-[600px] overflow-y-auto pr-2"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="users" class="tab-content hidden fade-in">
+            <div class="flex flex-col lg:flex-row gap-6">
+                <div class="lg:w-1/3 bg-white rounded-lg shadow-sm border border-gray-200 p-6 h-fit">
+                    <h2 class="text-xl font-bold text-[#003366] mb-6 border-b pb-4">Autorizar Personal</h2>
+                    <form id="personnelForm" class="space-y-4">
+                        <div>
+                            <label class="block text-sm font-bold text-gray-700 mb-1">Nombre Completo *</label>
+                            <input type="text" id="personnelName" class="w-full px-3 py-2 border border-gray-300 rounded focus:border-[#003366] focus:outline-none" required placeholder="Apellidos y Nombres">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-bold text-gray-700 mb-1">Cargo / Fotocheck</label>
+                            <input type="text" id="personnelRole" class="w-full px-3 py-2 border border-gray-300 rounded focus:border-[#003366] focus:outline-none" placeholder="Ej. Rescatista III / F-1234">
+                        </div>
+                        <button type="submit" class="w-full bg-[#0099cc] hover:bg-[#007799] text-white py-2 px-4 rounded font-bold transition-colors mt-4">
+                            Agregar Autorizado
+                        </button>
+                    </form>
+                </div>
+                <div class="lg:w-2/3 bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
+                    <div class="p-6 border-b border-gray-200 bg-slate-50">
+                        <h3 class="text-xl font-bold text-[#003366]">Lista de Personal Autorizado</h3>
+                    </div>
+                    <div class="p-0">
+                        <table class="w-full">
+                            <thead class="bg-gray-100">
+                                <tr>
+                                    <th class="px-6 py-3 text-left text-xs font-bold text-gray-600 uppercase">Nombre</th>
+                                    <th class="px-6 py-3 text-left text-xs font-bold text-gray-600 uppercase">Cargo/Detalle</th>
+                                    <th class="px-6 py-3 text-right text-xs font-bold text-gray-600 uppercase">Acción</th>
+                                </tr>
+                            </thead>
+                            <tbody id="personnelList" class="divide-y divide-gray-200"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Configuración limpia sin espacios ocultos
+        const firebaseConfig = {
+            apiKey: "AIzaSyCJPSncnUWIua1CiAceFbv1tmClpRKjj2U",
+            authDomain: "gestion-de-inventarios-rescate.firebaseapp.com",
+            projectId: "gestion-de-inventarios-rescate",
+            storageBucket: "gestion-de-inventarios-rescate.firebasestorage.app",
+            messagingSenderId: "390416288163",
+            appId: "1:390416288163:web:1482e4fc9d3bbeda1af216",
+            measurementId: "G-96K953JX49"
+        };
+
+        // Inicializar
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+
+        // Variables Globales
+        let articles = [];
+        let movements = [];
+        let personnel = [];
+        let unsubscribeArticles, unsubscribeMovements, unsubscribePersonnel;
+        let userCount = new Set();
+        let currentUserId = Date.now() + Math.random().toString();
+
+        // Iniciar App
+        async function init() {
+            registerUser();
+            await loadArticles();
+            await loadMovements();
+            await loadPersonnel();
+            setupEventListeners();
+            updateDashboard();
+        }
+
+        // Contador de usuarios
+        function registerUser() {
+            const userRef = db.collection('activeUsers').doc(currentUserId);
+            userRef.set({
+                timestamp: firebase.firestore.FieldValue.serverTimestamp()
+            });
+            setInterval(() => {
+                userRef.update({ timestamp: firebase.firestore.FieldValue.serverTimestamp() });
+            }, 30000);
+
+            db.collection('activeUsers').onSnapshot(snapshot => {
+                const now = Date.now();
+                userCount.clear();
+                snapshot.forEach(doc => {
+                    const data = doc.data();
+                    if (data.timestamp && (now - data.timestamp.toDate().getTime()) < 60000) {
+                        userCount.add(doc.id);
+                    }
+                });
+                document.getElementById('userCount').textContent = `${userCount.size} en línea`;
+            });
+        }
+
+        // Cargar Datos
+        async function loadArticles() {
+            unsubscribeArticles = db.collection('articles').orderBy('name').onSnapshot(snapshot => {
+                articles = [];
+                snapshot.forEach(doc => articles.push({ id: doc.id, ...doc.data() }));
+                updateArticleSelect();
+                updateCatalogList();
+                updateDashboard();
+            });
+        }
+
+        async function loadMovements() {
+            unsubscribeMovements = db.collection('movements').orderBy('timestamp', 'desc').limit(100).onSnapshot(snapshot => {
+                movements = [];
+                snapshot.forEach(doc => movements.push({ id: doc.id, ...doc.data() }));
+                updateMovementsTable();
+                updateDashboard();
+            });
+        }
+
+        async function loadPersonnel() {
+            unsubscribePersonnel = db.collection('personnel').orderBy('name').onSnapshot(snapshot => {
+                personnel = [];
+                snapshot.forEach(doc => personnel.push({ id: doc.id, ...doc.data() }));
+                updatePersonnelList();
+                updatePersonnelSelect();
+                document.getElementById('staffCount').textContent = personnel.length;
+            });
+        }
+
+        // Navegación de Pestañas
+        function setupEventListeners() {
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const tab = btn.dataset.tab;
+                    document.querySelectorAll('.tab-content').forEach(c => c.classList.add('hidden'));
+                    document.querySelectorAll('.tab-btn').forEach(b => {
+                        b.classList.remove('text-[#003366]', 'bg-slate-100');
+                        b.classList.add('text-gray-500');
+                    });
+                    document.getElementById(tab).classList.remove('hidden');
+                    btn.classList.remove('text-gray-500');
+                    btn.classList.add('text-[#003366]', 'bg-slate-100');
+                });
+            });
+
+            document.getElementById('movementForm').addEventListener('submit', handleMovement);
+            document.getElementById('catalogForm').addEventListener('submit', handleArticle);
+            document.getElementById('personnelForm').addEventListener('submit', handlePersonnel);
+            document.getElementById('movementFilter').addEventListener('change', updateMovementsTable);
+            document.getElementById('movementType').addEventListener('change', updateArticleSelect);
+            document.getElementById('cancelEdit').addEventListener('click', resetArticleForm);
+        }
+
+        // --- MÓDULO: PERSONAL ---
+        async function handlePersonnel(e) {
+            e.preventDefault();
+            const name = document.getElementById('personnelName').value;
+            const role = document.getElementById('personnelRole').value;
+            try {
+                await db.collection('personnel').add({ name, role, createdAt: firebase.firestore.FieldValue.serverTimestamp() });
+                e.target.reset();
+            } catch (error) {
+                alert('Error al agregar personal.');
+            }
+        }
+
+        async function deletePersonnel(id) {
+            if (!confirm('¿Quitar autorización a esta persona?')) return;
+            try {
+                await db.collection('personnel').doc(id).delete();
+            } catch (error) {
+                alert('Error al eliminar.');
+            }
+        }
+
+        function updatePersonnelList() {
+            const tbody = document.getElementById('personnelList');
+            tbody.innerHTML = personnel.map(p => `
+                <tr class="hover:bg-slate-50 border-b">
+                    <td class="px-6 py-3 font-medium text-gray-900">${p.name}</td>
+                    <td class="px-6 py-3 text-sm text-gray-500">${p.role || '-'}</td>
+                    <td class="px-6 py-3 text-right">
+                        <button onclick="deletePersonnel('${p.id}')" class="text-red-600 hover:text-red-800 text-sm font-bold">Quitar</button>
+                    </td>
+                </tr>
+            `).join('') || '<tr><td colspan="3" class="px-6 py-4 text-center text-gray-500">No hay personal registrado</td></tr>';
+        }
+
+        function updatePersonnelSelect() {
+            const select = document.getElementById('responsible');
+            select.innerHTML = '<option value="">Seleccione personal autorizado...</option>' + 
+                personnel.map(p => `<option value="${p.name}">${p.name} ${p.role ? `(${p.role})` : ''}</option>`).join('');
+        }
+
+        // --- MÓDULO: MOVIMIENTOS ---
+        function updateArticleSelect() {
+            const select = document.getElementById('articleSelect');
+            const type = document.getElementById('movementType').value;
+            const submitBtn = document.querySelector('#movementForm button[type="submit"]');
