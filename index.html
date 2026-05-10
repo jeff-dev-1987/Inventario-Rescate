@@ -7,6 +7,7 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://www.gstatic.com/firebasejs/10.13.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.13.1/firebase-firestore-compat.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <style>
         .fade-in { animation: fadeIn 0.4s ease-out; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
@@ -34,14 +35,14 @@
 
     <div class="max-w-7xl mx-auto px-4 py-8 sm:px-6 lg:px-8">
         <div class="flex flex-wrap bg-white rounded-lg shadow-sm border border-gray-200 p-1 mb-8">
-            <button class="tab-btn px-6 py-3 font-semibold text-sm uppercase tracking-wide flex-1 min-w-[120px] rounded transition-colors text-[#003366] bg-slate-100" data-tab="dashboard" id="dashboardTab">
-                📊 Dashboard
+            <button class="tab-btn px-6 py-3 font-semibold text-sm uppercase tracking-wide flex-1 min-w-[120px] rounded transition-colors text-[#003366] bg-slate-100" data-tab="dashboard">
+                📊 Resumen e Historial
             </button>
             <button class="tab-btn px-6 py-3 font-semibold text-sm uppercase tracking-wide flex-1 min-w-[120px] rounded transition-colors text-gray-500 hover:bg-slate-50" data-tab="movements">
-                🔄 Movimientos
+                🔄 Ingresos / Salidas
             </button>
             <button class="tab-btn px-6 py-3 font-semibold text-sm uppercase tracking-wide flex-1 min-w-[120px] rounded transition-colors text-gray-500 hover:bg-slate-50" data-tab="catalog">
-                📦 Catálogo
+                📦 Catálogo y Excel
             </button>
             <button class="tab-btn px-6 py-3 font-semibold text-sm uppercase tracking-wide flex-1 min-w-[120px] rounded transition-colors text-gray-500 hover:bg-slate-50" data-tab="users">
                 👥 Personal
@@ -68,21 +69,13 @@
                 </div>
             </div>
 
-            <div id="alertsSection" class="bg-red-50 border border-red-200 rounded-lg p-6 mb-8 hidden">
-                <div class="flex items-center mb-4">
-                    <svg class="w-6 h-6 text-red-600 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
-                    <h2 class="text-lg font-bold text-red-900 uppercase">Equipos que requieren reposición</h2>
-                </div>
-                <div id="alertsList" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"></div>
-            </div>
-
             <div class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
                 <div class="p-6 border-b border-gray-200 flex justify-between items-center bg-slate-50">
-                    <h2 class="text-lg font-bold text-[#003366] uppercase">Historial General</h2>
+                    <h2 class="text-lg font-bold text-[#003366] uppercase">📋 Historial de Ingresos y Salidas</h2>
                     <select id="movementFilter" class="px-3 py-1.5 border border-gray-300 rounded text-sm focus:outline-none focus:border-[#003366]">
                         <option value="all">Todos los movimientos</option>
-                        <option value="ingreso">Solo Ingresos</option>
-                        <option value="salida">Solo Salidas</option>
+                        <option value="ingreso">Solo Ingresos (+)</option>
+                        <option value="salida">Solo Salidas (-)</option>
                     </select>
                 </div>
                 <div class="overflow-x-auto">
@@ -97,7 +90,7 @@
                             </tr>
                         </thead>
                         <tbody id="movementsTable" class="divide-y divide-gray-200 bg-white">
-                            <tr><td colspan="5" class="px-6 py-8 text-center text-gray-500">Cargando base de datos...</td></tr>
+                            <tr><td colspan="5" class="px-6 py-8 text-center text-gray-500" id="loadingText">Conectando con la base de datos... (Si esto demora, revisa las reglas de Firebase)</td></tr>
                         </tbody>
                     </table>
                 </div>
@@ -106,39 +99,37 @@
 
         <div id="movements" class="tab-content hidden fade-in">
             <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-8 max-w-2xl mx-auto">
-                <h2 class="text-2xl font-bold text-[#003366] mb-6 border-b pb-4">Registrar Operación</h2>
+                <h2 class="text-2xl font-bold text-[#003366] mb-6 border-b pb-4">Registrar Ingreso o Salida</h2>
                 <form id="movementForm" class="space-y-5">
                     <div>
                         <label class="block text-sm font-bold text-gray-700 mb-1">Tipo de Operación</label>
-                        <select id="movementType" class="w-full px-4 py-2.5 border border-gray-300 rounded focus:ring-1 focus:ring-[#003366] focus:border-[#003366] bg-slate-50">
+                        <select id="movementType" class="w-full px-4 py-2.5 border border-gray-300 rounded focus:ring-1 focus:ring-[#003366] focus:border-[#003366] bg-slate-50" required>
                             <option value="">Seleccione el tipo...</option>
-                            <option value="ingreso">Entrada / Devolución al almacén (+)</option>
-                            <option value="salida">Salida / Asignación a terreno (-)</option>
+                            <option value="ingreso">🟢 INGRESO (Sumar al almacén)</option>
+                            <option value="salida">🔴 SALIDA (Asignar a terreno/persona)</option>
                         </select>
                     </div>
                     <div>
                         <label class="block text-sm font-bold text-gray-700 mb-1">Equipo / Existencia</label>
-                        <select id="articleSelect" class="w-full px-4 py-2.5 border border-gray-300 rounded focus:ring-1 focus:ring-[#003366] focus:border-[#003366] bg-slate-50 disabled:bg-gray-100" disabled>
+                        <select id="articleSelect" class="w-full px-4 py-2.5 border border-gray-300 rounded focus:ring-1 focus:ring-[#003366] bg-slate-50 disabled:bg-gray-100" disabled required>
                             <option value="">Primero seleccione tipo de operación...</option>
                         </select>
-                        <div id="stockInfo" class="mt-1 text-xs font-semibold text-gray-500"></div>
                     </div>
                     <div>
                         <label class="block text-sm font-bold text-gray-700 mb-1">Cantidad</label>
-                        <input type="number" id="quantity" min="1" class="w-full px-4 py-2.5 border border-gray-300 rounded focus:ring-1 focus:ring-[#003366] focus:border-[#003366]" placeholder="Ingrese cantidad numérica" required>
+                        <input type="number" id="quantity" min="1" class="w-full px-4 py-2.5 border border-gray-300 rounded focus:ring-1 focus:ring-[#003366]" placeholder="Ej. 5" required>
                     </div>
                     <div>
                         <label class="block text-sm font-bold text-gray-700 mb-1">Personal Responsable</label>
-                        <select id="responsible" class="w-full px-4 py-2.5 border border-gray-300 rounded focus:ring-1 focus:ring-[#003366] focus:border-[#003366] bg-slate-50" required>
-                            <option value="">Seleccione personal autorizado...</option>
+                        <select id="responsible" class="w-full px-4 py-2.5 border border-gray-300 rounded focus:ring-1 focus:ring-[#003366] bg-slate-50" required>
+                            <option value="">Seleccione personal...</option>
                         </select>
-                        <p class="text-xs text-gray-500 mt-1">Si no aparece en la lista, agréguelo en la pestaña "Personal".</p>
                     </div>
                     <div>
-                        <label class="block text-sm font-bold text-gray-700 mb-1">Observaciones / Motivo</label>
-                        <textarea id="observations" rows="2" class="w-full px-4 py-2.5 border border-gray-300 rounded focus:ring-1 focus:ring-[#003366] focus:border-[#003366]" placeholder="Ej. Rescate en tajo, Mantenimiento preventivo..."></textarea>
+                        <label class="block text-sm font-bold text-gray-700 mb-1">Observaciones</label>
+                        <textarea id="observations" rows="2" class="w-full px-4 py-2.5 border border-gray-300 rounded focus:ring-1 focus:ring-[#003366]" placeholder="Motivo o destino..."></textarea>
                     </div>
-                    <button type="submit" class="w-full bg-[#003366] hover:bg-[#002244] text-white py-3 px-4 rounded font-bold uppercase tracking-wider transition-colors disabled:opacity-50" disabled>
+                    <button type="submit" class="w-full bg-[#003366] hover:bg-[#002244] text-white py-3 px-4 rounded font-bold uppercase transition-colors disabled:opacity-50" disabled>
                         Guardar Registro
                     </button>
                 </form>
@@ -146,52 +137,45 @@
         </div>
 
         <div id="catalog" class="tab-content hidden fade-in">
+            <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6 mb-6">
+                <h2 class="text-lg font-bold text-[#003366] mb-4 border-b pb-2">📊 Importación Masiva mediante Excel</h2>
+                <div class="flex flex-col md:flex-row gap-4 items-center">
+                    <button onclick="downloadTemplate()" class="bg-green-600 hover:bg-green-700 text-white py-2 px-4 rounded font-bold text-sm transition-colors flex-1 text-center w-full">
+                        ⬇️ 1. Descargar Plantilla Excel
+                    </button>
+                    <div class="flex-1 w-full relative">
+                        <input type="file" id="excelUpload" accept=".xlsx, .xls" class="hidden" onchange="importExcel(event)">
+                        <button onclick="document.getElementById('excelUpload').click()" class="bg-[#0099cc] hover:bg-[#007799] text-white py-2 px-4 rounded font-bold text-sm transition-colors w-full">
+                            ⬆️ 2. Subir Archivo Llenado
+                        </button>
+                    </div>
+                </div>
+            </div>
+
             <div class="flex flex-col lg:flex-row gap-6">
                 <div class="lg:w-1/3 bg-white rounded-lg shadow-sm border border-gray-200 p-6 h-fit">
-                    <h2 class="text-xl font-bold text-[#003366] mb-6 border-b pb-4" id="catalogFormTitle">Nuevo Equipo</h2>
+                    <h2 class="text-xl font-bold text-[#003366] mb-6 border-b pb-4" id="catalogFormTitle">Agregar 1 Equipo</h2>
                     <form id="catalogForm" class="space-y-4">
                         <input type="hidden" id="articleId">
                         <div>
                             <label class="block text-xs font-bold text-gray-700 mb-1">Nombre de Equipo *</label>
-                            <input type="text" id="articleName" class="w-full px-3 py-2 border border-gray-300 rounded focus:border-[#003366] focus:outline-none" required placeholder="Ej. Arnés anticaídas">
+                            <input type="text" id="articleName" class="w-full px-3 py-2 border border-gray-300 rounded focus:border-[#003366]" required>
                         </div>
                         <div class="grid grid-cols-2 gap-3">
-                            <div>
-                                <label class="block text-xs font-bold text-gray-700 mb-1">Marca</label>
-                                <input type="text" id="brand" class="w-full px-3 py-2 border border-gray-300 rounded focus:border-[#003366] focus:outline-none" placeholder="Ej. Petzl">
-                            </div>
-                            <div>
-                                <label class="block text-xs font-bold text-gray-700 mb-1">Modelo</label>
-                                <input type="text" id="model" class="w-full px-3 py-2 border border-gray-300 rounded focus:border-[#003366] focus:outline-none">
-                            </div>
+                            <div><label class="block text-xs font-bold text-gray-700 mb-1">Marca</label><input type="text" id="brand" class="w-full px-3 py-2 border border-gray-300 rounded"></div>
+                            <div><label class="block text-xs font-bold text-gray-700 mb-1">Modelo</label><input type="text" id="model" class="w-full px-3 py-2 border border-gray-300 rounded"></div>
                         </div>
                         <div class="grid grid-cols-2 gap-3">
-                            <div>
-                                <label class="block text-xs font-bold text-gray-700 mb-1">Nº Serie</label>
-                                <input type="text" id="series" class="w-full px-3 py-2 border border-gray-300 rounded focus:border-[#003366] focus:outline-none">
-                            </div>
-                            <div>
-                                <label class="block text-xs font-bold text-gray-700 mb-1">Nº SAP</label>
-                                <input type="text" id="sapNumber" class="w-full px-3 py-2 border border-gray-300 rounded focus:border-[#003366] focus:outline-none">
-                            </div>
+                            <div><label class="block text-xs font-bold text-gray-700 mb-1">Nº Serie</label><input type="text" id="series" class="w-full px-3 py-2 border border-gray-300 rounded"></div>
+                            <div><label class="block text-xs font-bold text-gray-700 mb-1">Nº SAP</label><input type="text" id="sapNumber" class="w-full px-3 py-2 border border-gray-300 rounded"></div>
                         </div>
                         <div class="grid grid-cols-2 gap-3">
-                            <div>
-                                <label class="block text-xs font-bold text-gray-700 mb-1">Stock Actual *</label>
-                                <input type="number" id="initialStock" min="0" class="w-full px-3 py-2 border border-gray-300 rounded focus:border-[#003366] focus:outline-none" required>
-                            </div>
-                            <div>
-                                <label class="block text-xs font-bold text-gray-700 mb-1">Alerta Mínima *</label>
-                                <input type="number" id="minStock" min="0" class="w-full px-3 py-2 border border-gray-300 rounded focus:border-[#003366] focus:outline-none" required>
-                            </div>
+                            <div><label class="block text-xs font-bold text-gray-700 mb-1">Stock Actual *</label><input type="number" id="initialStock" min="0" class="w-full px-3 py-2 border border-gray-300 rounded" required></div>
+                            <div><label class="block text-xs font-bold text-gray-700 mb-1">Alerta Mínima *</label><input type="number" id="minStock" min="0" class="w-full px-3 py-2 border border-gray-300 rounded" required></div>
                         </div>
                         <div class="flex gap-2 pt-4">
-                            <button type="submit" class="flex-1 bg-[#0099cc] hover:bg-[#007799] text-white py-2 px-4 rounded font-bold transition-colors text-sm">
-                                Guardar
-                            </button>
-                            <button type="button" id="cancelEdit" class="flex-1 bg-gray-200 text-gray-800 rounded font-bold hover:bg-gray-300 transition-colors hidden text-sm">
-                                Cancelar
-                            </button>
+                            <button type="submit" class="flex-1 bg-[#003366] hover:bg-[#002244] text-white py-2 px-4 rounded font-bold text-sm">Guardar Manual</button>
+                            <button type="button" id="cancelEdit" class="flex-1 bg-gray-200 text-gray-800 rounded font-bold hidden text-sm" onclick="resetArticleForm()">Cancelar</button>
                         </div>
                     </form>
                 </div>
@@ -199,9 +183,7 @@
                     <div class="p-6 border-b border-gray-200 bg-slate-50">
                         <h3 class="text-xl font-bold text-[#003366]">Base de Datos de Equipos</h3>
                     </div>
-                    <div class="p-6">
-                        <div id="catalogList" class="grid grid-cols-1 md:grid-cols-2 gap-4 max-h-[600px] overflow-y-auto pr-2"></div>
-                    </div>
+                    <div class="p-6"><div id="catalogList" class="grid grid-cols-1 md:grid-cols-2 gap-4 max-h-[500px] overflow-y-auto"></div></div>
                 </div>
             </div>
         </div>
@@ -213,192 +195,264 @@
                     <form id="personnelForm" class="space-y-4">
                         <div>
                             <label class="block text-sm font-bold text-gray-700 mb-1">Nombre Completo *</label>
-                            <input type="text" id="personnelName" class="w-full px-3 py-2 border border-gray-300 rounded focus:border-[#003366] focus:outline-none" required placeholder="Apellidos y Nombres">
+                            <input type="text" id="personnelName" class="w-full px-3 py-2 border border-gray-300 rounded focus:border-[#003366]" required>
                         </div>
                         <div>
                             <label class="block text-sm font-bold text-gray-700 mb-1">Cargo / Fotocheck</label>
-                            <input type="text" id="personnelRole" class="w-full px-3 py-2 border border-gray-300 rounded focus:border-[#003366] focus:outline-none" placeholder="Ej. Rescatista III / F-1234">
+                            <input type="text" id="personnelRole" class="w-full px-3 py-2 border border-gray-300 rounded focus:border-[#003366]" placeholder="Ej. Rescatista / F-1234">
                         </div>
-                        <button type="submit" class="w-full bg-[#0099cc] hover:bg-[#007799] text-white py-2 px-4 rounded font-bold transition-colors mt-4">
-                            Agregar Autorizado
-                        </button>
+                        <button type="submit" class="w-full bg-[#0099cc] hover:bg-[#007799] text-white py-2 px-4 rounded font-bold mt-4">Agregar Autorizado</button>
                     </form>
                 </div>
                 <div class="lg:w-2/3 bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
-                    <div class="p-6 border-b border-gray-200 bg-slate-50">
-                        <h3 class="text-xl font-bold text-[#003366]">Lista de Personal Autorizado</h3>
-                    </div>
-                    <div class="p-0">
-                        <table class="w-full">
-                            <thead class="bg-gray-100">
-                                <tr>
-                                    <th class="px-6 py-3 text-left text-xs font-bold text-gray-600 uppercase">Nombre</th>
-                                    <th class="px-6 py-3 text-left text-xs font-bold text-gray-600 uppercase">Cargo/Detalle</th>
-                                    <th class="px-6 py-3 text-right text-xs font-bold text-gray-600 uppercase">Acción</th>
-                                </tr>
-                            </thead>
-                            <tbody id="personnelList" class="divide-y divide-gray-200"></tbody>
-                        </table>
-                    </div>
+                    <div class="p-6 border-b border-gray-200 bg-slate-50"><h3 class="text-xl font-bold text-[#003366]">Lista de Personal</h3></div>
+                    <table class="w-full"><tbody id="personnelList" class="divide-y divide-gray-200"></tbody></table>
                 </div>
             </div>
         </div>
     </div>
 
     <script>
-        // Configuración limpia sin espacios ocultos
         const firebaseConfig = {
             apiKey: "AIzaSyCJPSncnUWIua1CiAceFbv1tmClpRKjj2U",
             authDomain: "gestion-de-inventarios-rescate.firebaseapp.com",
             projectId: "gestion-de-inventarios-rescate",
             storageBucket: "gestion-de-inventarios-rescate.firebasestorage.app",
             messagingSenderId: "390416288163",
-            appId: "1:390416288163:web:1482e4fc9d3bbeda1af216",
-            measurementId: "G-96K953JX49"
+            appId: "1:390416288163:web:1482e4fc9d3bbeda1af216"
         };
 
-        // Inicializar
         firebase.initializeApp(firebaseConfig);
         const db = firebase.firestore();
 
-        // Variables Globales
-        let articles = [];
-        let movements = [];
-        let personnel = [];
-        let unsubscribeArticles, unsubscribeMovements, unsubscribePersonnel;
-        let userCount = new Set();
-        let currentUserId = Date.now() + Math.random().toString();
+        let articles = [], movements = [], personnel = [];
 
-        // Iniciar App
         async function init() {
-            registerUser();
-            await loadArticles();
-            await loadMovements();
-            await loadPersonnel();
-            setupEventListeners();
-            updateDashboard();
-        }
-
-        // Contador de usuarios
-        function registerUser() {
-            const userRef = db.collection('activeUsers').doc(currentUserId);
-            userRef.set({
-                timestamp: firebase.firestore.FieldValue.serverTimestamp()
-            });
-            setInterval(() => {
-                userRef.update({ timestamp: firebase.firestore.FieldValue.serverTimestamp() });
-            }, 30000);
-
-            db.collection('activeUsers').onSnapshot(snapshot => {
-                const now = Date.now();
-                userCount.clear();
-                snapshot.forEach(doc => {
-                    const data = doc.data();
-                    if (data.timestamp && (now - data.timestamp.toDate().getTime()) < 60000) {
-                        userCount.add(doc.id);
-                    }
-                });
-                document.getElementById('userCount').textContent = `${userCount.size} en línea`;
-            });
-        }
-
-        // Cargar Datos
-        async function loadArticles() {
-            unsubscribeArticles = db.collection('articles').orderBy('name').onSnapshot(snapshot => {
-                articles = [];
-                snapshot.forEach(doc => articles.push({ id: doc.id, ...doc.data() }));
-                updateArticleSelect();
-                updateCatalogList();
-                updateDashboard();
-            });
-        }
-
-        async function loadMovements() {
-            unsubscribeMovements = db.collection('movements').orderBy('timestamp', 'desc').limit(100).onSnapshot(snapshot => {
-                movements = [];
-                snapshot.forEach(doc => movements.push({ id: doc.id, ...doc.data() }));
-                updateMovementsTable();
-                updateDashboard();
-            });
-        }
-
-        async function loadPersonnel() {
-            unsubscribePersonnel = db.collection('personnel').orderBy('name').onSnapshot(snapshot => {
-                personnel = [];
-                snapshot.forEach(doc => personnel.push({ id: doc.id, ...doc.data() }));
-                updatePersonnelList();
-                updatePersonnelSelect();
-                document.getElementById('staffCount').textContent = personnel.length;
-            });
-        }
-
-        // Navegación de Pestañas
-        function setupEventListeners() {
-            document.querySelectorAll('.tab-btn').forEach(btn => {
-                btn.addEventListener('click', () => {
-                    const tab = btn.dataset.tab;
-                    document.querySelectorAll('.tab-content').forEach(c => c.classList.add('hidden'));
-                    document.querySelectorAll('.tab-btn').forEach(b => {
-                        b.classList.remove('text-[#003366]', 'bg-slate-100');
-                        b.classList.add('text-gray-500');
-                    });
-                    document.getElementById(tab).classList.remove('hidden');
-                    btn.classList.remove('text-gray-500');
-                    btn.classList.add('text-[#003366]', 'bg-slate-100');
-                });
-            });
-
+            loadArticles();
+            loadMovements();
+            loadPersonnel();
+            setupTabs();
+            
+            // Listeners de Formularios
             document.getElementById('movementForm').addEventListener('submit', handleMovement);
             document.getElementById('catalogForm').addEventListener('submit', handleArticle);
             document.getElementById('personnelForm').addEventListener('submit', handlePersonnel);
             document.getElementById('movementFilter').addEventListener('change', updateMovementsTable);
             document.getElementById('movementType').addEventListener('change', updateArticleSelect);
-            document.getElementById('cancelEdit').addEventListener('click', resetArticleForm);
         }
 
-        // --- MÓDULO: PERSONAL ---
-        async function handlePersonnel(e) {
-            e.preventDefault();
-            const name = document.getElementById('personnelName').value;
-            const role = document.getElementById('personnelRole').value;
-            try {
-                await db.collection('personnel').add({ name, role, createdAt: firebase.firestore.FieldValue.serverTimestamp() });
-                e.target.reset();
-            } catch (error) {
-                alert('Error al agregar personal.');
-            }
+        // --- SISTEMA EXCEL ---
+        function downloadTemplate() {
+            const ws = XLSX.utils.aoa_to_sheet([
+                ["Nombre", "Marca", "Modelo", "Serie", "SAP", "Stock Inicial", "Alerta Minima"],
+                ["Arnes Anticaidas", "Petzl", "Newton Fast", "12345", "987654", "10", "3"],
+                ["Mosqueton", "Black Diamond", "Oval", "", "", "50", "15"]
+            ]);
+            const wb = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(wb, ws, "Inventario");
+            XLSX.writeFile(wb, "Plantilla_Inventario_Chinalco.xlsx");
         }
 
-        async function deletePersonnel(id) {
-            if (!confirm('¿Quitar autorización a esta persona?')) return;
-            try {
-                await db.collection('personnel').doc(id).delete();
-            } catch (error) {
-                alert('Error al eliminar.');
-            }
+        function importExcel(event) {
+            const file = event.target.files[0];
+            if(!file) return;
+            const reader = new FileReader();
+            reader.onload = async function(e) {
+                try {
+                    const data = new Uint8Array(e.target.result);
+                    const workbook = XLSX.read(data, {type: 'array'});
+                    const sheet = workbook.Sheets[workbook.SheetNames[0]];
+                    const json = XLSX.utils.sheet_to_json(sheet);
+                    
+                    if(json.length === 0) return alert("El archivo está vacío.");
+                    if(!confirm(`¿Estás seguro de importar ${json.length} equipos?`)) return;
+
+                    let count = 0;
+                    for(let row of json) {
+                        if(row.Nombre) {
+                            await db.collection('articles').add({
+                                name: row.Nombre,
+                                brand: row.Marca || '',
+                                model: row.Modelo || '',
+                                series: row.Serie || '',
+                                sapNumber: row.SAP || '',
+                                stock: parseInt(row['Stock Inicial']) || 0,
+                                minStock: parseInt(row['Alerta Minima']) || 0,
+                                createdAt: firebase.firestore.FieldValue.serverTimestamp()
+                            });
+                            count++;
+                        }
+                    }
+                    alert(`✅ Excel procesado. Se guardaron ${count} equipos correctamente.`);
+                    document.getElementById('excelUpload').value = '';
+                } catch(error) {
+                    alert("Error al leer el archivo. Asegúrate de usar la plantilla descargada.");
+                    console.error(error);
+                }
+            };
+            reader.readAsArrayBuffer(file);
         }
 
-        function updatePersonnelList() {
-            const tbody = document.getElementById('personnelList');
-            tbody.innerHTML = personnel.map(p => `
-                <tr class="hover:bg-slate-50 border-b">
-                    <td class="px-6 py-3 font-medium text-gray-900">${p.name}</td>
-                    <td class="px-6 py-3 text-sm text-gray-500">${p.role || '-'}</td>
-                    <td class="px-6 py-3 text-right">
-                        <button onclick="deletePersonnel('${p.id}')" class="text-red-600 hover:text-red-800 text-sm font-bold">Quitar</button>
-                    </td>
-                </tr>
-            `).join('') || '<tr><td colspan="3" class="px-6 py-4 text-center text-gray-500">No hay personal registrado</td></tr>';
+        // --- CARGA DE DATOS ---
+        function loadArticles() {
+            db.collection('articles').orderBy('name').onSnapshot(snapshot => {
+                articles = [];
+                snapshot.forEach(doc => articles.push({ id: doc.id, ...doc.data() }));
+                updateArticleSelect(); updateCatalogList(); updateDashboard();
+            }, error => {
+                console.error("Fallo lectura de Artículos:", error);
+                document.getElementById('loadingText').textContent = "❌ ERROR: Permisos denegados en Firebase. Cambia las reglas a 'if true'.";
+            });
         }
 
-        function updatePersonnelSelect() {
-            const select = document.getElementById('responsible');
-            select.innerHTML = '<option value="">Seleccione personal autorizado...</option>' + 
-                personnel.map(p => `<option value="${p.name}">${p.name} ${p.role ? `(${p.role})` : ''}</option>`).join('');
+        function loadMovements() {
+            db.collection('movements').orderBy('timestamp', 'desc').limit(100).onSnapshot(snapshot => {
+                movements = [];
+                snapshot.forEach(doc => movements.push({ id: doc.id, ...doc.data() }));
+                updateMovementsTable(); updateDashboard();
+            }, error => console.error(error));
         }
 
-        // --- MÓDULO: MOVIMIENTOS ---
+        function loadPersonnel() {
+            db.collection('personnel').orderBy('name').onSnapshot(snapshot => {
+                personnel = [];
+                snapshot.forEach(doc => personnel.push({ id: doc.id, ...doc.data() }));
+                document.getElementById('staffCount').textContent = personnel.length;
+                document.getElementById('personnelList').innerHTML = personnel.map(p => `
+                    <tr class="border-b hover:bg-slate-50"><td class="px-6 py-3 font-bold">${p.name}</td><td class="px-6 py-3">${p.role || '-'}</td><td class="px-6 py-3 text-right"><button onclick="db.collection('personnel').doc('${p.id}').delete()" class="text-red-600 font-bold text-sm">Quitar</button></td></tr>
+                `).join('');
+                document.getElementById('responsible').innerHTML = '<option value="">Seleccione personal...</option>' + personnel.map(p => `<option value="${p.name}">${p.name}</option>`).join('');
+            });
+        }
+
+        // --- MOVIMIENTOS E HISTORIAL ---
         function updateArticleSelect() {
             const select = document.getElementById('articleSelect');
             const type = document.getElementById('movementType').value;
-            const submitBtn = document.querySelector('#movementForm button[type="submit"]');
+            const btn = document.querySelector('#movementForm button');
+            
+            select.innerHTML = '<option value="">Seleccione el equipo...</option>';
+            select.disabled = !type; btn.disabled = !type;
+
+            if (type) {
+                articles.forEach(a => select.innerHTML += `<option value="${a.id}">${a.name} (Stock Actual: ${a.stock || 0})</option>`);
+            }
+        }
+
+        async function handleMovement(e) {
+            e.preventDefault();
+            const data = Object.fromEntries(new FormData(e.target));
+            const article = articles.find(a => a.id === data.articleSelect);
+            const qty = parseInt(data.quantity);
+            
+            if (data.movementType === 'salida' && (article.stock || 0) < qty) {
+                return alert('⚠️ Error: No hay suficiente cantidad en el almacén para sacar esos equipos.');
+            }
+
+            try {
+                await db.collection('articles').doc(data.articleSelect).update({
+                    stock: firebase.firestore.FieldValue.increment(data.movementType === 'ingreso' ? qty : -qty)
+                });
+                await db.collection('movements').add({
+                    articleId: data.articleSelect, articleName: article.name, type: data.movementType,
+                    quantity: qty, responsible: data.responsible, observations: data.observations || '',
+                    timestamp: firebase.firestore.FieldValue.serverTimestamp()
+                });
+                e.target.reset(); updateArticleSelect();
+                alert('✅ Ingreso/Salida registrado correctamente en el historial.');
+            } catch (error) { alert('❌ Error al guardar en base de datos.'); }
+        }
+
+        function updateMovementsTable() {
+            const filter = document.getElementById('movementFilter').value;
+            const filtered = movements.filter(m => filter === 'all' || m.type === filter);
+            document.getElementById('movementsTable').innerHTML = filtered.map(m => `
+                <tr class="hover:bg-slate-50 transition-colors border-b">
+                    <td class="px-6 py-3 text-sm">${m.timestamp ? m.timestamp.toDate().toLocaleString() : 'Guardando...'}</td>
+                    <td class="px-6 py-3 font-bold text-gray-900 text-sm">${m.articleName}</td>
+                    <td class="px-6 py-3 font-bold ${m.type==='ingreso'?'text-green-600':'text-red-600'}">${m.type==='ingreso'?'+':'-'}${m.quantity}</td>
+                    <td class="px-6 py-3 text-sm"><span class="px-2 py-1 rounded text-xs font-bold ${m.type==='ingreso'?'bg-green-100 text-green-800':'bg-red-100 text-red-800'} uppercase">${m.type}</span></td>
+                    <td class="px-6 py-3 text-sm text-gray-700">${m.responsible}</td>
+                </tr>
+            `).join('') || '<tr><td colspan="5" class="px-6 py-8 text-center text-gray-500">No hay registros aún</td></tr>';
+        }
+
+        // --- CATALOGO ---
+        async function handleArticle(e) {
+            e.preventDefault();
+            const data = Object.fromEntries(new FormData(e.target));
+            const payload = {
+                name: data.articleName, brand: data.brand || '', model: data.model || '', series: data.series || '',
+                sapNumber: data.sapNumber || '', stock: parseInt(data.initialStock), minStock: parseInt(data.minStock)
+            };
+            const id = document.getElementById('articleId').value;
+            try {
+                if(id) await db.collection('articles').doc(id).update(payload);
+                else await db.collection('articles').add({...payload, createdAt: firebase.firestore.FieldValue.serverTimestamp()});
+                resetArticleForm(); alert('✅ Guardado con éxito');
+            } catch(e) { alert('Error al guardar'); }
+        }
+
+        function updateCatalogList() {
+            document.getElementById('catalogList').innerHTML = articles.map(a => `
+                <div class="border border-gray-200 p-4 rounded bg-white shadow-sm">
+                    <div class="flex justify-between items-start mb-2">
+                        <h4 class="font-bold text-[#003366] text-sm">${a.name}</h4>
+                        <div class="text-right">
+                            <span class="block text-sm font-bold ${a.stock < a.minStock ? 'text-red-600' : 'text-green-600'}">${a.stock || 0} Und</span>
+                        </div>
+                    </div>
+                    <div class="text-xs text-gray-500 mb-3 space-y-1">
+                        <div>M/M: ${a.brand||'-'} ${a.model||'-'} | SAP: ${a.sapNumber||'-'}</div>
+                    </div>
+                    <div class="flex gap-2">
+                        <button onclick="editArticle('${a.id}')" class="px-3 py-1 bg-gray-100 text-gray-700 text-xs font-bold rounded">Editar</button>
+                        <button onclick="if(confirm('¿Eliminar?')) db.collection('articles').doc('${a.id}').delete()" class="px-3 py-1 bg-red-50 text-red-600 text-xs font-bold rounded">Borrar</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function editArticle(id) {
+            const a = articles.find(x => x.id === id);
+            if(!a) return;
+            document.getElementById('articleId').value = id;
+            document.getElementById('articleName').value = a.name; document.getElementById('brand').value = a.brand;
+            document.getElementById('model').value = a.model; document.getElementById('series').value = a.series;
+            document.getElementById('sapNumber').value = a.sapNumber; document.getElementById('initialStock').value = a.stock;
+            document.getElementById('minStock').value = a.minStock;
+            document.getElementById('cancelEdit').classList.remove('hidden'); document.getElementById('catalogFormTitle').textContent = 'Editar Equipo';
+        }
+
+        function resetArticleForm() {
+            document.getElementById('catalogForm').reset(); document.getElementById('articleId').value = '';
+            document.getElementById('cancelEdit').classList.add('hidden'); document.getElementById('catalogFormTitle').textContent = 'Agregar 1 Equipo';
+        }
+
+        async function handlePersonnel(e) {
+            e.preventDefault();
+            await db.collection('personnel').add({name: document.getElementById('personnelName').value, role: document.getElementById('personnelRole').value});
+            e.target.reset();
+        }
+
+        function updateDashboard() {
+            document.getElementById('totalItems').textContent = articles.length;
+            document.getElementById('todayMovements').textContent = movements.filter(m => m.timestamp && m.timestamp.toDate() >= new Date().setHours(0,0,0,0)).length;
+            document.getElementById('alertCount').textContent = articles.filter(a => (a.stock || 0) < a.minStock).length;
+        }
+
+        function setupTabs() {
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    document.querySelectorAll('.tab-content').forEach(c => c.classList.add('hidden'));
+                    document.querySelectorAll('.tab-btn').forEach(b => { b.classList.remove('text-[#003366]', 'bg-slate-100'); b.classList.add('text-gray-500'); });
+                    document.getElementById(btn.dataset.tab).classList.remove('hidden');
+                    btn.classList.remove('text-gray-500'); btn.classList.add('text-[#003366]', 'bg-slate-100');
+                });
+            });
+        }
+
+        window.onload = init;
+    </script>
+</body>
+</html>
