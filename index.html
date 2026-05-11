@@ -599,7 +599,7 @@
             btn.textContent = "Guardando..."; btn.disabled = true;
 
             try {
-                const articleId = document.getElementById('movementModelSelect').value; // Toma el ID exacto del segundo dropdown
+                const articleId = document.getElementById('movementModelSelect').value; 
                 const mType = document.getElementById('movementType').value;
                 const qty = parseInt(document.getElementById('quantity').value);
                 
@@ -640,13 +640,24 @@
             if(e) e.preventDefault();
             const btn = document.getElementById('btnSaveArticle'); btn.textContent = "Guardando..."; btn.disabled = true;
             try {
-                const payload = {
-                    name: document.getElementById('articleName').value, brand: document.getElementById('brand').value || '', 
-                    model: document.getElementById('model').value || '', partNumber: document.getElementById('partNumber').value || '',
-                    sapNumber: document.getElementById('sapNumber').value || '', stock: parseInt(document.getElementById('initialStock').value), 
-                    minStock: parseInt(document.getElementById('minStock').value), observations: document.getElementById('catalogObs').value || ''
-                };
+                const name = document.getElementById('articleName').value.trim();
+                const model = document.getElementById('model').value.trim();
                 const id = document.getElementById('articleId').value;
+                
+                // VALIDACIÓN DE DUPLICADOS MANUAL
+                const exists = articles.find(a => a.name.toLowerCase() === name.toLowerCase() && (a.model||'').toLowerCase() === model.toLowerCase() && a.id !== id);
+                if (exists) {
+                    alert('⚠️ Error: Ya existe un equipo con este mismo Nombre y Modelo en el catálogo.');
+                    return; 
+                }
+
+                const payload = {
+                    name: name, brand: document.getElementById('brand').value.trim() || '', 
+                    model: model, partNumber: document.getElementById('partNumber').value.trim() || '',
+                    sapNumber: document.getElementById('sapNumber').value.trim() || '', stock: parseInt(document.getElementById('initialStock').value), 
+                    minStock: parseInt(document.getElementById('minStock').value), observations: document.getElementById('catalogObs').value.trim() || ''
+                };
+                
                 if(id) await db.collection('articles').doc(id).update(payload);
                 else await db.collection('articles').add({...payload, createdAt: firebase.firestore.FieldValue.serverTimestamp()});
                 resetArticleForm(); alert('Equipo guardado con éxito');
@@ -657,12 +668,12 @@
         function updateCatalogList() {
             // Buscador Inteligente No Dependiente
             const searchTerm = (document.getElementById('searchCatalog')?.value || '').toLowerCase();
-            const words = searchTerm.split(' ').filter(w => w); // Separa por palabras
+            const words = searchTerm.split(' ').filter(w => w); 
             
             const filteredAndSorted = articles.filter(a => {
                 const combinedText = `${a.name||''} ${a.brand||''} ${a.model||''} ${a.partNumber||''} ${a.sapNumber||''}`.toLowerCase();
-                return words.every(word => combinedText.includes(word)); // TODAS las palabras deben coincidir en cualquier campo
-            }).sort((a,b) => a.name.localeCompare(b.name)); // Orden Alfabético Z-A
+                return words.every(word => combinedText.includes(word)); 
+            }).sort((a,b) => a.name.localeCompare(b.name));
 
             const adminButtons = (id) => currentUserRole === 'admin' ? `
                 <div class="flex gap-2 mt-4 pt-4 border-t border-gray-200">
@@ -724,7 +735,7 @@
             });
         }
         
-        // --- SISTEMAS EXCEL MEJORADOS ---
+        // --- SISTEMAS EXCEL MEJORADOS Y ANTI-DUPLICADOS ---
         window.downloadCatalogTemplate = function() { 
             const ws = XLSX.utils.aoa_to_sheet([["EQUIPO / ACCESORIO / HERRAMIENTA", "MARCA", "MODELO", "N° PARTE", "CODIGO SAP (MCP)", "CANTIDAD ACTUAL", "ALERTA MINIMA", "OBSERVACIONES / COMENTARIOS"]]); 
             const wb = XLSX.utils.book_new(); XLSX.utils.book_append_sheet(wb, ws, "Catálogo"); XLSX.writeFile(wb, "Plantilla_Catalogo_Chinalco.xlsx"); 
@@ -737,15 +748,26 @@
                 try {
                     const json = XLSX.utils.sheet_to_json(XLSX.read(new Uint8Array(e.target.result), {type: 'array'}).Sheets[XLSX.read(new Uint8Array(e.target.result), {type: 'array'}).SheetNames[0]]);
                     if(!confirm(`¿Importar ${json.length} equipos al Catálogo?`)) return;
+                    
+                    let success = 0; let omitted = 0;
                     for(let row of json) { 
-                        if(row['EQUIPO / ACCESORIO / HERRAMIENTA']) {
-                            await db.collection('articles').add({ 
-                                name: row['EQUIPO / ACCESORIO / HERRAMIENTA'], brand: row['MARCA']||'', model: row['MODELO']||'', partNumber: row['N° PARTE']||'', sapNumber: row['CODIGO SAP (MCP)']||'', 
-                                stock: parseInt(row['CANTIDAD ACTUAL'])||0, minStock: parseInt(row['ALERTA MINIMA'])||0, observations: row['OBSERVACIONES / COMENTARIOS']||'', createdAt: firebase.firestore.FieldValue.serverTimestamp() 
-                            }); 
-                        }
+                        const name = (row['EQUIPO / ACCESORIO / HERRAMIENTA']||'').toString().trim();
+                        const model = (row['MODELO']||'').toString().trim();
+                        if(!name) continue;
+
+                        // Valida Duplicados
+                        const exists = articles.find(a => a.name.toLowerCase() === name.toLowerCase() && (a.model||'').toLowerCase() === model.toLowerCase());
+                        if(exists) { omitted++; continue; }
+
+                        const payload = { 
+                            name: name, brand: (row['MARCA']||'').toString().trim(), model: model, partNumber: (row['N° PARTE']||'').toString().trim(), sapNumber: (row['CODIGO SAP (MCP)']||'').toString().trim(), 
+                            stock: parseInt(row['CANTIDAD ACTUAL'])||0, minStock: parseInt(row['ALERTA MINIMA'])||0, observations: (row['OBSERVACIONES / COMENTARIOS']||'').toString().trim(), createdAt: firebase.firestore.FieldValue.serverTimestamp() 
+                        };
+                        const docRef = await db.collection('articles').add(payload);
+                        articles.push({ id: docRef.id, ...payload }); // Agrega localmente rápido para evitar duplicados en el mismo excel
+                        success++;
                     }
-                    alert(`✅ Catálogo importado.`); document.getElementById('excelUploadCatalog').value = '';
+                    alert(`✅ Carga procesada.\nAgregados: ${success}\nOmitidos (Ya existían): ${omitted}`); document.getElementById('excelUploadCatalog').value = '';
                 } catch(error) { alert("Error al leer Excel."); }
             }; reader.readAsArrayBuffer(file);
         }
@@ -766,24 +788,40 @@
                     let errs = []; let success = 0;
                     for(let i=0; i<json.length; i++) {
                         const row = json[i]; const name = (row['EQUIPO / ACCESORIO / HERRAMIENTA']||'').toString().trim(); const qty = parseInt(row['CANTIDAD']);
+                        const rowModel = (row['MODELO']||'').toString().trim();
+
                         if(!name || isNaN(qty)) { errs.push(`Fila ${i+2}: Faltan datos obligatorios.`); continue; }
                         
-                        // Busca coincidencia por Nombre Y Modelo (si es que la plantilla trajo modelo)
-                        const rowModel = (row['MODELO']||'').toString().trim().toLowerCase();
-                        const art = articles.find(a => a.name.toLowerCase() === name.toLowerCase() && (a.model||'').toLowerCase() === rowModel);
+                        let art = articles.find(a => a.name.toLowerCase() === name.toLowerCase() && (a.model||'').toLowerCase() === rowModel.toLowerCase());
                         
-                        if(!art) { errs.push(`Fila ${i+2}: "${name} - ${rowModel||'Sin Modelo'}" no existe en el catálogo.`); continue; }
-                        if(type === 'salida' && (art.stock||0) < qty) { errs.push(`Fila ${i+2}: Stock insuficiente para "${name}".`); continue; }
+                        if(!art) { 
+                            if(type === 'ingreso') {
+                                // AUTO CREAR EQUIPO EN CATÁLOGO
+                                const payload = {
+                                    name: name, brand: (row['MARCA']||'').toString().trim(), model: rowModel,
+                                    partNumber: '', sapNumber: '', stock: qty, minStock: 0, observations: 'Auto-creado por Ingreso Masivo Excel',
+                                    createdAt: firebase.firestore.FieldValue.serverTimestamp()
+                                };
+                                const docRef = await db.collection('articles').add(payload);
+                                art = { id: docRef.id, ...payload };
+                                articles.push(art); // Auto actualiza local
+                            } else {
+                                errs.push(`Fila ${i+2}: "${name} - ${rowModel||'Sin Modelo'}" no existe en el catálogo.`); continue; 
+                            }
+                        } else {
+                            if(type === 'salida' && (art.stock||0) < qty) { errs.push(`Fila ${i+2}: Stock insuficiente para "${name}".`); continue; }
+                            await db.collection('articles').doc(art.id).update({ stock: firebase.firestore.FieldValue.increment(type === 'ingreso' ? qty : -qty) });
+                            art.stock += (type === 'ingreso' ? qty : -qty); // Actualiza en memoria local para siguientes filas
+                        }
 
-                        await db.collection('articles').doc(art.id).update({ stock: firebase.firestore.FieldValue.increment(type === 'ingreso' ? qty : -qty) });
                         await db.collection('movements').add({
                             articleId: art.id, articleName: art.name, articleModel: art.model||'', type: type, quantity: qty,
-                            respDelivery: row['RESPONSABLE DE ENTREGA']||'', respReception: row['RESPONSABLE DE RECEPCION']||'',
-                            observations: row['OBSERVACIONES / COMENTARIOS']||'', timestamp: firebase.firestore.FieldValue.serverTimestamp(), registeredBy: currentUser.email
+                            respDelivery: (row['RESPONSABLE DE ENTREGA']||'').toString().trim(), respReception: (row['RESPONSABLE DE RECEPCION']||'').toString().trim(),
+                            observations: (row['OBSERVACIONES / COMENTARIOS']||'').toString().trim(), timestamp: firebase.firestore.FieldValue.serverTimestamp(), registeredBy: currentUser.email
                         });
                         success++;
                     }
-                    alert(`✅ Excel procesado.\nÉxitos: ${success}\nErrores: ${errs.length}\n${errs.join('\n')}`);
+                    alert(`✅ Excel procesado.\nÉxitos: ${success}\nErrores: ${errs.length}\n${errs.slice(0,10).join('\n')}${errs.length>10?'...':''}`);
                     event.target.value = '';
                 } catch(error) { alert("Error procesando Excel de Movimientos."); }
             }; reader.readAsArrayBuffer(file);
