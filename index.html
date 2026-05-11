@@ -45,7 +45,7 @@
                 </div>
                 <button type="submit" id="btnLogin" class="w-full bg-[#003366] hover:bg-[#002244] text-white py-2 px-4 rounded font-bold transition-colors">Ingresar</button>
                 <div class="text-center mt-4">
-                    <button type="button" id="btnShowRegister" class="text-[#0099cc] text-sm hover:underline font-semibold">¿No tienes cuenta? Solicitar acceso</button>
+                    <button type="button" onclick="toggleAuthMode()" class="text-[#0099cc] text-sm hover:underline font-semibold">¿No tienes cuenta? Solicitar acceso</button>
                 </div>
             </form>
 
@@ -71,7 +71,7 @@
                 </div>
                 <button type="submit" id="btnRegister" class="w-full bg-[#0099cc] hover:bg-[#007799] text-white py-2 px-4 rounded font-bold transition-colors">Crear Cuenta</button>
                 <div class="text-center mt-4">
-                    <button type="button" id="btnShowLogin" class="text-gray-500 text-sm hover:underline font-semibold">Volver al inicio de sesión</button>
+                    <button type="button" onclick="toggleAuthMode()" class="text-gray-500 text-sm hover:underline font-semibold">Volver al inicio de sesión</button>
                 </div>
             </form>
         </div>
@@ -85,7 +85,7 @@
                 Por favor, envía un correo solicitando tu habilitación a:<br>
                 <a href="mailto:supervision.rescate@gmail.com" class="font-bold text-blue-600 underline text-lg">supervision.rescate@gmail.com</a>
             </div>
-            <button id="btnLogoutPending" class="bg-[#003366] hover:bg-[#002244] text-white py-2 px-6 rounded font-bold transition-colors">Cerrar sesión / Volver</button>
+            <button onclick="logout()" class="bg-[#003366] hover:bg-[#002244] text-white py-2 px-6 rounded font-bold transition-colors">Cerrar sesión / Volver</button>
         </div>
     </div>
 
@@ -104,9 +104,9 @@
                     </div>
                     <div class="flex items-center space-x-3">
                         <span id="userNameBadge" class="hidden md:inline-block text-sm font-semibold text-gray-200"></span>
-                        <span id="userRoleBadge" class="px-2 py-1 bg-[#0099cc] text-white rounded text-xs font-bold uppercase tracking-wider">Lector</span>
+                        <span id="userRoleBadge" class="px-2 py-1 text-white rounded text-xs font-bold uppercase tracking-wider">Lector</span>
                         <span id="userCount" class="px-2 sm:px-3 py-1 bg-[#002244] text-white border border-[#0099cc] rounded text-sm font-medium">0 en línea</span>
-                        <button id="btnLogoutMain" class="p-1.5 bg-red-600 hover:bg-red-700 rounded text-white transition-colors" title="Cerrar Sesión">
+                        <button onclick="logout()" class="p-1.5 bg-red-600 hover:bg-red-700 rounded text-white transition-colors" title="Cerrar Sesión">
                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path></svg>
                         </button>
                     </div>
@@ -117,9 +117,9 @@
         <div class="max-w-7xl mx-auto px-4 py-8 sm:px-6 lg:px-8">
             <div class="flex flex-wrap bg-white rounded-lg shadow-sm border border-gray-200 p-1 mb-8">
                 <button class="tab-btn px-6 py-3 font-semibold text-sm uppercase tracking-wide flex-1 min-w-[120px] rounded transition-colors text-[#003366] bg-slate-100" data-tab="dashboard">📊 Resumen e Historial</button>
-                <button class="tab-btn admin-only hidden px-6 py-3 font-semibold text-sm uppercase tracking-wide flex-1 min-w-[120px] rounded transition-colors text-gray-500 hover:bg-slate-50" data-tab="movements">🔄 Ingresos / Salidas</button>
+                <button class="tab-btn admin-editor-only hidden px-6 py-3 font-semibold text-sm uppercase tracking-wide flex-1 min-w-[120px] rounded transition-colors text-gray-500 hover:bg-slate-50" data-tab="movements">🔄 Ingresos / Salidas</button>
                 <button class="tab-btn px-6 py-3 font-semibold text-sm uppercase tracking-wide flex-1 min-w-[120px] rounded transition-colors text-gray-500 hover:bg-slate-50" data-tab="catalog">📦 Catálogo</button>
-                <button class="tab-btn admin-only hidden px-6 py-3 font-semibold text-sm uppercase tracking-wide flex-1 min-w-[120px] rounded transition-colors text-gray-500 hover:bg-slate-50" data-tab="users">👥 Usuarios</button>
+                <button class="tab-btn admin-editor-only hidden px-6 py-3 font-semibold text-sm uppercase tracking-wide flex-1 min-w-[120px] rounded transition-colors text-gray-500 hover:bg-slate-50" data-tab="users">👥 Usuarios</button>
             </div>
 
             <div id="dashboard" class="tab-content fade-in">
@@ -141,7 +141,7 @@
                 <div class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
                     <div class="p-6 border-b border-gray-200 flex flex-col sm:flex-row justify-between items-center bg-slate-50 gap-4">
                         <h2 class="text-lg font-bold text-[#003366] uppercase">📋 Historial de Movimientos</h2>
-                        <select id="movementFilter" class="px-3 py-1.5 border border-gray-300 rounded text-sm focus:outline-none focus:border-[#003366] w-full sm:w-auto">
+                        <select id="movementFilter" onchange="updateMovementsTable()" class="px-3 py-1.5 border border-gray-300 rounded text-sm focus:outline-none focus:border-[#003366] w-full sm:w-auto">
                             <option value="all">Todos los movimientos</option>
                             <option value="ingreso">Solo Ingresos (+)</option>
                             <option value="salida">Solo Salidas (-)</option>
@@ -166,18 +166,18 @@
                 </div>
             </div>
 
-            <div id="movements" class="tab-content hidden fade-in admin-only">
+            <div id="movements" class="tab-content hidden fade-in admin-editor-only">
                 
-                <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6 mb-8 max-w-4xl mx-auto">
+                <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6 mb-8 max-w-4xl mx-auto admin-only hidden">
                     <h2 class="text-lg font-bold text-[#003366] mb-4 border-b pb-2">📊 Carga Masiva de Movimientos (Excel)</h2>
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                        <button id="btnDownloadMovementExcel" class="bg-slate-600 hover:bg-slate-700 text-white py-2 px-4 rounded font-bold text-sm transition-colors w-full">⬇️ Descargar Plantilla</button>
+                        <button onclick="downloadMovementTemplate()" class="bg-slate-600 hover:bg-slate-700 text-white py-2 px-4 rounded font-bold text-sm transition-colors w-full">⬇️ Descargar Plantilla</button>
                         <div class="w-full relative">
-                            <input type="file" id="excelUploadIngreso" accept=".xlsx, .xls" class="hidden">
+                            <input type="file" id="excelUploadIngreso" accept=".xlsx, .xls" class="hidden" onchange="importExcelMovements(event, 'ingreso')">
                             <button onclick="document.getElementById('excelUploadIngreso').click()" class="bg-green-600 hover:bg-green-700 text-white py-2 px-4 rounded font-bold text-sm transition-colors w-full">⬆️ Subir Excel INGRESOS (+)</button>
                         </div>
                         <div class="w-full relative">
-                            <input type="file" id="excelUploadSalida" accept=".xlsx, .xls" class="hidden">
+                            <input type="file" id="excelUploadSalida" accept=".xlsx, .xls" class="hidden" onchange="importExcelMovements(event, 'salida')">
                             <button onclick="document.getElementById('excelUploadSalida').click()" class="bg-red-600 hover:bg-red-700 text-white py-2 px-4 rounded font-bold text-sm transition-colors w-full">⬆️ Subir Excel SALIDAS (-)</button>
                         </div>
                     </div>
@@ -185,11 +185,11 @@
 
                 <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-8 max-w-4xl mx-auto">
                     <h2 class="text-2xl font-bold text-[#003366] mb-6 border-b pb-4">Registrar Movimiento Individual</h2>
-                    <form id="movementForm" class="space-y-5">
+                    <form id="movementForm" class="space-y-5" onsubmit="event.preventDefault(); handleMovement();">
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div>
                                 <label class="block text-sm font-bold text-gray-700 mb-1">Tipo de Operación</label>
-                                <select id="movementType" class="w-full px-4 py-2 border rounded focus:ring-1 focus:ring-[#003366] bg-slate-50" required>
+                                <select id="movementType" onchange="updateMovementNameSelect()" class="w-full px-4 py-2 border rounded focus:ring-1 focus:ring-[#003366] bg-slate-50" required>
                                     <option value="">Seleccione el tipo...</option>
                                     <option value="ingreso">🟢 INGRESO (Sumar al almacén)</option>
                                     <option value="salida">🔴 SALIDA (Asignar a terreno/persona)</option>
@@ -204,11 +204,11 @@
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div>
                                 <label class="block text-sm font-bold text-gray-700 mb-1">Nombre del Equipo</label>
-                                <select id="movementNameSelect" class="w-full px-4 py-2 border rounded focus:ring-1 focus:ring-[#003366] bg-slate-50 disabled:bg-gray-100" disabled required></select>
+                                <select id="movementNameSelect" onchange="updateModelSelect()" class="w-full px-4 py-2 border rounded focus:ring-1 focus:ring-[#003366] bg-slate-50 disabled:bg-gray-100" disabled required></select>
                             </div>
                             <div>
                                 <label class="block text-sm font-bold text-gray-700 mb-1">Modelo Específico</label>
-                                <select id="movementModelSelect" class="w-full px-4 py-2 border rounded focus:ring-1 focus:ring-[#003366] bg-slate-50 disabled:bg-gray-100" disabled required></select>
+                                <select id="movementModelSelect" onchange="checkMovementForm()" class="w-full px-4 py-2 border rounded focus:ring-1 focus:ring-[#003366] bg-slate-50 disabled:bg-gray-100" disabled required></select>
                             </div>
                         </div>
 
@@ -234,26 +234,34 @@
 
             <div id="catalog" class="tab-content hidden fade-in">
                 
-                <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6 mb-6">
-                    <h2 class="text-lg font-bold text-[#003366] mb-4">🔍 Buscador de Equipos</h2>
-                    <input type="text" id="searchCatalog" placeholder="Buscar palabras clave (Ej: Petzl Vertex 1234)..." class="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:border-[#0099cc] focus:outline-none text-lg">
+                <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6 mb-6 flex flex-col md:flex-row gap-4 justify-between items-center">
+                    <div class="w-full md:w-2/3">
+                        <h2 class="text-lg font-bold text-[#003366] mb-2">🔍 Buscador de Equipos</h2>
+                        <input type="text" id="searchCatalog" onkeyup="updateCatalogList()" placeholder="Buscar palabras clave (Ej: Petzl Vertex 1234)..." class="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:border-[#0099cc] focus:outline-none text-lg">
+                    </div>
+                    <div class="w-full md:w-1/3 flex items-end">
+                        <button onclick="exportCatalogToExcel()" class="w-full bg-green-600 hover:bg-green-700 text-white py-3 px-4 rounded-lg font-bold transition-colors h-full flex items-center justify-center gap-2 mt-auto">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
+                            Exportar Todo (Excel)
+                        </button>
+                    </div>
                 </div>
 
                 <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6 mb-6 admin-only hidden">
                     <h2 class="text-lg font-bold text-[#003366] mb-4 border-b pb-2">📊 Carga Masiva de Catálogo (Excel)</h2>
                     <div class="flex flex-col md:flex-row gap-4 items-center">
-                        <button id="btnDownloadCatalogExcel" class="bg-green-600 hover:bg-green-700 text-white py-2 px-4 rounded font-bold text-sm transition-colors flex-1 w-full">⬇️ 1. Descargar Plantilla Catálogo</button>
+                        <button onclick="downloadCatalogTemplate()" class="bg-slate-600 hover:bg-slate-700 text-white py-2 px-4 rounded font-bold text-sm transition-colors flex-1 w-full">⬇️ 1. Descargar Plantilla Catálogo</button>
                         <div class="flex-1 w-full relative">
-                            <input type="file" id="excelUploadCatalog" accept=".xlsx, .xls" class="hidden">
+                            <input type="file" id="excelUploadCatalog" accept=".xlsx, .xls" class="hidden" onchange="importExcelCatalog(event)">
                             <button onclick="document.getElementById('excelUploadCatalog').click()" class="bg-[#0099cc] hover:bg-[#007799] text-white py-2 px-4 rounded font-bold text-sm transition-colors w-full">⬆️ 2. Subir Archivo Excel</button>
                         </div>
                     </div>
                 </div>
 
                 <div class="flex flex-col lg:flex-row gap-6">
-                    <div class="lg:w-1/3 bg-white rounded-lg shadow-sm border border-gray-200 p-6 h-fit admin-only hidden">
+                    <div class="lg:w-1/3 bg-white rounded-lg shadow-sm border border-gray-200 p-6 h-fit admin-editor-only hidden">
                         <h2 class="text-xl font-bold text-[#003366] mb-6 border-b pb-4" id="catalogFormTitle">Agregar / Editar Equipo</h2>
-                        <form id="catalogForm" class="space-y-4">
+                        <form id="catalogForm" class="space-y-4" onsubmit="event.preventDefault(); handleArticle();">
                             <input type="hidden" id="articleId">
                             <div><label class="block text-xs font-bold text-gray-700 mb-1">EQUIPO / ACCESORIO *</label><input type="text" id="articleName" class="w-full px-3 py-2 border rounded focus:border-[#0099cc] focus:outline-none" required></div>
                             <div class="grid grid-cols-2 gap-3">
@@ -271,7 +279,7 @@
                             <div><label class="block text-xs font-bold text-gray-700 mb-1">OBSERVACIONES</label><textarea id="catalogObs" rows="2" class="w-full px-3 py-2 border rounded focus:outline-none focus:border-[#0099cc]"></textarea></div>
                             <div class="flex gap-2 pt-4">
                                 <button type="submit" id="btnSaveArticle" class="flex-1 bg-[#003366] hover:bg-[#002244] text-white py-2 px-4 rounded font-bold text-sm transition-colors">Guardar</button>
-                                <button type="button" id="cancelEdit" class="flex-1 bg-gray-200 text-gray-800 rounded font-bold hidden text-sm hover:bg-gray-300">Cancelar</button>
+                                <button type="button" id="cancelEdit" class="flex-1 bg-gray-200 text-gray-800 rounded font-bold hidden text-sm hover:bg-gray-300" onclick="resetArticleForm()">Cancelar</button>
                             </div>
                         </form>
                     </div>
@@ -287,7 +295,7 @@
                 </div>
             </div>
 
-            <div id="users" class="tab-content hidden fade-in admin-only">
+            <div id="users" class="tab-content hidden fade-in admin-editor-only">
                 <div class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
                     <div class="p-6 border-b border-gray-200 bg-slate-50">
                         <h3 class="text-xl font-bold text-[#003366]">Gestión de Accesos</h3>
@@ -298,7 +306,7 @@
                                 <tr>
                                     <th class="px-6 py-3 text-left text-xs font-bold text-gray-600 uppercase">Nombre</th>
                                     <th class="px-6 py-3 text-left text-xs font-bold text-gray-600 uppercase">Correo</th>
-                                    <th class="px-6 py-3 text-left text-xs font-bold text-gray-600 uppercase">Fecha Solicitud</th>
+                                    <th class="px-6 py-3 text-left text-xs font-bold text-gray-600 uppercase">Fecha de Solicitud</th>
                                     <th class="px-6 py-3 text-left text-xs font-bold text-gray-600 uppercase">Rol Actual</th>
                                     <th class="px-6 py-3 text-left text-xs font-bold text-gray-600 uppercase">Autorización</th>
                                 </tr>
@@ -312,7 +320,6 @@
     </div>
 
     <script>
-        // --- 1. CONFIGURACIÓN FIREBASE ---
         const firebaseConfig = {
             apiKey: "AIzaSyCJPSncnUWIua1CiAceFbv1tmClpRKjj2U",
             authDomain: "gestion-de-inventarios-rescate.firebaseapp.com",
@@ -330,7 +337,6 @@
         let currentUserRole = 'lector'; 
         let articles = [], movements = [], usersData = [];
 
-        // Función para mostrar/ocultar contraseña
         function togglePassword(inputId, iconId) {
             const input = document.getElementById(inputId);
             const icon = document.getElementById(iconId);
@@ -343,48 +349,12 @@
             }
         }
 
-        // --- 2. PROTECCIÓN GLOBAL DE EVENTOS ---
-        document.addEventListener('DOMContentLoaded', () => {
-            document.getElementById('btnShowRegister').addEventListener('click', toggleAuthMode);
-            document.getElementById('btnShowLogin').addEventListener('click', toggleAuthMode);
-            
-            document.getElementById('loginForm').addEventListener('submit', handleLogin);
-            document.getElementById('registerForm').addEventListener('submit', handleRegister);
-            
-            document.getElementById('btnLogoutPending').addEventListener('click', () => auth.signOut());
-            document.getElementById('btnLogoutMain').addEventListener('click', () => auth.signOut());
-
-            // Listeners de Movimientos
-            document.getElementById('movementForm').addEventListener('submit', handleMovement);
-            document.getElementById('movementType').addEventListener('change', updateMovementNameSelect);
-            document.getElementById('movementNameSelect').addEventListener('change', updateModelSelect);
-            document.getElementById('movementModelSelect').addEventListener('change', checkMovementForm);
-            document.getElementById('movementFilter').addEventListener('change', updateMovementsTable);
-
-            // Listeners Catálogo
-            document.getElementById('catalogForm').addEventListener('submit', handleArticle);
-            document.getElementById('cancelEdit').addEventListener('click', resetArticleForm);
-            document.getElementById('searchCatalog').addEventListener('keyup', updateCatalogList);
-
-            // Excel Botones
-            document.getElementById('btnDownloadCatalogExcel').addEventListener('click', downloadCatalogTemplate);
-            document.getElementById('excelUploadCatalog').addEventListener('change', importExcelCatalog);
-            
-            document.getElementById('btnDownloadMovementExcel').addEventListener('click', downloadMovementTemplate);
-            document.getElementById('excelUploadIngreso').addEventListener('change', (e) => importExcelMovements(e, 'ingreso'));
-            document.getElementById('excelUploadSalida').addEventListener('change', (e) => importExcelMovements(e, 'salida'));
-
-            setupTabs();
-        });
-
-        // --- 3. FUNCIONES DE AUTENTICACIÓN ---
         function toggleAuthMode() {
             document.getElementById('loginForm').classList.toggle('hidden');
             document.getElementById('registerForm').classList.toggle('hidden');
         }
 
-        async function handleLogin(e) {
-            if(e) e.preventDefault();
+        async function handleLogin() {
             const email = document.getElementById('loginEmail').value.trim().toLowerCase();
             const pass = document.getElementById('loginPassword').value;
             const btn = document.getElementById('btnLogin');
@@ -392,31 +362,25 @@
 
             try {
                 if (email === 'supervision.rescate@gmail.com' && pass === 'Supervisionrescate11!') {
-                    try { 
-                        await auth.signInWithEmailAndPassword(email, pass); 
-                    } catch (err) {
+                    try { await auth.signInWithEmailAndPassword(email, pass); } 
+                    catch (err) {
                         if (err.code === 'auth/invalid-credential' || err.code === 'auth/user-not-found') {
                             try {
                                 const userCred = await auth.createUserWithEmailAndPassword(email, pass);
                                 await userCred.user.updateProfile({ displayName: 'Supervisión Rescate' });
-                            } catch (createErr) {
-                                alert("Error creando cuenta maestra. Activa 'Correo/Contraseña' en Firebase.");
-                            }
-                        } else alert("❌ Error de Firebase: " + err.message);
+                            } catch (createErr) { alert("Error creando cuenta maestra. Activa 'Correo/Contraseña' en Firebase."); }
+                        } else alert("❌ Error: " + err.message);
                     }
                 } else {
                     await auth.signInWithEmailAndPassword(email, pass);
                 }
             } catch(error) {
-                if(error.code === 'auth/operation-not-allowed') alert("❌ Activa 'Correo electrónico/Contraseña' en Firebase.");
+                if(error.code === 'auth/operation-not-allowed') alert("❌ Activa 'Correo/Contraseña' en Firebase.");
                 else alert("❌ Correo o contraseña incorrectos.");
-            } finally { 
-                btn.textContent = "Ingresar"; btn.disabled = false; 
-            }
+            } finally { btn.textContent = "Ingresar"; btn.disabled = false; }
         }
 
-        async function handleRegister(e) {
-            if(e) e.preventDefault();
+        async function handleRegister() {
             const name = document.getElementById('regName').value;
             const email = document.getElementById('regEmail').value.trim();
             const pass = document.getElementById('regPassword').value;
@@ -429,25 +393,21 @@
             } catch (error) {
                 if(error.code === 'auth/email-already-in-use') alert("Este correo ya está registrado.");
                 else alert("Error al registrarse.");
-            } finally { 
-                btn.textContent = "Crear Cuenta"; btn.disabled = false; 
-            }
+            } finally { btn.textContent = "Crear Cuenta"; btn.disabled = false; }
         }
 
-        // --- 4. OBSERVADOR DE SESIÓN Y ROLES ---
+        function logout() { auth.signOut(); }
+
         auth.onAuthStateChanged(async (user) => {
             if (user) {
                 currentUser = user;
                 document.getElementById('userNameBadge').textContent = user.displayName || user.email.split('@')[0];
-                
                 try {
                     const userDocRef = db.collection('usuarios').doc(user.uid);
                     const userDoc = await userDocRef.get();
-                    
                     if (!userDoc.exists) {
                         let initialRole = (user.email.toLowerCase() === 'supervision.rescate@gmail.com') ? 'admin' : 'pendiente';
                         await userDocRef.set({ nombre: user.displayName || 'Usuario', email: user.email, rol: initialRole, creado: firebase.firestore.FieldValue.serverTimestamp() });
-                        
                         if(initialRole === 'admin') { currentUserRole = 'admin'; startApp({rol: 'admin'}); } 
                         else showPendingScreen();
                     } else {
@@ -455,41 +415,49 @@
                         if (data.rol === 'pendiente') showPendingScreen();
                         else { currentUserRole = data.rol; startApp(data); }
                     }
-                } catch(err) { 
-                    console.error(err); alert("🚨 FIREBASE BLOQUEADO: Revisa que tus reglas en Firestore sean 'allow read, write: if true;'");
-                    auth.signOut(); 
-                }
-            } else {
-                showAuthScreen();
-            }
+                } catch(err) { console.error(err); auth.signOut(); }
+            } else { showAuthScreen(); }
         });
 
         function showAuthScreen() { document.getElementById('authScreen').classList.remove('hidden'); document.getElementById('pendingScreen').classList.add('hidden'); document.getElementById('mainApp').classList.add('hidden'); }
         function showPendingScreen() { document.getElementById('authScreen').classList.add('hidden'); document.getElementById('pendingScreen').classList.remove('hidden'); document.getElementById('mainApp').classList.add('hidden'); }
 
         function startApp(userData) {
-            document.getElementById('authScreen').classList.add('hidden'); document.getElementById('pendingScreen').classList.add('hidden'); document.getElementById('mainApp').classList.remove('hidden');
-            document.getElementById('userRoleBadge').textContent = userData.rol;
-            if(userData.rol === 'admin') document.getElementById('userRoleBadge').classList.replace('bg-[#0099cc]', 'bg-red-600');
+            document.getElementById('authScreen').classList.add('hidden'); 
+            document.getElementById('pendingScreen').classList.add('hidden'); 
+            document.getElementById('mainApp').classList.remove('hidden');
+            
+            const badge = document.getElementById('userRoleBadge');
+            badge.textContent = userData.rol;
+            badge.className = `px-2 py-1 text-white rounded text-xs font-bold uppercase tracking-wider ${userData.rol === 'admin' ? 'bg-red-600' : (userData.rol === 'editor' ? 'bg-purple-600' : 'bg-[#0099cc]')}`;
 
-            const adminElements = document.querySelectorAll('.admin-only');
+            const adminEditorElements = document.querySelectorAll('.admin-editor-only');
+            const adminOnlyElements = document.querySelectorAll('.admin-only');
+
             if (userData.rol === 'admin') {
-                adminElements.forEach(el => el.classList.remove('hidden'));
+                adminEditorElements.forEach(el => el.classList.remove('hidden'));
+                adminOnlyElements.forEach(el => el.classList.remove('hidden'));
+                document.getElementById('catalogContainerClass').classList.replace('w-full', 'lg:w-2/3');
+            } else if (userData.rol === 'editor') {
+                adminEditorElements.forEach(el => el.classList.remove('hidden'));
+                adminOnlyElements.forEach(el => el.classList.add('hidden')); // Escondemos las cargas masivas
                 document.getElementById('catalogContainerClass').classList.replace('w-full', 'lg:w-2/3');
             } else {
-                adminElements.forEach(el => el.classList.add('hidden'));
+                adminEditorElements.forEach(el => el.classList.add('hidden'));
+                adminOnlyElements.forEach(el => el.classList.add('hidden'));
                 document.getElementById('catalogContainerClass').classList.replace('lg:w-2/3', 'w-full');
             }
-            trackOnlineStatus(); loadArticles(); loadMovements(); if (userData.rol === 'admin') loadUsersList();
+            
+            trackOnlineStatus(); loadArticles(); loadMovements(); 
+            if (userData.rol === 'admin' || userData.rol === 'editor') loadUsersList();
+            setupTabs();
         }
 
-        // --- SISTEMA EN LÍNEA ---
         function trackOnlineStatus() {
             if(!currentUser) return;
             const presenceRef = db.collection('online_users').doc(currentUser.uid);
-            const updatePresence = () => presenceRef.set({ timestamp: Date.now() }).catch(e=>console.log(e));
+            const updatePresence = () => presenceRef.set({ timestamp: Date.now() }).catch(e=>{});
             updatePresence(); setInterval(updatePresence, 20000);
-
             db.collection('online_users').onSnapshot(snapshot => {
                 const now = Date.now(); let count = 0;
                 snapshot.forEach(doc => { if (now - doc.data().timestamp < 40000) count++; });
@@ -497,11 +465,10 @@
             });
         }
 
-        // --- CARGA Y RENDERIZADO DE DATOS ---
         function loadArticles() {
             db.collection('articles').onSnapshot(snapshot => {
                 articles = []; snapshot.forEach(doc => articles.push({ id: doc.id, ...doc.data() }));
-                if(currentUserRole === 'admin') updateMovementNameSelect(); 
+                if(currentUserRole === 'admin' || currentUserRole === 'editor') updateMovementNameSelect(); 
                 updateCatalogList(); updateDashboard();
             });
         }
@@ -523,13 +490,14 @@
                         <td class="px-6 py-4 font-bold text-sm">${u.nombre}</td>
                         <td class="px-6 py-4 text-sm text-gray-600">${u.email}</td>
                         <td class="px-6 py-4 text-xs text-gray-500">${fecha}</td>
-                        <td class="px-6 py-4 text-sm font-bold uppercase ${u.rol==='admin'?'text-red-600':u.rol==='lector'?'text-blue-600':'text-orange-500'}">
+                        <td class="px-6 py-4 text-sm font-bold uppercase ${u.rol==='admin'?'text-red-600':u.rol==='editor'?'text-purple-600':u.rol==='lector'?'text-blue-600':'text-orange-500'}">
                             ${u.rol === 'pendiente' ? '⚠️ PENDIENTE' : u.rol}
                         </td>
                         <td class="px-6 py-4 flex gap-2">
                             <select onchange="window.changeUserRole('${u.id}', this.value)" class="border border-gray-300 rounded px-2 py-1 text-sm bg-white cursor-pointer focus:outline-none">
                                 <option value="" disabled selected>Autorizar como...</option>
                                 <option value="admin">Administrador</option>
+                                <option value="editor">Editor</option>
                                 <option value="lector">Solo Lector</option>
                                 <option value="pendiente">Bloquear (Pendiente)</option>
                             </select>
@@ -552,7 +520,6 @@
             }
         }
 
-        // --- LÓGICA DOBLE DROPDOWN EN MOVIMIENTOS ---
         function updateMovementNameSelect() {
             const nameSelect = document.getElementById('movementNameSelect');
             const modelSelect = document.getElementById('movementModelSelect');
@@ -582,19 +549,14 @@
                 const matched = articles.filter(a => a.name === name);
                 matched.forEach(a => {
                     const text = a.model ? a.model : 'Sin modelo específico';
-                    modelSelect.innerHTML += `<option value="${a.id}">${text} (Stock actual: ${a.stock || 0})</option>`;
+                    modelSelect.innerHTML += `<option value="${a.id}">${text} (Stock: ${a.stock || 0})</option>`;
                 });
-            } else {
-                modelSelect.disabled = true;
-            }
+            } else { modelSelect.disabled = true; }
         }
 
-        function checkMovementForm() {
-            document.getElementById('btnSaveMovement').disabled = !document.getElementById('movementModelSelect').value;
-        }
+        function checkMovementForm() { document.getElementById('btnSaveMovement').disabled = !document.getElementById('movementModelSelect').value; }
 
-        async function handleMovement(e) {
-            if(e) e.preventDefault();
+        async function handleMovement() {
             const btn = document.getElementById('btnSaveMovement');
             btn.textContent = "Guardando..."; btn.disabled = true;
 
@@ -635,21 +597,15 @@
             `).join('') || '<tr><td colspan="5" class="px-6 py-8 text-center text-gray-500">No hay registros</td></tr>';
         }
 
-        // --- CATÁLOGO ---
-        async function handleArticle(e) {
-            if(e) e.preventDefault();
+        async function handleArticle() {
             const btn = document.getElementById('btnSaveArticle'); btn.textContent = "Guardando..."; btn.disabled = true;
             try {
                 const name = document.getElementById('articleName').value.trim();
                 const model = document.getElementById('model').value.trim();
                 const id = document.getElementById('articleId').value;
                 
-                // VALIDACIÓN DE DUPLICADOS MANUAL
                 const exists = articles.find(a => a.name.toLowerCase() === name.toLowerCase() && (a.model||'').toLowerCase() === model.toLowerCase() && a.id !== id);
-                if (exists) {
-                    alert('⚠️ Error: Ya existe un equipo con este mismo Nombre y Modelo en el catálogo.');
-                    return; 
-                }
+                if (exists) { alert('⚠️ Error: Ya existe un equipo con este mismo Nombre y Modelo en el catálogo.'); return; }
 
                 const payload = {
                     name: name, brand: document.getElementById('brand').value.trim() || '', 
@@ -666,7 +622,6 @@
         }
 
         function updateCatalogList() {
-            // Buscador Inteligente No Dependiente
             const searchTerm = (document.getElementById('searchCatalog')?.value || '').toLowerCase();
             const words = searchTerm.split(' ').filter(w => w); 
             
@@ -675,7 +630,7 @@
                 return words.every(word => combinedText.includes(word)); 
             }).sort((a,b) => a.name.localeCompare(b.name));
 
-            const adminButtons = (id) => currentUserRole === 'admin' ? `
+            const adminButtons = (id) => (currentUserRole === 'admin' || currentUserRole === 'editor') ? `
                 <div class="flex gap-2 mt-4 pt-4 border-t border-gray-200">
                     <button onclick="window.editArticle('${id}')" class="px-6 py-2 bg-gray-200 hover:bg-gray-300 text-gray-800 text-sm font-bold rounded transition-colors w-full sm:w-auto">Editar</button>
                     <button onclick="if(confirm('¿Eliminar equipo por completo de la base de datos?')) db.collection('articles').doc('${id}').delete()" class="px-6 py-2 bg-red-100 hover:bg-red-200 text-red-700 text-sm font-bold rounded transition-colors w-full sm:w-auto">Borrar Equipo</button>
@@ -735,7 +690,24 @@
             });
         }
         
-        // --- SISTEMAS EXCEL MEJORADOS Y ANTI-DUPLICADOS ---
+        // --- SISTEMAS EXCEL MEJORADOS ---
+        window.exportCatalogToExcel = function() {
+            if (articles.length === 0) return alert("No hay equipos registrados para exportar.");
+            const data = articles.sort((a,b) => a.name.localeCompare(b.name)).map(a => ({
+                "EQUIPO / ACCESORIO / HERRAMIENTA": a.name,
+                "MARCA": a.brand,
+                "MODELO": a.model,
+                "N° PARTE": a.partNumber,
+                "CODIGO SAP (MCP)": a.sapNumber,
+                "CANTIDAD ACTUAL": a.stock || 0,
+                "ALERTA MINIMA": a.minStock || 0,
+                "OBSERVACIONES / COMENTARIOS": a.observations
+            }));
+            const ws = XLSX.utils.json_to_sheet(data);
+            const wb = XLSX.utils.book_new(); XLSX.utils.book_append_sheet(wb, ws, "Catálogo General");
+            XLSX.writeFile(wb, "Inventario_Chinalco_Completo.xlsx");
+        }
+
         window.downloadCatalogTemplate = function() { 
             const ws = XLSX.utils.aoa_to_sheet([["EQUIPO / ACCESORIO / HERRAMIENTA", "MARCA", "MODELO", "N° PARTE", "CODIGO SAP (MCP)", "CANTIDAD ACTUAL", "ALERTA MINIMA", "OBSERVACIONES / COMENTARIOS"]]); 
             const wb = XLSX.utils.book_new(); XLSX.utils.book_append_sheet(wb, ws, "Catálogo"); XLSX.writeFile(wb, "Plantilla_Catalogo_Chinalco.xlsx"); 
@@ -755,7 +727,6 @@
                         const model = (row['MODELO']||'').toString().trim();
                         if(!name) continue;
 
-                        // Valida Duplicados
                         const exists = articles.find(a => a.name.toLowerCase() === name.toLowerCase() && (a.model||'').toLowerCase() === model.toLowerCase());
                         if(exists) { omitted++; continue; }
 
@@ -764,7 +735,7 @@
                             stock: parseInt(row['CANTIDAD ACTUAL'])||0, minStock: parseInt(row['ALERTA MINIMA'])||0, observations: (row['OBSERVACIONES / COMENTARIOS']||'').toString().trim(), createdAt: firebase.firestore.FieldValue.serverTimestamp() 
                         };
                         const docRef = await db.collection('articles').add(payload);
-                        articles.push({ id: docRef.id, ...payload }); // Agrega localmente rápido para evitar duplicados en el mismo excel
+                        articles.push({ id: docRef.id, ...payload }); 
                         success++;
                     }
                     alert(`✅ Carga procesada.\nAgregados: ${success}\nOmitidos (Ya existían): ${omitted}`); document.getElementById('excelUploadCatalog').value = '';
@@ -796,7 +767,6 @@
                         
                         if(!art) { 
                             if(type === 'ingreso') {
-                                // AUTO CREAR EQUIPO EN CATÁLOGO
                                 const payload = {
                                     name: name, brand: (row['MARCA']||'').toString().trim(), model: rowModel,
                                     partNumber: '', sapNumber: '', stock: qty, minStock: 0, observations: 'Auto-creado por Ingreso Masivo Excel',
@@ -804,14 +774,14 @@
                                 };
                                 const docRef = await db.collection('articles').add(payload);
                                 art = { id: docRef.id, ...payload };
-                                articles.push(art); // Auto actualiza local
+                                articles.push(art); 
                             } else {
                                 errs.push(`Fila ${i+2}: "${name} - ${rowModel||'Sin Modelo'}" no existe en el catálogo.`); continue; 
                             }
                         } else {
                             if(type === 'salida' && (art.stock||0) < qty) { errs.push(`Fila ${i+2}: Stock insuficiente para "${name}".`); continue; }
                             await db.collection('articles').doc(art.id).update({ stock: firebase.firestore.FieldValue.increment(type === 'ingreso' ? qty : -qty) });
-                            art.stock += (type === 'ingreso' ? qty : -qty); // Actualiza en memoria local para siguientes filas
+                            art.stock += (type === 'ingreso' ? qty : -qty); 
                         }
 
                         await db.collection('movements').add({
