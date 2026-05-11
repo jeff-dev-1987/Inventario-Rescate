@@ -41,7 +41,7 @@
 
             <form id="registerForm" class="space-y-4 hidden">
                 <div>
-                    <label class="block text-sm font-bold text-gray-700 mb-1">Nombre y Apellido</label>
+                    <label class="block text-sm font-bold text-gray-700 mb-1">Nombre y Apellidos</label>
                     <input type="text" id="regName" class="w-full px-4 py-2 border border-gray-300 rounded focus:ring-1 focus:ring-[#003366]" required>
                 </div>
                 <div>
@@ -63,12 +63,12 @@
     <div id="pendingScreen" class="min-h-screen flex items-center justify-center bg-slate-100 px-4 hidden absolute inset-0 z-[90]">
         <div class="bg-white p-8 rounded-lg shadow-xl w-full max-w-lg text-center border-t-4 border-orange-500">
             <h2 class="text-2xl font-bold text-gray-800 mb-4">⏳ Cuenta en Revisión</h2>
-            <p class="text-gray-600 mb-6">Tu cuenta ha sido creada exitosamente, pero requiere autorización para acceder a los datos de la minera.</p>
+            <p class="text-gray-600 mb-6">Tu cuenta ha sido creada exitosamente, pero requiere autorización de la Jefatura para acceder al sistema.</p>
             <div class="bg-orange-50 border border-orange-200 rounded p-4 mb-6 text-sm text-orange-800">
                 Por favor, envía un correo solicitando tu habilitación a:<br>
                 <a href="mailto:supervision.rescate@gmail.com" class="font-bold text-blue-600 underline text-lg">supervision.rescate@gmail.com</a>
             </div>
-            <button onclick="logout()" class="bg-gray-200 hover:bg-gray-300 text-gray-800 py-2 px-6 rounded font-bold transition-colors">Cerrar Sesión</button>
+            <button onclick="logout()" class="bg-[#003366] hover:bg-[#002244] text-white py-2 px-6 rounded font-bold transition-colors">Volver a la portada</button>
         </div>
     </div>
 
@@ -108,7 +108,7 @@
                     📦 Catálogo
                 </button>
                 <button id="tabUsers" class="tab-btn admin-only hidden px-6 py-3 font-semibold text-sm uppercase tracking-wide flex-1 min-w-[120px] rounded transition-colors text-gray-500 hover:bg-slate-50" data-tab="users">
-                    👥 Personal
+                    👥 Solicitudes y Personal
                 </button>
             </div>
 
@@ -145,11 +145,12 @@
                                     <th class="px-6 py-3 text-left text-xs font-bold text-gray-600 uppercase tracking-wider">Equipo</th>
                                     <th class="px-6 py-3 text-left text-xs font-bold text-gray-600 uppercase tracking-wider">Cant.</th>
                                     <th class="px-6 py-3 text-left text-xs font-bold text-gray-600 uppercase tracking-wider">Operación</th>
-                                    <th class="px-6 py-3 text-left text-xs font-bold text-gray-600 uppercase tracking-wider">Responsable</th>
+                                    <th class="px-6 py-3 text-left text-xs font-bold text-gray-600 uppercase tracking-wider">Responsable en Terreno</th>
+                                    <th class="px-6 py-3 text-left text-xs font-bold text-gray-600 uppercase tracking-wider">Registrado por</th>
                                 </tr>
                             </thead>
                             <tbody id="movementsTable" class="divide-y divide-gray-200 bg-white">
-                                <tr><td colspan="5" class="px-6 py-8 text-center text-gray-500">Cargando base de datos...</td></tr>
+                                <tr><td colspan="6" class="px-6 py-8 text-center text-gray-500">Cargando base de datos...</td></tr>
                             </tbody>
                         </table>
                     </div>
@@ -177,8 +178,8 @@
                             <input type="number" id="quantity" min="1" class="w-full px-4 py-2.5 border border-gray-300 rounded focus:ring-1 focus:ring-[#003366]" required>
                         </div>
                         <div>
-                            <label class="block text-sm font-bold text-gray-700 mb-1">Responsable del Movimiento</label>
-                            <select id="responsible" class="w-full px-4 py-2.5 border border-gray-300 rounded focus:ring-1 focus:ring-[#003366] bg-slate-50" required></select>
+                            <label class="block text-sm font-bold text-gray-700 mb-1">Responsable en Terreno (A quién se le entrega / Quién devuelve)</label>
+                            <input type="text" id="responsible" class="w-full px-4 py-2.5 border border-gray-300 rounded focus:ring-1 focus:ring-[#003366]" placeholder="Nombre del trabajador / cuadrilla" required>
                         </div>
                         <div>
                             <label class="block text-sm font-bold text-gray-700 mb-1">Observaciones</label>
@@ -240,7 +241,7 @@
                 <div class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
                     <div class="p-6 border-b border-gray-200 bg-slate-50">
                         <h3 class="text-xl font-bold text-[#003366]">Gestión de Accesos y Personal</h3>
-                        <p class="text-sm text-gray-500 mt-1">Aquí puedes aprobar cuentas pendientes o cambiar sus permisos.</p>
+                        <p class="text-sm text-gray-500 mt-1">Aquí puedes aprobar cuentas pendientes, asignar roles o rechazar accesos.</p>
                     </div>
                     <div class="overflow-x-auto">
                         <table class="w-full">
@@ -249,7 +250,7 @@
                                     <th class="px-6 py-3 text-left text-xs font-bold text-gray-600 uppercase">Nombre</th>
                                     <th class="px-6 py-3 text-left text-xs font-bold text-gray-600 uppercase">Correo</th>
                                     <th class="px-6 py-3 text-left text-xs font-bold text-gray-600 uppercase">Rol Actual</th>
-                                    <th class="px-6 py-3 text-left text-xs font-bold text-gray-600 uppercase">Cambiar Rol</th>
+                                    <th class="px-6 py-3 text-left text-xs font-bold text-gray-600 uppercase">Acciones / Autorización</th>
                                 </tr>
                             </thead>
                             <tbody id="personnelList" class="divide-y divide-gray-200 bg-white"></tbody>
@@ -276,25 +277,35 @@
         const db = firebase.firestore();
 
         let currentUser = null;
-        let currentUserRole = 'lector'; // por defecto
+        let currentUserRole = 'lector'; 
         let articles = [], movements = [], usersData = [];
 
         // --- 2. SISTEMA DE AUTENTICACIÓN ---
         auth.onAuthStateChanged(async (user) => {
             if (user) {
                 currentUser = user;
-                // Buscar rol del usuario en la base de datos
                 const userDoc = await db.collection('usuarios').doc(user.uid).get();
                 
                 if (!userDoc.exists) {
-                    // Si no existe, es su primer inicio de sesión tras registrarse
+                    // LÓGICA DE CUENTA MAESTRA (VIP)
+                    let initialRole = 'pendiente';
+                    if(user.email.toLowerCase() === 'supervision.rescate@gmail.com') {
+                        initialRole = 'admin'; // Auto-aprueba al administrador maestro
+                    }
+
                     await db.collection('usuarios').doc(user.uid).set({
-                        nombre: user.displayName || 'Usuario Nuevo',
+                        nombre: user.displayName || 'Usuario',
                         email: user.email,
-                        rol: 'pendiente',
+                        rol: initialRole,
                         creado: firebase.firestore.FieldValue.serverTimestamp()
                     });
-                    showPendingScreen();
+
+                    if(initialRole === 'admin') {
+                        currentUserRole = 'admin';
+                        startApp({rol: 'admin'});
+                    } else {
+                        showPendingScreen();
+                    }
                 } else {
                     const data = userDoc.data();
                     if (data.rol === 'pendiente') {
@@ -333,11 +344,8 @@
             e.preventDefault();
             const email = document.getElementById('loginEmail').value;
             const pass = document.getElementById('loginPassword').value;
-            try {
-                await auth.signInWithEmailAndPassword(email, pass);
-            } catch (error) {
-                alert("Error al ingresar: Verifica tu correo o contraseña.");
-            }
+            try { await auth.signInWithEmailAndPassword(email, pass); } 
+            catch (error) { alert("Error al ingresar: Verifica tu correo o contraseña."); }
         });
 
         // Registro
@@ -349,11 +357,10 @@
             try {
                 const userCredential = await auth.createUserWithEmailAndPassword(email, pass);
                 await userCredential.user.updateProfile({ displayName: name });
-                // El onAuthStateChanged se disparará y creará el doc 'pendiente'
             } catch (error) {
                 if(error.code === 'auth/email-already-in-use') alert("Este correo ya está registrado.");
                 else if(error.code === 'auth/weak-password') alert("La contraseña debe tener mínimo 6 caracteres.");
-                else alert("Error al registrarse: " + error.message);
+                else alert("Error al registrarse.");
             }
         });
 
@@ -366,11 +373,8 @@
             document.getElementById('mainApp').classList.remove('hidden');
             
             document.getElementById('userRoleBadge').textContent = userData.rol;
-            if(userData.rol === 'admin') {
-                document.getElementById('userRoleBadge').classList.replace('bg-[#0099cc]', 'bg-red-600');
-            }
+            if(userData.rol === 'admin') document.getElementById('userRoleBadge').classList.replace('bg-[#0099cc]', 'bg-red-600');
 
-            // Aplicar permisos en la Interfaz
             const adminElements = document.querySelectorAll('.admin-only');
             if (userData.rol === 'admin') {
                 adminElements.forEach(el => el.classList.remove('hidden'));
@@ -380,14 +384,12 @@
                 document.getElementById('catalogContainerClass').classList.replace('lg:w-2/3', 'w-full');
             }
 
-            // Iniciar contadores y datos
             trackOnlineStatus();
             loadArticles();
             loadMovements();
             if (userData.rol === 'admin') loadUsersList();
             setupTabs();
 
-            // Listeners
             document.getElementById('movementForm').addEventListener('submit', handleMovement);
             document.getElementById('catalogForm').addEventListener('submit', handleArticle);
             document.getElementById('movementFilter').addEventListener('change', updateMovementsTable);
@@ -398,19 +400,12 @@
         function trackOnlineStatus() {
             if(!currentUser) return;
             const presenceRef = db.collection('online_users').doc(currentUser.uid);
-            
-            // Actualizar cada 20 segundos
             const updatePresence = () => presenceRef.set({ timestamp: Date.now() });
-            updatePresence();
-            setInterval(updatePresence, 20000);
+            updatePresence(); setInterval(updatePresence, 20000);
 
-            // Escuchar conectados (activos en los últimos 40 seg)
             db.collection('online_users').onSnapshot(snapshot => {
-                const now = Date.now();
-                let count = 0;
-                snapshot.forEach(doc => {
-                    if (now - doc.data().timestamp < 40000) count++;
-                });
+                const now = Date.now(); let count = 0;
+                snapshot.forEach(doc => { if (now - doc.data().timestamp < 40000) count++; });
                 document.getElementById('userCount').textContent = `${count} en línea`;
             });
         }
@@ -418,64 +413,63 @@
         // --- CARGA DE DATOS ---
         function loadArticles() {
             db.collection('articles').orderBy('name').onSnapshot(snapshot => {
-                articles = [];
-                snapshot.forEach(doc => articles.push({ id: doc.id, ...doc.data() }));
+                articles = []; snapshot.forEach(doc => articles.push({ id: doc.id, ...doc.data() }));
                 if(currentUserRole === 'admin') updateArticleSelect(); 
-                updateCatalogList(); 
-                updateDashboard();
+                updateCatalogList(); updateDashboard();
             });
         }
 
         function loadMovements() {
             db.collection('movements').orderBy('timestamp', 'desc').limit(100).onSnapshot(snapshot => {
-                movements = [];
-                snapshot.forEach(doc => movements.push({ id: doc.id, ...doc.data() }));
+                movements = []; snapshot.forEach(doc => movements.push({ id: doc.id, ...doc.data() }));
                 updateMovementsTable(); updateDashboard();
             });
         }
 
-        // Solo Admin: Cargar lista de usuarios para cambiar roles
+        // Solo Admin: Cargar usuarios, cambiar roles y rechazar/borrar
         function loadUsersList() {
             db.collection('usuarios').orderBy('nombre').onSnapshot(snapshot => {
-                usersData = [];
-                snapshot.forEach(doc => usersData.push({ id: doc.id, ...doc.data() }));
+                usersData = []; snapshot.forEach(doc => usersData.push({ id: doc.id, ...doc.data() }));
                 
-                // Llenar tabla de administración
                 document.getElementById('personnelList').innerHTML = usersData.map(u => `
                     <tr class="border-b hover:bg-slate-50">
                         <td class="px-6 py-4 font-bold text-sm">${u.nombre}</td>
                         <td class="px-6 py-4 text-sm text-gray-600">${u.email}</td>
-                        <td class="px-6 py-4 text-sm font-bold uppercase ${u.rol==='admin'?'text-red-600':u.rol==='lector'?'text-blue-600':'text-orange-500'}">${u.rol}</td>
-                        <td class="px-6 py-4">
+                        <td class="px-6 py-4 text-sm font-bold uppercase ${u.rol==='admin'?'text-red-600':u.rol==='lector'?'text-blue-600':'text-orange-500'}">
+                            ${u.rol === 'pendiente' ? '⚠️ PENDIENTE' : u.rol}
+                        </td>
+                        <td class="px-6 py-4 flex gap-2">
                             <select onchange="changeUserRole('${u.id}', this.value)" class="border border-gray-300 rounded px-2 py-1 text-sm bg-white cursor-pointer focus:outline-none">
-                                <option value="" disabled selected>Cambiar a...</option>
+                                <option value="" disabled selected>Autorizar como...</option>
                                 <option value="admin">Administrador</option>
-                                <option value="lector">Lector</option>
-                                <option value="pendiente">Pendiente (Bloquear)</option>
+                                <option value="lector">Solo Lector</option>
+                                <option value="pendiente">Bloquear (Pendiente)</option>
                             </select>
+                            <button onclick="deleteUser('${u.id}')" class="px-3 py-1 bg-red-100 hover:bg-red-200 text-red-700 rounded font-bold text-xs transition-colors">❌ Rechazar</button>
                         </td>
                     </tr>
                 `).join('');
-
-                // Llenar select de responsables en movimientos (solo usuarios aprobados)
-                const approvedUsers = usersData.filter(u => u.rol !== 'pendiente');
-                document.getElementById('responsible').innerHTML = '<option value="">Seleccione personal...</option>' + 
-                    approvedUsers.map(u => `<option value="${u.nombre}">${u.nombre}</option>`).join('');
             });
         }
 
         async function changeUserRole(uid, newRole) {
             if(!newRole) return;
-            if(confirm(`¿Estás seguro de cambiar el rol a ${newRole}?`)) {
+            if(confirm(`¿Confirmas autorizar este usuario como ${newRole.toUpperCase()}?`)) {
                 await db.collection('usuarios').doc(uid).update({ rol: newRole });
-                alert("Rol actualizado correctamente.");
+                alert("Permisos actualizados.");
+            }
+        }
+
+        async function deleteUser(uid) {
+            if(confirm("¿Estás seguro de RECHAZAR y eliminar a este usuario de la base de datos? Se le denegará el acceso permanentemente.")) {
+                await db.collection('usuarios').doc(uid).delete();
+                alert("Usuario rechazado y eliminado.");
             }
         }
 
         // --- FUNCIONES DEL SISTEMA ---
         function updateArticleSelect() {
-            const select = document.getElementById('articleSelect');
-            const type = document.getElementById('movementType').value;
+            const select = document.getElementById('articleSelect'); const type = document.getElementById('movementType').value;
             const btn = document.querySelector('#movementForm button');
             select.innerHTML = '<option value="">Seleccione el equipo...</option>';
             select.disabled = !type; btn.disabled = !type;
@@ -495,7 +489,7 @@
                     articleId: data.articleSelect, articleName: article.name, type: data.movementType,
                     quantity: qty, responsible: data.responsible, observations: data.observations || '',
                     timestamp: firebase.firestore.FieldValue.serverTimestamp(),
-                    registeredBy: currentUser.email // Registro de auditoría
+                    registeredBy: currentUser.email // Auditoría
                 });
                 e.target.reset(); updateArticleSelect(); alert('Movimiento guardado.');
             } catch (error) { alert('Error al guardar.'); }
@@ -503,114 +497,4 @@
 
         function updateMovementsTable() {
             const filter = document.getElementById('movementFilter').value;
-            const filtered = movements.filter(m => filter === 'all' || m.type === filter);
-            document.getElementById('movementsTable').innerHTML = filtered.map(m => `
-                <tr class="hover:bg-slate-50 border-b">
-                    <td class="px-6 py-3 text-sm">${m.timestamp ? m.timestamp.toDate().toLocaleString() : '...'}</td>
-                    <td class="px-6 py-3 font-bold text-gray-900 text-sm">${m.articleName}</td>
-                    <td class="px-6 py-3 font-bold ${m.type==='ingreso'?'text-green-600':'text-red-600'}">${m.type==='ingreso'?'+':'-'}${m.quantity}</td>
-                    <td class="px-6 py-3 text-sm"><span class="px-2 py-1 rounded text-xs font-bold ${m.type==='ingreso'?'bg-green-100 text-green-800':'bg-red-100 text-red-800'} uppercase">${m.type}</span></td>
-                    <td class="px-6 py-3 text-sm text-gray-700">${m.responsible}</td>
-                </tr>
-            `).join('') || '<tr><td colspan="5" class="px-6 py-8 text-center text-gray-500">No hay registros</td></tr>';
-        }
-
-        async function handleArticle(e) {
-            e.preventDefault();
-            const data = Object.fromEntries(new FormData(e.target));
-            const payload = {
-                name: data.articleName, brand: data.brand || '', model: data.model || '', series: data.series || '',
-                sapNumber: data.sapNumber || '', stock: parseInt(data.initialStock), minStock: parseInt(data.minStock)
-            };
-            const id = document.getElementById('articleId').value;
-            try {
-                if(id) await db.collection('articles').doc(id).update(payload);
-                else await db.collection('articles').add({...payload, createdAt: firebase.firestore.FieldValue.serverTimestamp()});
-                resetArticleForm(); alert('Guardado con éxito');
-            } catch(e) { alert('Error al guardar'); }
-        }
-
-        function updateCatalogList() {
-            // El lector no ve los botones de editar/borrar
-            const adminButtons = (id) => currentUserRole === 'admin' ? `
-                <div class="flex gap-2 mt-2 pt-2 border-t border-gray-100">
-                    <button onclick="editArticle('${id}')" class="px-3 py-1 bg-gray-100 text-gray-700 text-xs font-bold rounded">Editar</button>
-                    <button onclick="if(confirm('¿Eliminar?')) db.collection('articles').doc('${id}').delete()" class="px-3 py-1 bg-red-50 text-red-600 text-xs font-bold rounded">Borrar</button>
-                </div>` : '';
-
-            document.getElementById('catalogList').innerHTML = articles.map(a => `
-                <div class="border border-gray-200 p-4 rounded bg-white shadow-sm flex flex-col justify-between">
-                    <div>
-                        <div class="flex justify-between items-start mb-2">
-                            <h4 class="font-bold text-[#003366] text-sm">${a.name}</h4>
-                            <div class="text-right">
-                                <span class="block text-sm font-bold ${a.stock < a.minStock ? 'text-red-600' : 'text-green-600'}">${a.stock || 0} Und</span>
-                            </div>
-                        </div>
-                        <div class="text-xs text-gray-500 space-y-1">
-                            <div>M/M: ${a.brand||'-'} ${a.model||'-'}</div>
-                            <div>SAP: ${a.sapNumber||'-'} | Serie: ${a.series||'-'}</div>
-                        </div>
-                    </div>
-                    ${adminButtons(a.id)}
-                </div>
-            `).join('');
-        }
-
-        function editArticle(id) {
-            const a = articles.find(x => x.id === id);
-            if(!a) return;
-            document.getElementById('articleId').value = id; document.getElementById('articleName').value = a.name; 
-            document.getElementById('brand').value = a.brand; document.getElementById('model').value = a.model; 
-            document.getElementById('series').value = a.series; document.getElementById('sapNumber').value = a.sapNumber;
-            document.getElementById('initialStock').value = a.stock; document.getElementById('minStock').value = a.minStock;
-            document.getElementById('cancelEdit').classList.remove('hidden'); document.getElementById('catalogFormTitle').textContent = 'Editar Equipo';
-        }
-
-        function resetArticleForm() {
-            document.getElementById('catalogForm').reset(); document.getElementById('articleId').value = '';
-            document.getElementById('cancelEdit').classList.add('hidden'); document.getElementById('catalogFormTitle').textContent = 'Agregar / Editar Equipo';
-        }
-
-        function updateDashboard() {
-            document.getElementById('totalItems').textContent = articles.length;
-            document.getElementById('todayMovements').textContent = movements.filter(m => m.timestamp && m.timestamp.toDate() >= new Date().setHours(0,0,0,0)).length;
-            document.getElementById('alertCount').textContent = articles.filter(a => (a.stock || 0) < a.minStock).length;
-        }
-
-        function setupTabs() {
-            document.querySelectorAll('.tab-btn').forEach(btn => {
-                btn.addEventListener('click', () => {
-                    document.querySelectorAll('.tab-content').forEach(c => c.classList.add('hidden'));
-                    document.querySelectorAll('.tab-btn').forEach(b => { b.classList.remove('text-[#003366]', 'bg-slate-100'); b.classList.add('text-gray-500'); });
-                    document.getElementById(btn.dataset.tab).classList.remove('hidden');
-                    btn.classList.remove('text-gray-500'); btn.classList.add('text-[#003366]', 'bg-slate-100');
-                });
-            });
-        }
-        
-        // Función Excel (Solo Admin)
-        function downloadTemplate() {
-            const ws = XLSX.utils.aoa_to_sheet([["Nombre", "Marca", "Modelo", "Serie", "SAP", "Stock Inicial", "Alerta Minima"]]);
-            const wb = XLSX.utils.book_new(); XLSX.utils.book_append_sheet(wb, ws, "Inventario");
-            XLSX.writeFile(wb, "Plantilla_Inventario_Chinalco.xlsx");
-        }
-
-        function importExcel(event) {
-            const file = event.target.files[0]; if(!file) return;
-            const reader = new FileReader();
-            reader.onload = async function(e) {
-                try {
-                    const json = XLSX.utils.sheet_to_json(XLSX.read(new Uint8Array(e.target.result), {type: 'array'}).Sheets[XLSX.read(new Uint8Array(e.target.result), {type: 'array'}).SheetNames[0]]);
-                    if(json.length === 0) return alert("Archivo vacío.");
-                    if(!confirm(`¿Importar ${json.length} equipos?`)) return;
-                    for(let row of json) {
-                        if(row.Nombre) await db.collection('articles').add({ name: row.Nombre, brand: row.Marca||'', model: row.Modelo||'', series: row.Serie||'', sapNumber: row.SAP||'', stock: parseInt(row['Stock Inicial'])||0, minStock: parseInt(row['Alerta Minima'])||0, createdAt: firebase.firestore.FieldValue.serverTimestamp() });
-                    }
-                    alert(`✅ Excel procesado.`); document.getElementById('excelUpload').value = '';
-                } catch(error) { alert("Error al leer Excel."); }
-            }; reader.readAsArrayBuffer(file);
-        }
-    </script>
-</body>
-</html>
+            const filtered = movements.filter(m => filter === 'all' || m.type === filter
