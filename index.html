@@ -24,7 +24,7 @@
                 <p class="text-sm text-gray-500 uppercase tracking-widest mt-1">Minera Chinalco Perú</p>
             </div>
 
-            <form id="loginForm" class="space-y-4">
+            <form id="loginForm" class="space-y-4" onsubmit="event.preventDefault(); handleLogin();">
                 <div>
                     <label class="block text-sm font-bold text-gray-700 mb-1">Correo Electrónico</label>
                     <input type="email" id="loginEmail" class="w-full px-4 py-2 border border-gray-300 rounded focus:ring-1 focus:ring-[#003366]" required>
@@ -39,7 +39,7 @@
                 </div>
             </form>
 
-            <form id="registerForm" class="space-y-4 hidden">
+            <form id="registerForm" class="space-y-4 hidden" onsubmit="event.preventDefault(); handleRegister();">
                 <div>
                     <label class="block text-sm font-bold text-gray-700 mb-1">Nombre y Apellidos</label>
                     <input type="text" id="regName" class="w-full px-4 py-2 border border-gray-300 rounded focus:ring-1 focus:ring-[#003366]" required>
@@ -109,7 +109,7 @@
                     📦 Catálogo
                 </button>
                 <button id="tabUsers" class="tab-btn admin-only hidden px-6 py-3 font-semibold text-sm uppercase tracking-wide flex-1 min-w-[120px] rounded transition-colors text-gray-500 hover:bg-slate-50" data-tab="users">
-                    👥 Solicitudes y Usuarios
+                    👥 Usuarios
                 </button>
             </div>
 
@@ -132,7 +132,7 @@
                 <div class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
                     <div class="p-6 border-b border-gray-200 flex flex-col sm:flex-row justify-between items-center bg-slate-50 gap-4">
                         <h2 class="text-lg font-bold text-[#003366] uppercase">📋 Historial de Movimientos</h2>
-                        <select id="movementFilter" class="px-3 py-1.5 border border-gray-300 rounded text-sm focus:outline-none focus:border-[#003366] w-full sm:w-auto">
+                        <select id="movementFilter" onchange="updateMovementsTable()" class="px-3 py-1.5 border border-gray-300 rounded text-sm focus:outline-none focus:border-[#003366] w-full sm:w-auto">
                             <option value="all">Todos los movimientos</option>
                             <option value="ingreso">Solo Ingresos (+)</option>
                             <option value="salida">Solo Salidas (-)</option>
@@ -146,7 +146,7 @@
                                     <th class="px-6 py-3 text-left text-xs font-bold text-gray-600 uppercase tracking-wider">Equipo</th>
                                     <th class="px-6 py-3 text-left text-xs font-bold text-gray-600 uppercase tracking-wider">Cant.</th>
                                     <th class="px-6 py-3 text-left text-xs font-bold text-gray-600 uppercase tracking-wider">Operación</th>
-                                    <th class="px-6 py-3 text-left text-xs font-bold text-gray-600 uppercase tracking-wider">Responsable en Terreno</th>
+                                    <th class="px-6 py-3 text-left text-xs font-bold text-gray-600 uppercase tracking-wider">Terreno</th>
                                     <th class="px-6 py-3 text-left text-xs font-bold text-gray-600 uppercase tracking-wider">Registrado por</th>
                                 </tr>
                             </thead>
@@ -160,11 +160,11 @@
 
             <div id="movements" class="tab-content hidden fade-in admin-only">
                 <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-8 max-w-2xl mx-auto">
-                    <h2 class="text-2xl font-bold text-[#003366] mb-6 border-b pb-4">Registrar Ingreso o Salida</h2>
-                    <form id="movementForm" class="space-y-5">
+                    <h2 class="text-2xl font-bold text-[#003366] mb-6 border-b pb-4">Registrar Operación</h2>
+                    <form id="movementForm" class="space-y-5" onsubmit="event.preventDefault(); handleMovement();">
                         <div>
                             <label class="block text-sm font-bold text-gray-700 mb-1">Tipo de Operación</label>
-                            <select id="movementType" class="w-full px-4 py-2.5 border border-gray-300 rounded focus:ring-1 focus:ring-[#003366] bg-slate-50" required>
+                            <select id="movementType" onchange="updateArticleSelect()" class="w-full px-4 py-2.5 border border-gray-300 rounded focus:ring-1 focus:ring-[#003366] bg-slate-50" required>
                                 <option value="">Seleccione el tipo...</option>
                                 <option value="ingreso">🟢 INGRESO (Sumar al almacén)</option>
                                 <option value="salida">🔴 SALIDA (Asignar a terreno/persona)</option>
@@ -179,8 +179,8 @@
                             <input type="number" id="quantity" min="1" class="w-full px-4 py-2.5 border border-gray-300 rounded focus:ring-1 focus:ring-[#003366]" required>
                         </div>
                         <div>
-                            <label class="block text-sm font-bold text-gray-700 mb-1">Responsable en Terreno (A quién se le entrega / Quién devuelve)</label>
-                            <input type="text" id="responsible" class="w-full px-4 py-2.5 border border-gray-300 rounded focus:ring-1 focus:ring-[#003366]" placeholder="Nombre del trabajador / cuadrilla" required>
+                            <label class="block text-sm font-bold text-gray-700 mb-1">A quién se le entrega / Quién devuelve</label>
+                            <input type="text" id="responsible" class="w-full px-4 py-2.5 border border-gray-300 rounded focus:ring-1 focus:ring-[#003366]" placeholder="Ej. Cuadrilla Alfa / Juan Perez" required>
                         </div>
                         <div>
                             <label class="block text-sm font-bold text-gray-700 mb-1">Observaciones</label>
@@ -195,18 +195,18 @@
                 <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6 mb-6 admin-only hidden">
                     <h2 class="text-lg font-bold text-[#003366] mb-4 border-b pb-2">📊 Importación Masiva mediante Excel</h2>
                     <div class="flex flex-col md:flex-row gap-4 items-center">
-                        <button onclick="downloadTemplate()" class="bg-green-600 hover:bg-green-700 text-white py-2 px-4 rounded font-bold text-sm transition-colors flex-1 w-full">⬇️ 1. Descargar Plantilla Excel</button>
+                        <button onclick="downloadTemplate()" class="bg-green-600 hover:bg-green-700 text-white py-2 px-4 rounded font-bold text-sm transition-colors flex-1 w-full">⬇️ 1. Descargar Plantilla</button>
                         <div class="flex-1 w-full relative">
                             <input type="file" id="excelUpload" accept=".xlsx, .xls" class="hidden" onchange="importExcel(event)">
-                            <button onclick="document.getElementById('excelUpload').click()" class="bg-[#0099cc] hover:bg-[#007799] text-white py-2 px-4 rounded font-bold text-sm transition-colors w-full">⬆️ 2. Subir Archivo Llenado</button>
+                            <button onclick="document.getElementById('excelUpload').click()" class="bg-[#0099cc] hover:bg-[#007799] text-white py-2 px-4 rounded font-bold text-sm transition-colors w-full">⬆️ 2. Subir Archivo Excel</button>
                         </div>
                     </div>
                 </div>
 
                 <div class="flex flex-col lg:flex-row gap-6">
                     <div class="lg:w-1/3 bg-white rounded-lg shadow-sm border border-gray-200 p-6 h-fit admin-only hidden">
-                        <h2 class="text-xl font-bold text-[#003366] mb-6 border-b pb-4" id="catalogFormTitle">Agregar / Editar Equipo</h2>
-                        <form id="catalogForm" class="space-y-4">
+                        <h2 class="text-xl font-bold text-[#003366] mb-6 border-b pb-4" id="catalogFormTitle">Agregar Equipo</h2>
+                        <form id="catalogForm" class="space-y-4" onsubmit="event.preventDefault(); handleArticle();">
                             <input type="hidden" id="articleId">
                             <div><label class="block text-xs font-bold text-gray-700 mb-1">Nombre *</label><input type="text" id="articleName" class="w-full px-3 py-2 border rounded" required></div>
                             <div class="grid grid-cols-2 gap-3">
@@ -230,7 +230,7 @@
                     
                     <div id="catalogContainerClass" class="w-full bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
                         <div class="p-6 border-b border-gray-200 bg-slate-50 flex justify-between items-center">
-                            <h3 class="text-xl font-bold text-[#003366]">Base de Datos de Equipos</h3>
+                            <h3 class="text-xl font-bold text-[#003366]">Base de Datos</h3>
                         </div>
                         <div class="p-6"><div id="catalogList" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 max-h-[600px] overflow-y-auto pr-2"></div></div>
                     </div>
@@ -240,8 +240,7 @@
             <div id="users" class="tab-content hidden fade-in admin-only">
                 <div class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
                     <div class="p-6 border-b border-gray-200 bg-slate-50">
-                        <h3 class="text-xl font-bold text-[#003366]">Gestión de Accesos y Personal</h3>
-                        <p class="text-sm text-gray-500 mt-1">Aquí puedes aprobar cuentas pendientes, asignar roles o rechazar accesos.</p>
+                        <h3 class="text-xl font-bold text-[#003366]">Gestión de Accesos</h3>
                     </div>
                     <div class="overflow-x-auto">
                         <table class="w-full">
@@ -250,7 +249,7 @@
                                     <th class="px-6 py-3 text-left text-xs font-bold text-gray-600 uppercase">Nombre</th>
                                     <th class="px-6 py-3 text-left text-xs font-bold text-gray-600 uppercase">Correo</th>
                                     <th class="px-6 py-3 text-left text-xs font-bold text-gray-600 uppercase">Rol Actual</th>
-                                    <th class="px-6 py-3 text-left text-xs font-bold text-gray-600 uppercase">Acciones / Autorización</th>
+                                    <th class="px-6 py-3 text-left text-xs font-bold text-gray-600 uppercase">Autorización</th>
                                 </tr>
                             </thead>
                             <tbody id="personnelList" class="divide-y divide-gray-200 bg-white"></tbody>
@@ -262,7 +261,7 @@
     </div>
 
     <script>
-        // --- 1. CONFIGURACIÓN FIREBASE ---
+        // 1. Configuración Principal
         const firebaseConfig = {
             apiKey: "AIzaSyCJPSncnUWIua1CiAceFbv1tmClpRKjj2U",
             authDomain: "gestion-de-inventarios-rescate.firebaseapp.com",
@@ -280,18 +279,85 @@
         let currentUserRole = 'lector'; 
         let articles = [], movements = [], usersData = [];
 
-        // --- 2. SISTEMA DE AUTENTICACIÓN OPTIMIZADO ---
+        // Cambiar entre Login y Registro
+        function toggleAuthMode() {
+            document.getElementById('loginForm').classList.toggle('hidden');
+            document.getElementById('registerForm').classList.toggle('hidden');
+        }
+
+        // 2. Lógica de Ingreso (Con Creación de Cuenta Maestra Automática)
+        async function handleLogin() {
+            const email = document.getElementById('loginEmail').value.trim().toLowerCase();
+            const pass = document.getElementById('loginPassword').value;
+            const btn = document.getElementById('btnLogin');
+            
+            btn.textContent = "Verificando..."; btn.disabled = true;
+
+            try {
+                // Chequeo de Cuenta Maestra VIP
+                if (email === 'supervision.rescate@gmail.com' && pass === 'Supervisionrescate11!') {
+                    try {
+                        await auth.signInWithEmailAndPassword(email, pass);
+                    } catch (err) {
+                        // Si la cuenta maestra no existe, la creamos en secreto
+                        if (err.code === 'auth/invalid-credential' || err.code === 'auth/user-not-found') {
+                            try {
+                                const userCred = await auth.createUserWithEmailAndPassword(email, pass);
+                                await userCred.user.updateProfile({ displayName: 'Supervisión Rescate' });
+                            } catch (createErr) {
+                                if(createErr.code === 'auth/operation-not-allowed') alert("❌ Activa el acceso por Correo en Firebase Authentication.");
+                                else alert("Error creando cuenta maestra: " + createErr.message);
+                            }
+                        } else {
+                            alert("❌ Correo o contraseña incorrectos.");
+                        }
+                    }
+                } else {
+                    // Ingreso Regular para otros usuarios
+                    await auth.signInWithEmailAndPassword(email, pass);
+                }
+            } catch(error) {
+                if(error.code === 'auth/operation-not-allowed') alert("❌ Activa el acceso por Correo/Contraseña en Firebase.");
+                else alert("❌ Error: Verifica tu correo o contraseña.");
+            } finally {
+                btn.textContent = "Ingresar"; btn.disabled = false;
+            }
+        }
+
+        // 3. Lógica de Registro Normal
+        async function handleRegister() {
+            const name = document.getElementById('regName').value;
+            const email = document.getElementById('regEmail').value.trim();
+            const pass = document.getElementById('regPassword').value;
+            const btn = document.getElementById('btnRegister');
+            
+            btn.textContent = "Creando Cuenta..."; btn.disabled = true;
+
+            try {
+                const userCredential = await auth.createUserWithEmailAndPassword(email, pass);
+                await userCredential.user.updateProfile({ displayName: name });
+            } catch (error) {
+                if(error.code === 'auth/email-already-in-use') alert("Este correo ya está registrado.");
+                else alert("Error al registrarse: " + error.message);
+            } finally {
+                btn.textContent = "Crear Cuenta"; btn.disabled = false;
+            }
+        }
+
+        function logout() { auth.signOut(); }
+
+        // 4. Observador de Sesión (El que decide quién entra)
         auth.onAuthStateChanged(async (user) => {
             if (user) {
+                currentUser = user;
+                document.getElementById('userNameBadge').textContent = user.displayName || user.email.split('@')[0];
+                
                 try {
-                    currentUser = user;
-                    document.getElementById('userNameBadge').textContent = user.displayName || user.email.split('@')[0];
-                    
                     const userDocRef = db.collection('usuarios').doc(user.uid);
                     const userDoc = await userDocRef.get();
                     
                     if (!userDoc.exists) {
-                        // REGLA MAESTRA (Si borraste la base de datos, te la vuelve a crear)
+                        // Si es su primera vez, lo evaluamos
                         let initialRole = (user.email.toLowerCase() === 'supervision.rescate@gmail.com') ? 'admin' : 'pendiente';
                         
                         await userDocRef.set({
@@ -302,6 +368,256 @@
                         });
 
                         if(initialRole === 'admin') {
-                            currentUserRole = 'admin';
-                            startApp({rol: 'admin'});
+                            currentUserRole = 'admin'; startApp({rol: 'admin'});
                         } else {
+                            showPendingScreen();
+                        }
+                    } else {
+                        const data = userDoc.data();
+                        if (data.rol === 'pendiente') {
+                            showPendingScreen();
+                        } else {
+                            currentUserRole = data.rol; startApp(data);
+                        }
+                    }
+                } catch(err) {
+                    console.error("Error en base de datos: ", err);
+                }
+            } else {
+                showAuthScreen();
+            }
+        });
+
+        // Controladores de Vistas
+        function showAuthScreen() { document.getElementById('authScreen').classList.remove('hidden'); document.getElementById('pendingScreen').classList.add('hidden'); document.getElementById('mainApp').classList.add('hidden'); }
+        function showPendingScreen() { document.getElementById('authScreen').classList.add('hidden'); document.getElementById('pendingScreen').classList.remove('hidden'); document.getElementById('mainApp').classList.add('hidden'); }
+
+        function startApp(userData) {
+            document.getElementById('authScreen').classList.add('hidden');
+            document.getElementById('pendingScreen').classList.add('hidden');
+            document.getElementById('mainApp').classList.remove('hidden');
+            
+            document.getElementById('userRoleBadge').textContent = userData.rol;
+            if(userData.rol === 'admin') document.getElementById('userRoleBadge').classList.replace('bg-[#0099cc]', 'bg-red-600');
+
+            const adminElements = document.querySelectorAll('.admin-only');
+            if (userData.rol === 'admin') {
+                adminElements.forEach(el => el.classList.remove('hidden'));
+                document.getElementById('catalogContainerClass').classList.replace('w-full', 'lg:w-2/3');
+            } else {
+                adminElements.forEach(el => el.classList.add('hidden'));
+                document.getElementById('catalogContainerClass').classList.replace('lg:w-2/3', 'w-full');
+            }
+
+            trackOnlineStatus(); loadArticles(); loadMovements();
+            if (userData.rol === 'admin') loadUsersList();
+            setupTabs();
+        }
+
+        // --- SISTEMA "EN LÍNEA" ---
+        function trackOnlineStatus() {
+            if(!currentUser) return;
+            const presenceRef = db.collection('online_users').doc(currentUser.uid);
+            const updatePresence = () => presenceRef.set({ timestamp: Date.now() });
+            updatePresence(); setInterval(updatePresence, 20000);
+
+            db.collection('online_users').onSnapshot(snapshot => {
+                const now = Date.now(); let count = 0;
+                snapshot.forEach(doc => { if (now - doc.data().timestamp < 40000) count++; });
+                document.getElementById('userCount').textContent = `${count} en línea`;
+            });
+        }
+
+        // --- CARGA DE DATOS ---
+        function loadArticles() {
+            db.collection('articles').orderBy('name').onSnapshot(snapshot => {
+                articles = []; snapshot.forEach(doc => articles.push({ id: doc.id, ...doc.data() }));
+                if(currentUserRole === 'admin') updateArticleSelect(); 
+                updateCatalogList(); updateDashboard();
+            });
+        }
+
+        function loadMovements() {
+            db.collection('movements').orderBy('timestamp', 'desc').limit(100).onSnapshot(snapshot => {
+                movements = []; snapshot.forEach(doc => movements.push({ id: doc.id, ...doc.data() }));
+                updateMovementsTable(); updateDashboard();
+            });
+        }
+
+        function loadUsersList() {
+            db.collection('usuarios').orderBy('nombre').onSnapshot(snapshot => {
+                usersData = []; snapshot.forEach(doc => usersData.push({ id: doc.id, ...doc.data() }));
+                document.getElementById('personnelList').innerHTML = usersData.map(u => `
+                    <tr class="border-b hover:bg-slate-50">
+                        <td class="px-6 py-4 font-bold text-sm">${u.nombre}</td>
+                        <td class="px-6 py-4 text-sm text-gray-600">${u.email}</td>
+                        <td class="px-6 py-4 text-sm font-bold uppercase ${u.rol==='admin'?'text-red-600':u.rol==='lector'?'text-blue-600':'text-orange-500'}">
+                            ${u.rol === 'pendiente' ? '⚠️ PENDIENTE' : u.rol}
+                        </td>
+                        <td class="px-6 py-4 flex gap-2">
+                            <select onchange="changeUserRole('${u.id}', this.value)" class="border border-gray-300 rounded px-2 py-1 text-sm bg-white cursor-pointer focus:outline-none">
+                                <option value="" disabled selected>Autorizar como...</option>
+                                <option value="admin">Administrador</option>
+                                <option value="lector">Solo Lector</option>
+                                <option value="pendiente">Bloquear (Pendiente)</option>
+                            </select>
+                            <button onclick="deleteUser('${u.id}')" class="px-3 py-1 bg-red-100 hover:bg-red-200 text-red-700 rounded font-bold text-xs">❌ Rechazar</button>
+                        </td>
+                    </tr>
+                `).join('');
+            });
+        }
+
+        async function changeUserRole(uid, newRole) {
+            if(!newRole) return;
+            if(confirm(`¿Confirmas autorizar a este usuario como ${newRole.toUpperCase()}?`)) {
+                await db.collection('usuarios').doc(uid).update({ rol: newRole });
+                alert("Permisos actualizados.");
+            }
+        }
+
+        async function deleteUser(uid) {
+            if(confirm("¿Estás seguro de RECHAZAR y eliminar a este usuario permanentemente?")) {
+                await db.collection('usuarios').doc(uid).delete();
+                alert("Usuario eliminado.");
+            }
+        }
+
+        // --- MÓDULOS DE INVENTARIO ---
+        function updateArticleSelect() {
+            const select = document.getElementById('articleSelect'); const type = document.getElementById('movementType').value;
+            const btn = document.getElementById('btnSaveMovement');
+            select.innerHTML = '<option value="">Seleccione el equipo...</option>';
+            select.disabled = !type; btn.disabled = !type;
+            if (type) articles.forEach(a => select.innerHTML += `<option value="${a.id}">${a.name} (Stock: ${a.stock || 0})</option>`);
+        }
+
+        async function handleMovement() {
+            const btn = document.getElementById('btnSaveMovement');
+            btn.textContent = "Guardando..."; btn.disabled = true;
+
+            try {
+                const articleId = document.getElementById('articleSelect').value;
+                const mType = document.getElementById('movementType').value;
+                const qty = parseInt(document.getElementById('quantity').value);
+                const resp = document.getElementById('responsible').value;
+                const obs = document.getElementById('observations').value;
+
+                const article = articles.find(a => a.id === articleId);
+                if (mType === 'salida' && (article.stock || 0) < qty) { alert('Stock insuficiente.'); return; }
+
+                await db.collection('articles').doc(articleId).update({ stock: firebase.firestore.FieldValue.increment(mType === 'ingreso' ? qty : -qty) });
+                await db.collection('movements').add({
+                    articleId: articleId, articleName: article.name, type: mType,
+                    quantity: qty, responsible: resp, observations: obs || '',
+                    timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+                    registeredBy: currentUser.email
+                });
+                
+                document.getElementById('movementForm').reset(); updateArticleSelect(); alert('Movimiento guardado exitosamente.');
+            } catch (error) { alert('Error al guardar el movimiento.'); } 
+            finally { btn.textContent = "Guardar Registro"; btn.disabled = false; }
+        }
+
+        function updateMovementsTable() {
+            const filter = document.getElementById('movementFilter').value;
+            const filtered = movements.filter(m => filter === 'all' || m.type === filter);
+            document.getElementById('movementsTable').innerHTML = filtered.map(m => `
+                <tr class="hover:bg-slate-50 border-b">
+                    <td class="px-6 py-3 text-sm">${m.timestamp ? m.timestamp.toDate().toLocaleString() : 'Cargando...'}</td>
+                    <td class="px-6 py-3 font-bold text-gray-900 text-sm">${m.articleName}</td>
+                    <td class="px-6 py-3 font-bold ${m.type==='ingreso'?'text-green-600':'text-red-600'}">${m.type==='ingreso'?'+':'-'}${m.quantity}</td>
+                    <td class="px-6 py-3 text-sm"><span class="px-2 py-1 rounded text-xs font-bold ${m.type==='ingreso'?'bg-green-100 text-green-800':'bg-red-100 text-red-800'} uppercase">${m.type}</span></td>
+                    <td class="px-6 py-3 text-sm font-semibold text-gray-700">${m.responsible}</td>
+                    <td class="px-6 py-3 text-xs text-gray-500">${m.registeredBy || 'Sistema'}</td>
+                </tr>
+            `).join('') || '<tr><td colspan="6" class="px-6 py-8 text-center text-gray-500">No hay registros</td></tr>';
+        }
+
+        async function handleArticle() {
+            const btn = document.getElementById('btnSaveArticle');
+            btn.textContent = "Guardando..."; btn.disabled = true;
+
+            try {
+                const payload = {
+                    name: document.getElementById('articleName').value, brand: document.getElementById('brand').value || '', 
+                    model: document.getElementById('model').value || '', series: document.getElementById('series').value || '',
+                    sapNumber: document.getElementById('sapNumber').value || '', stock: parseInt(document.getElementById('initialStock').value), 
+                    minStock: parseInt(document.getElementById('minStock').value)
+                };
+                const id = document.getElementById('articleId').value;
+                if(id) await db.collection('articles').doc(id).update(payload);
+                else await db.collection('articles').add({...payload, createdAt: firebase.firestore.FieldValue.serverTimestamp()});
+                resetArticleForm(); alert('Guardado con éxito');
+            } catch(error) { alert('Error al guardar el equipo.'); } 
+            finally { btn.textContent = "Guardar"; btn.disabled = false; }
+        }
+
+        function updateCatalogList() {
+            const adminButtons = (id) => currentUserRole === 'admin' ? `
+                <div class="flex gap-2 mt-2 pt-2 border-t border-gray-100">
+                    <button onclick="editArticle('${id}')" class="px-3 py-1 bg-gray-100 text-gray-700 text-xs font-bold rounded">Editar</button>
+                    <button onclick="if(confirm('¿Eliminar equipo por completo?')) db.collection('articles').doc('${id}').delete()" class="px-3 py-1 bg-red-50 text-red-600 text-xs font-bold rounded">Borrar</button>
+                </div>` : '';
+
+            document.getElementById('catalogList').innerHTML = articles.map(a => `
+                <div class="border border-gray-200 p-4 rounded bg-white shadow-sm flex flex-col justify-between">
+                    <div>
+                        <div class="flex justify-between items-start mb-2">
+                            <h4 class="font-bold text-[#003366] text-sm">${a.name}</h4>
+                            <div class="text-right"><span class="block text-sm font-bold ${a.stock < a.minStock ? 'text-red-600' : 'text-green-600'}">${a.stock || 0} Und</span></div>
+                        </div>
+                        <div class="text-xs text-gray-500 space-y-1"><div>M/M: ${a.brand||'-'} ${a.model||'-'}</div><div>SAP: ${a.sapNumber||'-'} | Serie: ${a.series||'-'}</div></div>
+                    </div>
+                    ${adminButtons(a.id)}
+                </div>
+            `).join('');
+        }
+
+        function editArticle(id) {
+            const a = articles.find(x => x.id === id); if(!a) return;
+            document.getElementById('articleId').value = id; document.getElementById('articleName').value = a.name; 
+            document.getElementById('brand').value = a.brand; document.getElementById('model').value = a.model; 
+            document.getElementById('series').value = a.series; document.getElementById('sapNumber').value = a.sapNumber;
+            document.getElementById('initialStock').value = a.stock; document.getElementById('minStock').value = a.minStock;
+            document.getElementById('cancelEdit').classList.remove('hidden'); document.getElementById('catalogFormTitle').textContent = 'Editar Equipo';
+        }
+
+        function resetArticleForm() { document.getElementById('catalogForm').reset(); document.getElementById('articleId').value = ''; document.getElementById('cancelEdit').classList.add('hidden'); document.getElementById('catalogFormTitle').textContent = 'Agregar Equipo'; }
+
+        function updateDashboard() {
+            document.getElementById('totalItems').textContent = articles.length;
+            document.getElementById('alertCount').textContent = articles.filter(a => (a.stock || 0) < a.minStock).length;
+            document.getElementById('todayMovements').textContent = movements.filter(m => {
+                if(!m.timestamp) return true; return m.timestamp.toDate() >= new Date().setHours(0,0,0,0);
+            }).length;
+        }
+
+        function setupTabs() {
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    document.querySelectorAll('.tab-content').forEach(c => c.classList.add('hidden'));
+                    document.querySelectorAll('.tab-btn').forEach(b => { b.classList.remove('text-[#003366]', 'bg-slate-100'); b.classList.add('text-gray-500'); });
+                    document.getElementById(btn.dataset.tab).classList.remove('hidden');
+                    btn.classList.remove('text-gray-500'); btn.classList.add('text-[#003366]', 'bg-slate-100');
+                });
+            });
+        }
+        
+        // Excel (Solo Admin)
+        function downloadTemplate() { const ws = XLSX.utils.aoa_to_sheet([["Nombre", "Marca", "Modelo", "Serie", "SAP", "Stock Inicial", "Alerta Minima"]]); const wb = XLSX.utils.book_new(); XLSX.utils.book_append_sheet(wb, ws, "Inventario"); XLSX.writeFile(wb, "Plantilla_Inventario_Chinalco.xlsx"); }
+        function importExcel(event) {
+            const file = event.target.files[0]; if(!file) return;
+            const reader = new FileReader();
+            reader.onload = async function(e) {
+                try {
+                    const json = XLSX.utils.sheet_to_json(XLSX.read(new Uint8Array(e.target.result), {type: 'array'}).Sheets[XLSX.read(new Uint8Array(e.target.result), {type: 'array'}).SheetNames[0]]);
+                    if(!confirm(`¿Importar ${json.length} equipos?`)) return;
+                    for(let row of json) { if(row.Nombre) await db.collection('articles').add({ name: row.Nombre, brand: row.Marca||'', model: row.Modelo||'', series: row.Serie||'', sapNumber: row.SAP||'', stock: parseInt(row['Stock Inicial'])||0, minStock: parseInt(row['Alerta Minima'])||0, createdAt: firebase.firestore.FieldValue.serverTimestamp() }); }
+                    alert(`✅ Excel procesado.`); document.getElementById('excelUpload').value = '';
+                } catch(error) { alert("Error al leer Excel."); }
+            }; reader.readAsArrayBuffer(file);
+        }
+    </script>
+</body>
+</html>
