@@ -34,11 +34,18 @@
                 </div>
                 <div>
                     <label class="block text-sm font-bold text-gray-700 mb-1">Contraseña</label>
-                    <input type="password" id="loginPassword" class="w-full px-4 py-2 border border-gray-300 rounded focus:ring-1 focus:ring-[#003366]" required>
+                    <div class="relative">
+                        <input type="password" id="loginPassword" class="w-full px-4 py-2 border border-gray-300 rounded focus:ring-1 focus:ring-[#003366] pr-10" required>
+                        <button type="button" onclick="togglePassword('loginPassword', 'eyeLogin')" class="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-500 hover:text-gray-700">
+                            <svg id="eyeLogin" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                            </svg>
+                        </button>
+                    </div>
                 </div>
                 <button type="submit" id="btnLogin" class="w-full bg-[#003366] hover:bg-[#002244] text-white py-2 px-4 rounded font-bold transition-colors">Ingresar</button>
                 <div class="text-center mt-4">
-                    <button type="button" onclick="toggleAuthMode()" class="text-[#0099cc] text-sm hover:underline font-semibold">¿No tienes cuenta? Solicitar acceso</button>
+                    <button type="button" id="btnShowRegister" class="text-[#0099cc] text-sm hover:underline font-semibold">¿No tienes cuenta? Solicitar acceso</button>
                 </div>
             </form>
 
@@ -53,11 +60,18 @@
                 </div>
                 <div>
                     <label class="block text-sm font-bold text-gray-700 mb-1">Contraseña (Mín. 6 caracteres)</label>
-                    <input type="password" id="regPassword" class="w-full px-4 py-2 border border-gray-300 rounded focus:ring-1 focus:ring-[#003366]" required>
+                    <div class="relative">
+                        <input type="password" id="regPassword" class="w-full px-4 py-2 border border-gray-300 rounded focus:ring-1 focus:ring-[#003366] pr-10" required>
+                        <button type="button" onclick="togglePassword('regPassword', 'eyeReg')" class="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-500 hover:text-gray-700">
+                            <svg id="eyeReg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                            </svg>
+                        </button>
+                    </div>
                 </div>
                 <button type="submit" id="btnRegister" class="w-full bg-[#0099cc] hover:bg-[#007799] text-white py-2 px-4 rounded font-bold transition-colors">Crear Cuenta</button>
                 <div class="text-center mt-4">
-                    <button type="button" onclick="toggleAuthMode()" class="text-gray-500 text-sm hover:underline font-semibold">Volver al inicio de sesión</button>
+                    <button type="button" id="btnShowLogin" class="text-gray-500 text-sm hover:underline font-semibold">Volver al inicio de sesión</button>
                 </div>
             </form>
         </div>
@@ -71,7 +85,7 @@
                 Por favor, envía un correo solicitando tu habilitación a:<br>
                 <a href="mailto:supervision.rescate@gmail.com" class="font-bold text-blue-600 underline text-lg">supervision.rescate@gmail.com</a>
             </div>
-            <button onclick="logout()" class="bg-[#003366] hover:bg-[#002244] text-white py-2 px-6 rounded font-bold transition-colors">Volver a la portada</button>
+            <button id="btnLogoutPending" class="bg-[#003366] hover:bg-[#002244] text-white py-2 px-6 rounded font-bold transition-colors">Cerrar sesión / Volver</button>
         </div>
     </div>
 
@@ -92,7 +106,7 @@
                         <span id="userNameBadge" class="hidden md:inline-block text-sm font-semibold text-gray-200"></span>
                         <span id="userRoleBadge" class="px-2 py-1 bg-[#0099cc] text-white rounded text-xs font-bold uppercase tracking-wider">Lector</span>
                         <span id="userCount" class="px-2 sm:px-3 py-1 bg-[#002244] text-white border border-[#0099cc] rounded text-sm font-medium">0 en línea</span>
-                        <button onclick="logout()" class="p-1.5 bg-red-600 hover:bg-red-700 rounded text-white transition-colors" title="Cerrar Sesión">
+                        <button id="btnLogoutMain" class="p-1.5 bg-red-600 hover:bg-red-700 rounded text-white transition-colors" title="Cerrar Sesión">
                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path></svg>
                         </button>
                     </div>
@@ -102,18 +116,10 @@
 
         <div class="max-w-7xl mx-auto px-4 py-8 sm:px-6 lg:px-8">
             <div class="flex flex-wrap bg-white rounded-lg shadow-sm border border-gray-200 p-1 mb-8">
-                <button class="tab-btn px-6 py-3 font-semibold text-sm uppercase tracking-wide flex-1 min-w-[120px] rounded transition-colors text-[#003366] bg-slate-100" data-tab="dashboard">
-                    📊 Resumen e Historial
-                </button>
-                <button id="tabMovements" class="tab-btn admin-only hidden px-6 py-3 font-semibold text-sm uppercase tracking-wide flex-1 min-w-[120px] rounded transition-colors text-gray-500 hover:bg-slate-50" data-tab="movements">
-                    🔄 Ingresos / Salidas
-                </button>
-                <button class="tab-btn px-6 py-3 font-semibold text-sm uppercase tracking-wide flex-1 min-w-[120px] rounded transition-colors text-gray-500 hover:bg-slate-50" data-tab="catalog">
-                    📦 Catálogo
-                </button>
-                <button id="tabUsers" class="tab-btn admin-only hidden px-6 py-3 font-semibold text-sm uppercase tracking-wide flex-1 min-w-[120px] rounded transition-colors text-gray-500 hover:bg-slate-50" data-tab="users">
-                    👥 Usuarios
-                </button>
+                <button class="tab-btn px-6 py-3 font-semibold text-sm uppercase tracking-wide flex-1 min-w-[120px] rounded transition-colors text-[#003366] bg-slate-100" data-tab="dashboard">📊 Resumen e Historial</button>
+                <button class="tab-btn admin-only hidden px-6 py-3 font-semibold text-sm uppercase tracking-wide flex-1 min-w-[120px] rounded transition-colors text-gray-500 hover:bg-slate-50" data-tab="movements">🔄 Ingresos / Salidas</button>
+                <button class="tab-btn px-6 py-3 font-semibold text-sm uppercase tracking-wide flex-1 min-w-[120px] rounded transition-colors text-gray-500 hover:bg-slate-50" data-tab="catalog">📦 Catálogo</button>
+                <button class="tab-btn admin-only hidden px-6 py-3 font-semibold text-sm uppercase tracking-wide flex-1 min-w-[120px] rounded transition-colors text-gray-500 hover:bg-slate-50" data-tab="users">👥 Usuarios</button>
             </div>
 
             <div id="dashboard" class="tab-content fade-in">
@@ -135,7 +141,7 @@
                 <div class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
                     <div class="p-6 border-b border-gray-200 flex flex-col sm:flex-row justify-between items-center bg-slate-50 gap-4">
                         <h2 class="text-lg font-bold text-[#003366] uppercase">📋 Historial de Movimientos</h2>
-                        <select id="movementFilter" onchange="updateMovementsTable()" class="px-3 py-1.5 border border-gray-300 rounded text-sm focus:outline-none focus:border-[#003366] w-full sm:w-auto">
+                        <select id="movementFilter" class="px-3 py-1.5 border border-gray-300 rounded text-sm focus:outline-none focus:border-[#003366] w-full sm:w-auto">
                             <option value="all">Todos los movimientos</option>
                             <option value="ingreso">Solo Ingresos (+)</option>
                             <option value="salida">Solo Salidas (-)</option>
@@ -165,33 +171,25 @@
                 <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6 mb-8 max-w-4xl mx-auto">
                     <h2 class="text-lg font-bold text-[#003366] mb-4 border-b pb-2">📊 Carga Masiva de Movimientos (Excel)</h2>
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                        <button onclick="downloadMovementTemplate()" class="bg-slate-600 hover:bg-slate-700 text-white py-2 px-4 rounded font-bold text-sm transition-colors w-full">
-                            ⬇️ Descargar Plantilla
-                        </button>
-                        
+                        <button id="btnDownloadMovementExcel" class="bg-slate-600 hover:bg-slate-700 text-white py-2 px-4 rounded font-bold text-sm transition-colors w-full">⬇️ Descargar Plantilla</button>
                         <div class="w-full relative">
-                            <input type="file" id="excelUploadIngreso" accept=".xlsx, .xls" class="hidden" onchange="importExcelMovements(event, 'ingreso')">
-                            <button onclick="document.getElementById('excelUploadIngreso').click()" class="bg-green-600 hover:bg-green-700 text-white py-2 px-4 rounded font-bold text-sm transition-colors w-full">
-                                ⬆️ Subir Excel INGRESOS (+)
-                            </button>
+                            <input type="file" id="excelUploadIngreso" accept=".xlsx, .xls" class="hidden">
+                            <button onclick="document.getElementById('excelUploadIngreso').click()" class="bg-green-600 hover:bg-green-700 text-white py-2 px-4 rounded font-bold text-sm transition-colors w-full">⬆️ Subir Excel INGRESOS (+)</button>
                         </div>
-
                         <div class="w-full relative">
-                            <input type="file" id="excelUploadSalida" accept=".xlsx, .xls" class="hidden" onchange="importExcelMovements(event, 'salida')">
-                            <button onclick="document.getElementById('excelUploadSalida').click()" class="bg-red-600 hover:bg-red-700 text-white py-2 px-4 rounded font-bold text-sm transition-colors w-full">
-                                ⬆️ Subir Excel SALIDAS (-)
-                            </button>
+                            <input type="file" id="excelUploadSalida" accept=".xlsx, .xls" class="hidden">
+                            <button onclick="document.getElementById('excelUploadSalida').click()" class="bg-red-600 hover:bg-red-700 text-white py-2 px-4 rounded font-bold text-sm transition-colors w-full">⬆️ Subir Excel SALIDAS (-)</button>
                         </div>
                     </div>
                 </div>
 
                 <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-8 max-w-4xl mx-auto">
                     <h2 class="text-2xl font-bold text-[#003366] mb-6 border-b pb-4">Registrar Movimiento Individual</h2>
-                    <form id="movementForm" class="space-y-5" onsubmit="event.preventDefault(); handleMovement();">
+                    <form id="movementForm" class="space-y-5">
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div>
                                 <label class="block text-sm font-bold text-gray-700 mb-1">Tipo de Operación</label>
-                                <select id="movementType" onchange="updateArticleSelect()" class="w-full px-4 py-2 border rounded focus:ring-1 focus:ring-[#003366] bg-slate-50" required>
+                                <select id="movementType" class="w-full px-4 py-2 border rounded focus:ring-1 focus:ring-[#003366] bg-slate-50" required>
                                     <option value="">Seleccione el tipo...</option>
                                     <option value="ingreso">🟢 INGRESO (Sumar al almacén)</option>
                                     <option value="salida">🔴 SALIDA (Asignar a terreno/persona)</option>
@@ -205,12 +203,12 @@
                         
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div>
-                                <label class="block text-sm font-bold text-gray-700 mb-1">Equipo / Existencia</label>
-                                <select id="articleSelect" onchange="handleArticleSelectChange()" class="w-full px-4 py-2 border rounded focus:ring-1 focus:ring-[#003366] bg-slate-50 disabled:bg-gray-100" disabled required></select>
+                                <label class="block text-sm font-bold text-gray-700 mb-1">Nombre del Equipo</label>
+                                <select id="movementNameSelect" class="w-full px-4 py-2 border rounded focus:ring-1 focus:ring-[#003366] bg-slate-50 disabled:bg-gray-100" disabled required></select>
                             </div>
                             <div>
-                                <label class="block text-sm font-bold text-gray-700 mb-1">Modelo (Auto-completado)</label>
-                                <input type="text" id="movementModel" class="w-full px-4 py-2 border rounded bg-gray-100 text-gray-600" readonly>
+                                <label class="block text-sm font-bold text-gray-700 mb-1">Modelo Específico</label>
+                                <select id="movementModelSelect" class="w-full px-4 py-2 border rounded focus:ring-1 focus:ring-[#003366] bg-slate-50 disabled:bg-gray-100" disabled required></select>
                             </div>
                         </div>
 
@@ -238,15 +236,15 @@
                 
                 <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6 mb-6">
                     <h2 class="text-lg font-bold text-[#003366] mb-4">🔍 Buscador de Equipos</h2>
-                    <input type="text" id="searchCatalog" onkeyup="updateCatalogList()" placeholder="Buscar por Nombre, Marca, Modelo o N° de Parte..." class="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:border-[#0099cc] focus:outline-none text-lg">
+                    <input type="text" id="searchCatalog" placeholder="Buscar palabras clave (Ej: Petzl Vertex 1234)..." class="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:border-[#0099cc] focus:outline-none text-lg">
                 </div>
 
                 <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6 mb-6 admin-only hidden">
                     <h2 class="text-lg font-bold text-[#003366] mb-4 border-b pb-2">📊 Carga Masiva de Catálogo (Excel)</h2>
                     <div class="flex flex-col md:flex-row gap-4 items-center">
-                        <button onclick="downloadCatalogTemplate()" class="bg-green-600 hover:bg-green-700 text-white py-2 px-4 rounded font-bold text-sm transition-colors flex-1 w-full">⬇️ 1. Descargar Plantilla Catálogo</button>
+                        <button id="btnDownloadCatalogExcel" class="bg-green-600 hover:bg-green-700 text-white py-2 px-4 rounded font-bold text-sm transition-colors flex-1 w-full">⬇️ 1. Descargar Plantilla Catálogo</button>
                         <div class="flex-1 w-full relative">
-                            <input type="file" id="excelUploadCatalog" accept=".xlsx, .xls" class="hidden" onchange="importExcelCatalog(event)">
+                            <input type="file" id="excelUploadCatalog" accept=".xlsx, .xls" class="hidden">
                             <button onclick="document.getElementById('excelUploadCatalog').click()" class="bg-[#0099cc] hover:bg-[#007799] text-white py-2 px-4 rounded font-bold text-sm transition-colors w-full">⬆️ 2. Subir Archivo Excel</button>
                         </div>
                     </div>
@@ -255,9 +253,9 @@
                 <div class="flex flex-col lg:flex-row gap-6">
                     <div class="lg:w-1/3 bg-white rounded-lg shadow-sm border border-gray-200 p-6 h-fit admin-only hidden">
                         <h2 class="text-xl font-bold text-[#003366] mb-6 border-b pb-4" id="catalogFormTitle">Agregar / Editar Equipo</h2>
-                        <form id="catalogForm" class="space-y-4" onsubmit="event.preventDefault(); handleArticle();">
+                        <form id="catalogForm" class="space-y-4">
                             <input type="hidden" id="articleId">
-                            <div><label class="block text-xs font-bold text-gray-700 mb-1">EQUIPO / ACCESORIO / HERRAMIENTA *</label><input type="text" id="articleName" class="w-full px-3 py-2 border rounded focus:border-[#0099cc] focus:outline-none" required></div>
+                            <div><label class="block text-xs font-bold text-gray-700 mb-1">EQUIPO / ACCESORIO *</label><input type="text" id="articleName" class="w-full px-3 py-2 border rounded focus:border-[#0099cc] focus:outline-none" required></div>
                             <div class="grid grid-cols-2 gap-3">
                                 <div><label class="block text-xs font-bold text-gray-700 mb-1">MARCA</label><input type="text" id="brand" class="w-full px-3 py-2 border rounded focus:outline-none focus:border-[#0099cc]"></div>
                                 <div><label class="block text-xs font-bold text-gray-700 mb-1">MODELO</label><input type="text" id="model" class="w-full px-3 py-2 border rounded focus:outline-none focus:border-[#0099cc]"></div>
@@ -270,10 +268,10 @@
                                 <div><label class="block text-xs font-bold text-gray-700 mb-1">CANT. ACTUAL *</label><input type="number" id="initialStock" class="w-full px-3 py-2 border rounded focus:outline-none focus:border-[#0099cc]" required></div>
                                 <div><label class="block text-xs font-bold text-gray-700 mb-1">ALERTA MÍNIMA *</label><input type="number" id="minStock" class="w-full px-3 py-2 border rounded focus:outline-none focus:border-[#0099cc]" required></div>
                             </div>
-                            <div><label class="block text-xs font-bold text-gray-700 mb-1">OBSERVACIONES / COMENTARIOS</label><textarea id="catalogObs" rows="2" class="w-full px-3 py-2 border rounded focus:outline-none focus:border-[#0099cc]"></textarea></div>
+                            <div><label class="block text-xs font-bold text-gray-700 mb-1">OBSERVACIONES</label><textarea id="catalogObs" rows="2" class="w-full px-3 py-2 border rounded focus:outline-none focus:border-[#0099cc]"></textarea></div>
                             <div class="flex gap-2 pt-4">
                                 <button type="submit" id="btnSaveArticle" class="flex-1 bg-[#003366] hover:bg-[#002244] text-white py-2 px-4 rounded font-bold text-sm transition-colors">Guardar</button>
-                                <button type="button" id="cancelEdit" class="flex-1 bg-gray-200 text-gray-800 rounded font-bold hidden text-sm hover:bg-gray-300" onclick="resetArticleForm()">Cancelar</button>
+                                <button type="button" id="cancelEdit" class="flex-1 bg-gray-200 text-gray-800 rounded font-bold hidden text-sm hover:bg-gray-300">Cancelar</button>
                             </div>
                         </form>
                     </div>
@@ -300,6 +298,7 @@
                                 <tr>
                                     <th class="px-6 py-3 text-left text-xs font-bold text-gray-600 uppercase">Nombre</th>
                                     <th class="px-6 py-3 text-left text-xs font-bold text-gray-600 uppercase">Correo</th>
+                                    <th class="px-6 py-3 text-left text-xs font-bold text-gray-600 uppercase">Fecha Solicitud</th>
                                     <th class="px-6 py-3 text-left text-xs font-bold text-gray-600 uppercase">Rol Actual</th>
                                     <th class="px-6 py-3 text-left text-xs font-bold text-gray-600 uppercase">Autorización</th>
                                 </tr>
@@ -313,7 +312,7 @@
     </div>
 
     <script>
-        // 1. CONFIGURACIÓN
+        // --- 1. CONFIGURACIÓN FIREBASE ---
         const firebaseConfig = {
             apiKey: "AIzaSyCJPSncnUWIua1CiAceFbv1tmClpRKjj2U",
             authDomain: "gestion-de-inventarios-rescate.firebaseapp.com",
@@ -331,20 +330,67 @@
         let currentUserRole = 'lector'; 
         let articles = [], movements = [], usersData = [];
 
-        // 2. FUNCIONES DE AUTENTICACIÓN
+        // Función para mostrar/ocultar contraseña
+        function togglePassword(inputId, iconId) {
+            const input = document.getElementById(inputId);
+            const icon = document.getElementById(iconId);
+            if (input.type === "password") {
+                input.type = "text";
+                icon.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21" />';
+            } else {
+                input.type = "password";
+                icon.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />';
+            }
+        }
+
+        // --- 2. PROTECCIÓN GLOBAL DE EVENTOS ---
+        document.addEventListener('DOMContentLoaded', () => {
+            document.getElementById('btnShowRegister').addEventListener('click', toggleAuthMode);
+            document.getElementById('btnShowLogin').addEventListener('click', toggleAuthMode);
+            
+            document.getElementById('loginForm').addEventListener('submit', handleLogin);
+            document.getElementById('registerForm').addEventListener('submit', handleRegister);
+            
+            document.getElementById('btnLogoutPending').addEventListener('click', () => auth.signOut());
+            document.getElementById('btnLogoutMain').addEventListener('click', () => auth.signOut());
+
+            // Listeners de Movimientos
+            document.getElementById('movementForm').addEventListener('submit', handleMovement);
+            document.getElementById('movementType').addEventListener('change', updateMovementNameSelect);
+            document.getElementById('movementNameSelect').addEventListener('change', updateModelSelect);
+            document.getElementById('movementModelSelect').addEventListener('change', checkMovementForm);
+            document.getElementById('movementFilter').addEventListener('change', updateMovementsTable);
+
+            // Listeners Catálogo
+            document.getElementById('catalogForm').addEventListener('submit', handleArticle);
+            document.getElementById('cancelEdit').addEventListener('click', resetArticleForm);
+            document.getElementById('searchCatalog').addEventListener('keyup', updateCatalogList);
+
+            // Excel Botones
+            document.getElementById('btnDownloadCatalogExcel').addEventListener('click', downloadCatalogTemplate);
+            document.getElementById('excelUploadCatalog').addEventListener('change', importExcelCatalog);
+            
+            document.getElementById('btnDownloadMovementExcel').addEventListener('click', downloadMovementTemplate);
+            document.getElementById('excelUploadIngreso').addEventListener('change', (e) => importExcelMovements(e, 'ingreso'));
+            document.getElementById('excelUploadSalida').addEventListener('change', (e) => importExcelMovements(e, 'salida'));
+
+            setupTabs();
+        });
+
+        // --- 3. FUNCIONES DE AUTENTICACIÓN ---
         function toggleAuthMode() {
             document.getElementById('loginForm').classList.toggle('hidden');
             document.getElementById('registerForm').classList.toggle('hidden');
         }
 
-        async function handleLogin() {
+        async function handleLogin(e) {
+            if(e) e.preventDefault();
             const email = document.getElementById('loginEmail').value.trim().toLowerCase();
             const pass = document.getElementById('loginPassword').value;
             const btn = document.getElementById('btnLogin');
             btn.textContent = "Verificando..."; btn.disabled = true;
 
             try {
-                // Cuenta Maestra Secreta
                 if (email === 'supervision.rescate@gmail.com' && pass === 'Supervisionrescate11!') {
                     try { 
                         await auth.signInWithEmailAndPassword(email, pass); 
@@ -354,44 +400,41 @@
                                 const userCred = await auth.createUserWithEmailAndPassword(email, pass);
                                 await userCred.user.updateProfile({ displayName: 'Supervisión Rescate' });
                             } catch (createErr) {
-                                alert("Error creando cuenta maestra. Asegúrate de tener activada la autenticación por Correo/Contraseña en Firebase.");
+                                alert("Error creando cuenta maestra. Activa 'Correo/Contraseña' en Firebase.");
                             }
-                        } else alert("❌ Error: " + err.message);
+                        } else alert("❌ Error de Firebase: " + err.message);
                     }
                 } else {
-                    // Login Normal
                     await auth.signInWithEmailAndPassword(email, pass);
                 }
             } catch(error) {
-                if(error.code === 'auth/operation-not-allowed') alert("❌ ¡ALERTA! Debes habilitar 'Correo electrónico/Contraseña' en la sección Authentication de Firebase.");
+                if(error.code === 'auth/operation-not-allowed') alert("❌ Activa 'Correo electrónico/Contraseña' en Firebase.");
                 else alert("❌ Correo o contraseña incorrectos.");
             } finally { 
                 btn.textContent = "Ingresar"; btn.disabled = false; 
             }
         }
 
-        async function handleRegister() {
+        async function handleRegister(e) {
+            if(e) e.preventDefault();
             const name = document.getElementById('regName').value;
             const email = document.getElementById('regEmail').value.trim();
             const pass = document.getElementById('regPassword').value;
             const btn = document.getElementById('btnRegister');
-            btn.textContent = "Creando Cuenta..."; btn.disabled = true;
+            btn.textContent = "Creando..."; btn.disabled = true;
 
             try {
                 const userCredential = await auth.createUserWithEmailAndPassword(email, pass);
                 await userCredential.user.updateProfile({ displayName: name });
             } catch (error) {
                 if(error.code === 'auth/email-already-in-use') alert("Este correo ya está registrado.");
-                else if(error.code === 'auth/operation-not-allowed') alert("❌ Activa 'Correo electrónico/Contraseña' en Firebase.");
                 else alert("Error al registrarse.");
             } finally { 
                 btn.textContent = "Crear Cuenta"; btn.disabled = false; 
             }
         }
 
-        function logout() { auth.signOut(); }
-
-        // 3. OBSERVADOR DE SESIÓN
+        // --- 4. OBSERVADOR DE SESIÓN Y ROLES ---
         auth.onAuthStateChanged(async (user) => {
             if (user) {
                 currentUser = user;
@@ -413,8 +456,7 @@
                         else { currentUserRole = data.rol; startApp(data); }
                     }
                 } catch(err) { 
-                    console.error("Fallo de Base de Datos:", err);
-                    alert("🚨 ERROR DE PERMISOS DE FIREBASE:\n\nTu cuenta inició sesión, pero Firebase bloqueó la lectura de datos.\nVe a Firestore Database -> Reglas y asegúrate de que diga 'allow read, write: if true;'");
+                    console.error(err); alert("🚨 FIREBASE BLOQUEADO: Revisa que tus reglas en Firestore sean 'allow read, write: if true;'");
                     auth.signOut(); 
                 }
             } else {
@@ -422,7 +464,6 @@
             }
         });
 
-        // Controladores de Vistas
         function showAuthScreen() { document.getElementById('authScreen').classList.remove('hidden'); document.getElementById('pendingScreen').classList.add('hidden'); document.getElementById('mainApp').classList.add('hidden'); }
         function showPendingScreen() { document.getElementById('authScreen').classList.add('hidden'); document.getElementById('pendingScreen').classList.remove('hidden'); document.getElementById('mainApp').classList.add('hidden'); }
 
@@ -440,7 +481,6 @@
                 document.getElementById('catalogContainerClass').classList.replace('lg:w-2/3', 'w-full');
             }
             trackOnlineStatus(); loadArticles(); loadMovements(); if (userData.rol === 'admin') loadUsersList();
-            setupTabs();
         }
 
         // --- SISTEMA EN LÍNEA ---
@@ -457,11 +497,11 @@
             });
         }
 
-        // --- CARGA DE DATOS ---
+        // --- CARGA Y RENDERIZADO DE DATOS ---
         function loadArticles() {
             db.collection('articles').onSnapshot(snapshot => {
                 articles = []; snapshot.forEach(doc => articles.push({ id: doc.id, ...doc.data() }));
-                if(currentUserRole === 'admin') updateArticleSelect(); 
+                if(currentUserRole === 'admin') updateMovementNameSelect(); 
                 updateCatalogList(); updateDashboard();
             });
         }
@@ -474,12 +514,15 @@
         }
 
         function loadUsersList() {
-            db.collection('usuarios').orderBy('nombre').onSnapshot(snapshot => {
+            db.collection('usuarios').orderBy('creado', 'desc').onSnapshot(snapshot => {
                 usersData = []; snapshot.forEach(doc => usersData.push({ id: doc.id, ...doc.data() }));
-                document.getElementById('personnelList').innerHTML = usersData.map(u => `
+                document.getElementById('personnelList').innerHTML = usersData.map(u => {
+                    const fecha = u.creado ? u.creado.toDate().toLocaleString('es-PE') : 'N/A';
+                    return `
                     <tr class="border-b hover:bg-slate-50">
                         <td class="px-6 py-4 font-bold text-sm">${u.nombre}</td>
                         <td class="px-6 py-4 text-sm text-gray-600">${u.email}</td>
+                        <td class="px-6 py-4 text-xs text-gray-500">${fecha}</td>
                         <td class="px-6 py-4 text-sm font-bold uppercase ${u.rol==='admin'?'text-red-600':u.rol==='lector'?'text-blue-600':'text-orange-500'}">
                             ${u.rol === 'pendiente' ? '⚠️ PENDIENTE' : u.rol}
                         </td>
@@ -490,10 +533,10 @@
                                 <option value="lector">Solo Lector</option>
                                 <option value="pendiente">Bloquear (Pendiente)</option>
                             </select>
-                            <button onclick="window.deleteUser('${u.id}')" class="px-3 py-1 bg-red-100 hover:bg-red-200 text-red-700 rounded font-bold text-xs transition-colors">❌ Rechazar</button>
+                            <button onclick="window.deleteUser('${u.id}')" class="px-3 py-1 bg-red-100 hover:bg-red-200 text-red-700 rounded font-bold text-xs">❌ Eliminar</button>
                         </td>
-                    </tr>
-                `).join('');
+                    </tr>`;
+                }).join('');
             });
         }
 
@@ -505,35 +548,58 @@
         }
         window.deleteUser = async function(uid) {
             if(confirm("¿Estás seguro de RECHAZAR y eliminar a este usuario permanentemente?")) {
-                await db.collection('usuarios').doc(uid).delete(); alert("Usuario eliminado.");
+                await db.collection('usuarios').doc(uid).delete(); alert("Usuario eliminado de la base de datos.");
             }
         }
 
-        // --- MÓDULOS DE INVENTARIO ---
-        function updateArticleSelect() {
-            const select = document.getElementById('articleSelect'); const type = document.getElementById('movementType').value;
+        // --- LÓGICA DOBLE DROPDOWN EN MOVIMIENTOS ---
+        function updateMovementNameSelect() {
+            const nameSelect = document.getElementById('movementNameSelect');
+            const modelSelect = document.getElementById('movementModelSelect');
+            const type = document.getElementById('movementType').value;
             const btn = document.getElementById('btnSaveMovement');
-            select.innerHTML = '<option value="">Seleccione el equipo...</option>';
-            select.disabled = !type; btn.disabled = !type;
             
-            // Ordenar alfabéticamente
-            const sorted = [...articles].sort((a,b) => a.name.localeCompare(b.name));
-            if (type) sorted.forEach(a => select.innerHTML += `<option value="${a.id}">${a.name} (Stock: ${a.stock || 0})</option>`);
-            handleArticleSelectChange();
+            nameSelect.innerHTML = '<option value="">Seleccione el equipo...</option>';
+            modelSelect.innerHTML = '<option value="">Primero seleccione el equipo</option>';
+            nameSelect.disabled = !type; modelSelect.disabled = true; btn.disabled = true;
+            
+            if (type) {
+                const uniqueNames = [...new Set(articles.map(a => a.name))].sort((a,b) => a.localeCompare(b));
+                uniqueNames.forEach(name => nameSelect.innerHTML += `<option value="${name}">${name}</option>`);
+            }
         }
 
-        function handleArticleSelectChange() {
-            const id = document.getElementById('articleSelect').value;
-            const art = articles.find(a => a.id === id);
-            document.getElementById('movementModel').value = art ? art.model || 'N/A' : '';
+        function updateModelSelect() {
+            const name = document.getElementById('movementNameSelect').value;
+            const modelSelect = document.getElementById('movementModelSelect');
+            const btn = document.getElementById('btnSaveMovement');
+            
+            modelSelect.innerHTML = '<option value="">Seleccione el modelo...</option>';
+            btn.disabled = true;
+
+            if (name) {
+                modelSelect.disabled = false;
+                const matched = articles.filter(a => a.name === name);
+                matched.forEach(a => {
+                    const text = a.model ? a.model : 'Sin modelo específico';
+                    modelSelect.innerHTML += `<option value="${a.id}">${text} (Stock actual: ${a.stock || 0})</option>`;
+                });
+            } else {
+                modelSelect.disabled = true;
+            }
         }
 
-        async function handleMovement() {
+        function checkMovementForm() {
+            document.getElementById('btnSaveMovement').disabled = !document.getElementById('movementModelSelect').value;
+        }
+
+        async function handleMovement(e) {
+            if(e) e.preventDefault();
             const btn = document.getElementById('btnSaveMovement');
             btn.textContent = "Guardando..."; btn.disabled = true;
 
             try {
-                const articleId = document.getElementById('articleSelect').value;
+                const articleId = document.getElementById('movementModelSelect').value; // Toma el ID exacto del segundo dropdown
                 const mType = document.getElementById('movementType').value;
                 const qty = parseInt(document.getElementById('quantity').value);
                 
@@ -550,9 +616,9 @@
                     timestamp: firebase.firestore.FieldValue.serverTimestamp(), registeredBy: currentUser.email
                 });
                 
-                document.getElementById('movementForm').reset(); updateArticleSelect(); alert('Movimiento guardado exitosamente.');
+                document.getElementById('movementForm').reset(); updateMovementNameSelect(); alert('Movimiento guardado exitosamente.');
             } catch (error) { alert('Error al guardar el movimiento.'); } 
-            finally { btn.textContent = "Guardar Registro Manual"; btn.disabled = false; }
+            finally { btn.textContent = "Guardar Registro Manual"; checkMovementForm(); }
         }
 
         function updateMovementsTable() {
@@ -569,7 +635,9 @@
             `).join('') || '<tr><td colspan="5" class="px-6 py-8 text-center text-gray-500">No hay registros</td></tr>';
         }
 
-        async function handleArticle() {
+        // --- CATÁLOGO ---
+        async function handleArticle(e) {
+            if(e) e.preventDefault();
             const btn = document.getElementById('btnSaveArticle'); btn.textContent = "Guardando..."; btn.disabled = true;
             try {
                 const payload = {
@@ -581,26 +649,25 @@
                 const id = document.getElementById('articleId').value;
                 if(id) await db.collection('articles').doc(id).update(payload);
                 else await db.collection('articles').add({...payload, createdAt: firebase.firestore.FieldValue.serverTimestamp()});
-                resetArticleForm(); alert('Guardado con éxito');
+                resetArticleForm(); alert('Equipo guardado con éxito');
             } catch(error) { alert('Error al guardar el equipo.'); } 
             finally { btn.textContent = "Guardar"; btn.disabled = false; }
         }
 
         function updateCatalogList() {
+            // Buscador Inteligente No Dependiente
             const searchTerm = (document.getElementById('searchCatalog')?.value || '').toLowerCase();
+            const words = searchTerm.split(' ').filter(w => w); // Separa por palabras
             
-            // Filtro universal y Orden Alfabético
-            const filteredAndSorted = articles.filter(a => 
-                (a.name||'').toLowerCase().includes(searchTerm) || 
-                (a.brand||'').toLowerCase().includes(searchTerm) || 
-                (a.model||'').toLowerCase().includes(searchTerm) ||
-                (a.partNumber||'').toLowerCase().includes(searchTerm)
-            ).sort((a,b) => a.name.localeCompare(b.name));
+            const filteredAndSorted = articles.filter(a => {
+                const combinedText = `${a.name||''} ${a.brand||''} ${a.model||''} ${a.partNumber||''} ${a.sapNumber||''}`.toLowerCase();
+                return words.every(word => combinedText.includes(word)); // TODAS las palabras deben coincidir en cualquier campo
+            }).sort((a,b) => a.name.localeCompare(b.name)); // Orden Alfabético Z-A
 
             const adminButtons = (id) => currentUserRole === 'admin' ? `
                 <div class="flex gap-2 mt-4 pt-4 border-t border-gray-200">
-                    <button onclick="window.editArticle('${id}')" class="px-6 py-1 bg-gray-200 hover:bg-gray-300 text-gray-800 text-sm font-bold rounded transition-colors">Editar</button>
-                    <button onclick="if(confirm('¿Eliminar equipo por completo?')) db.collection('articles').doc('${id}').delete()" class="px-6 py-1 bg-red-100 hover:bg-red-200 text-red-700 text-sm font-bold rounded transition-colors">Borrar</button>
+                    <button onclick="window.editArticle('${id}')" class="px-6 py-2 bg-gray-200 hover:bg-gray-300 text-gray-800 text-sm font-bold rounded transition-colors w-full sm:w-auto">Editar</button>
+                    <button onclick="if(confirm('¿Eliminar equipo por completo de la base de datos?')) db.collection('articles').doc('${id}').delete()" class="px-6 py-2 bg-red-100 hover:bg-red-200 text-red-700 text-sm font-bold rounded transition-colors w-full sm:w-auto">Borrar Equipo</button>
                 </div>` : '';
 
             document.getElementById('catalogList').innerHTML = filteredAndSorted.map(a => `
@@ -622,7 +689,7 @@
                         <span class="block text-xs font-semibold mt-1 ${a.stock < a.minStock ? 'text-red-500' : 'text-gray-500'}">ALERTA MÍN: ${a.minStock}</span>
                     </div>
                 </div>
-            `).join('') || '<div class="text-center text-gray-500 py-8">No se encontraron equipos.</div>';
+            `).join('') || '<div class="text-center text-gray-500 py-8 font-bold">No se encontraron equipos con esa búsqueda.</div>';
         }
 
         window.editArticle = function(id) {
@@ -699,10 +766,13 @@
                     let errs = []; let success = 0;
                     for(let i=0; i<json.length; i++) {
                         const row = json[i]; const name = (row['EQUIPO / ACCESORIO / HERRAMIENTA']||'').toString().trim(); const qty = parseInt(row['CANTIDAD']);
-                        if(!name || isNaN(qty)) { errs.push(`Fila ${i+2}: Datos inválidos.`); continue; }
+                        if(!name || isNaN(qty)) { errs.push(`Fila ${i+2}: Faltan datos obligatorios.`); continue; }
                         
-                        const art = articles.find(a => a.name.toLowerCase() === name.toLowerCase());
-                        if(!art) { errs.push(`Fila ${i+2}: "${name}" no existe en catálogo.`); continue; }
+                        // Busca coincidencia por Nombre Y Modelo (si es que la plantilla trajo modelo)
+                        const rowModel = (row['MODELO']||'').toString().trim().toLowerCase();
+                        const art = articles.find(a => a.name.toLowerCase() === name.toLowerCase() && (a.model||'').toLowerCase() === rowModel);
+                        
+                        if(!art) { errs.push(`Fila ${i+2}: "${name} - ${rowModel||'Sin Modelo'}" no existe en el catálogo.`); continue; }
                         if(type === 'salida' && (art.stock||0) < qty) { errs.push(`Fila ${i+2}: Stock insuficiente para "${name}".`); continue; }
 
                         await db.collection('articles').doc(art.id).update({ stock: firebase.firestore.FieldValue.increment(type === 'ingreso' ? qty : -qty) });
@@ -713,7 +783,7 @@
                         });
                         success++;
                     }
-                    alert(`✅ Excel de Movimientos procesado.\nÉxitos: ${success}\nErrores: ${errs.length}\n${errs.join('\n')}`);
+                    alert(`✅ Excel procesado.\nÉxitos: ${success}\nErrores: ${errs.length}\n${errs.join('\n')}`);
                     event.target.value = '';
                 } catch(error) { alert("Error procesando Excel de Movimientos."); }
             }; reader.readAsArrayBuffer(file);
