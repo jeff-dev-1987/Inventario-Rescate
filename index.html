@@ -119,7 +119,7 @@
                 <button class="tab-btn px-6 py-3 font-semibold text-sm uppercase tracking-wide flex-1 min-w-[120px] rounded transition-colors text-[#003366] bg-slate-100" data-tab="dashboard">📊 Resumen e Historial</button>
                 <button class="tab-btn admin-editor-only hidden px-6 py-3 font-semibold text-sm uppercase tracking-wide flex-1 min-w-[120px] rounded transition-colors text-gray-500 hover:bg-slate-50" data-tab="movements">🔄 Ingresos / Salidas</button>
                 <button class="tab-btn px-6 py-3 font-semibold text-sm uppercase tracking-wide flex-1 min-w-[120px] rounded transition-colors text-gray-500 hover:bg-slate-50" data-tab="catalog">📦 Catálogo</button>
-                <button class="tab-btn admin-editor-only hidden px-6 py-3 font-semibold text-sm uppercase tracking-wide flex-1 min-w-[120px] rounded transition-colors text-gray-500 hover:bg-slate-50" data-tab="users">👥 Usuarios</button>
+                <button class="tab-btn admin-only hidden px-6 py-3 font-semibold text-sm uppercase tracking-wide flex-1 min-w-[120px] rounded transition-colors text-gray-500 hover:bg-slate-50" data-tab="users">👥 Usuarios</button>
             </div>
 
             <div id="dashboard" class="tab-content fade-in">
@@ -155,11 +155,13 @@
                                     <th class="px-6 py-3 text-left text-xs font-bold text-gray-600 uppercase tracking-wider">Equipo / Modelo</th>
                                     <th class="px-6 py-3 text-left text-xs font-bold text-gray-600 uppercase tracking-wider">Cant.</th>
                                     <th class="px-6 py-3 text-left text-xs font-bold text-gray-600 uppercase tracking-wider">Operación</th>
-                                    <th class="px-6 py-3 text-left text-xs font-bold text-gray-600 uppercase tracking-wider">Responsables (Entrega / Recepción)</th>
+                                    <th class="px-6 py-3 text-left text-xs font-bold text-blue-800 uppercase tracking-wider">Stock Nuevo</th>
+                                    <th class="px-6 py-3 text-left text-xs font-bold text-gray-600 uppercase tracking-wider">Responsables</th>
+                                    <th class="px-6 py-3 text-left text-xs font-bold text-gray-600 uppercase tracking-wider">Observaciones</th>
                                 </tr>
                             </thead>
                             <tbody id="movementsTable" class="divide-y divide-gray-200 bg-white">
-                                <tr><td colspan="5" class="px-6 py-8 text-center text-gray-500">Cargando base de datos...</td></tr>
+                                <tr><td colspan="7" class="px-6 py-8 text-center text-gray-500">Cargando base de datos...</td></tr>
                             </tbody>
                         </table>
                     </div>
@@ -234,15 +236,20 @@
 
             <div id="catalog" class="tab-content hidden fade-in">
                 
-                <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6 mb-6 flex flex-col md:flex-row gap-4 justify-between items-center">
-                    <div class="w-full md:w-2/3">
+                <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6 mb-6 flex flex-col xl:flex-row gap-4 justify-between items-center">
+                    <div class="w-full xl:w-2/5">
                         <h2 class="text-lg font-bold text-[#003366] mb-2">🔍 Buscador de Equipos</h2>
                         <input type="text" id="searchCatalog" onkeyup="updateCatalogList()" placeholder="Buscar palabras clave (Ej: Petzl Vertex 1234)..." class="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:border-[#0099cc] focus:outline-none text-lg">
                     </div>
-                    <div class="w-full md:w-1/3 flex items-end">
-                        <button onclick="exportCatalogToExcel()" class="w-full bg-green-600 hover:bg-green-700 text-white py-3 px-4 rounded-lg font-bold transition-colors h-full flex items-center justify-center gap-2 mt-auto">
-                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
-                            Exportar Todo (Excel)
+                    <div class="w-full xl:w-3/5 flex flex-col sm:flex-row gap-2 items-end justify-end mt-auto">
+                        <button id="btnFilterCritical" onclick="toggleCriticalFilter()" class="w-full sm:w-auto bg-orange-500 hover:bg-orange-600 text-white py-3 px-4 rounded-lg font-bold transition-colors shadow-sm">
+                            ⚠️ Ver Críticos
+                        </button>
+                        <button id="btnExportFiltered" onclick="exportFilteredCatalogToExcel()" class="w-full sm:w-auto bg-[#0099cc] hover:bg-[#007799] text-white py-3 px-4 rounded-lg font-bold transition-colors shadow-sm">
+                            ⬇️ Exp. Filtrados
+                        </button>
+                        <button id="btnExportAll" onclick="exportCatalogToExcel()" class="w-full sm:w-auto bg-green-600 hover:bg-green-700 text-white py-3 px-4 rounded-lg font-bold transition-colors shadow-sm">
+                            ⬇️ Exportar Todo
                         </button>
                     </div>
                 </div>
@@ -295,7 +302,7 @@
                 </div>
             </div>
 
-            <div id="users" class="tab-content hidden fade-in admin-editor-only">
+            <div id="users" class="tab-content hidden fade-in admin-only">
                 <div class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
                     <div class="p-6 border-b border-gray-200 bg-slate-50">
                         <h3 class="text-xl font-bold text-[#003366]">Gestión de Accesos</h3>
@@ -336,7 +343,10 @@
         let currentUser = null;
         let currentUserRole = 'lector'; 
         let articles = [], movements = [], usersData = [];
+        let currentFilteredArticles = []; // Guarda lo que se está viendo actualmente
+        let showOnlyCritical = false; // Estado del botón naranja
 
+        // Mostrar Ojo de Contraseña
         function togglePassword(inputId, iconId) {
             const input = document.getElementById(inputId);
             const icon = document.getElementById(iconId);
@@ -449,7 +459,7 @@
             }
             
             trackOnlineStatus(); loadArticles(); loadMovements(); 
-            if (userData.rol === 'admin' || userData.rol === 'editor') loadUsersList();
+            if (userData.rol === 'admin') loadUsersList();
             setupTabs();
         }
 
@@ -474,7 +484,7 @@
         }
 
         function loadMovements() {
-            db.collection('movements').orderBy('timestamp', 'desc').limit(100).onSnapshot(snapshot => {
+            db.collection('movements').orderBy('timestamp', 'desc').limit(150).onSnapshot(snapshot => {
                 movements = []; snapshot.forEach(doc => movements.push({ id: doc.id, ...doc.data() }));
                 updateMovementsTable(); updateDashboard();
             });
@@ -501,7 +511,7 @@
                                 <option value="lector">Solo Lector</option>
                                 <option value="pendiente">Bloquear (Pendiente)</option>
                             </select>
-                            <button onclick="window.deleteUser('${u.id}')" class="px-3 py-1 bg-red-100 hover:bg-red-200 text-red-700 rounded font-bold text-xs">❌ Eliminar</button>
+                            <button onclick="window.deleteUser('${u.id}')" class="px-3 py-1 bg-red-100 hover:bg-red-200 text-red-700 rounded font-bold text-xs transition-colors">❌ Eliminar</button>
                         </td>
                     </tr>`;
                 }).join('');
@@ -549,7 +559,7 @@
                 const matched = articles.filter(a => a.name === name);
                 matched.forEach(a => {
                     const text = a.model ? a.model : 'Sin modelo específico';
-                    modelSelect.innerHTML += `<option value="${a.id}">${text} (Stock: ${a.stock || 0})</option>`;
+                    modelSelect.innerHTML += `<option value="${a.id}">${text} (Stock actual: ${a.stock || 0})</option>`;
                 });
             } else { modelSelect.disabled = true; }
         }
@@ -568,13 +578,16 @@
                 const article = articles.find(a => a.id === articleId);
                 if (mType === 'salida' && (article.stock || 0) < qty) { alert('Stock insuficiente.'); return; }
 
-                await db.collection('articles').doc(articleId).update({ stock: firebase.firestore.FieldValue.increment(mType === 'ingreso' ? qty : -qty) });
+                const newStock = (article.stock || 0) + (mType === 'ingreso' ? qty : -qty);
+                const obsFinal = (document.getElementById('observations').value || '').trim() || 'Ingreso Manual';
+
+                await db.collection('articles').doc(articleId).update({ stock: newStock });
                 await db.collection('movements').add({
                     articleId: articleId, articleName: article.name, articleModel: article.model || '',
-                    type: mType, quantity: qty, 
+                    type: mType, quantity: qty, newStock: newStock,
                     respDelivery: document.getElementById('respDelivery').value, 
                     respReception: document.getElementById('respReception').value, 
-                    observations: document.getElementById('observations').value || '',
+                    observations: obsFinal,
                     timestamp: firebase.firestore.FieldValue.serverTimestamp(), registeredBy: currentUser.email
                 });
                 
@@ -592,12 +605,30 @@
                     <td class="px-6 py-3 text-sm"><div class="font-bold text-gray-900">${m.articleName}</div><div class="text-xs text-gray-500">Mod: ${m.articleModel||'-'}</div></td>
                     <td class="px-6 py-3 font-bold ${m.type==='ingreso'?'text-green-600':'text-red-600'}">${m.type==='ingreso'?'+':'-'}${m.quantity}</td>
                     <td class="px-6 py-3 text-sm"><span class="px-2 py-1 rounded text-xs font-bold ${m.type==='ingreso'?'bg-green-100 text-green-800':'bg-red-100 text-red-800'} uppercase">${m.type}</span></td>
+                    <td class="px-6 py-3 font-bold text-blue-700">${m.newStock !== undefined ? m.newStock : '-'}</td>
                     <td class="px-6 py-3 text-sm font-semibold text-gray-700"><div class="text-xs text-blue-800">Entrega: ${m.respDelivery||'-'}</div><div class="text-xs text-green-800">Recibe: ${m.respReception||'-'}</div></td>
+                    <td class="px-6 py-3 text-xs text-gray-600 max-w-[200px] truncate" title="${m.observations || '-'}">${m.observations || '-'}</td>
                 </tr>
-            `).join('') || '<tr><td colspan="5" class="px-6 py-8 text-center text-gray-500">No hay registros</td></tr>';
+            `).join('') || '<tr><td colspan="7" class="px-6 py-8 text-center text-gray-500">No hay registros</td></tr>';
         }
 
-        async function handleArticle() {
+        function toggleCriticalFilter() {
+            showOnlyCritical = !showOnlyCritical;
+            const btn = document.getElementById('btnFilterCritical');
+            if (showOnlyCritical) {
+                btn.classList.replace('bg-orange-500', 'bg-red-600');
+                btn.classList.replace('hover:bg-orange-600', 'hover:bg-red-700');
+                btn.innerHTML = '❌ Quitar Filtro Crítico';
+            } else {
+                btn.classList.replace('bg-red-600', 'bg-orange-500');
+                btn.classList.replace('hover:bg-red-700', 'hover:bg-orange-600');
+                btn.innerHTML = '⚠️ Ver Críticos';
+            }
+            updateCatalogList();
+        }
+
+        async function handleArticle(e) {
+            if(e) e.preventDefault();
             const btn = document.getElementById('btnSaveArticle'); btn.textContent = "Guardando..."; btn.disabled = true;
             try {
                 const name = document.getElementById('articleName').value.trim();
@@ -625,12 +656,17 @@
             const searchTerm = (document.getElementById('searchCatalog')?.value || '').toLowerCase();
             const words = searchTerm.split(' ').filter(w => w); 
             
-            const filteredAndSorted = articles.filter(a => {
+            let filteredAndSorted = articles.filter(a => {
                 const combinedText = `${a.name||''} ${a.brand||''} ${a.model||''} ${a.partNumber||''} ${a.sapNumber||''}`.toLowerCase();
                 return words.every(word => combinedText.includes(word)); 
-            }).sort((a,b) => a.name.localeCompare(b.name));
+            });
 
-            const adminButtons = (id) => (currentUserRole === 'admin' || currentUserRole === 'editor') ? `
+            if (showOnlyCritical) { filteredAndSorted = filteredAndSorted.filter(a => (a.stock || 0) <= (a.minStock || 0)); }
+            
+            filteredAndSorted.sort((a,b) => a.name.localeCompare(b.name));
+            currentFilteredArticles = filteredAndSorted; 
+
+            const editButtons = (id) => (currentUserRole === 'admin' || currentUserRole === 'editor') ? `
                 <div class="flex gap-2 mt-4 pt-4 border-t border-gray-200">
                     <button onclick="window.editArticle('${id}')" class="px-6 py-2 bg-gray-200 hover:bg-gray-300 text-gray-800 text-sm font-bold rounded transition-colors w-full sm:w-auto">Editar</button>
                     <button onclick="if(confirm('¿Eliminar equipo por completo de la base de datos?')) db.collection('articles').doc('${id}').delete()" class="px-6 py-2 bg-red-100 hover:bg-red-200 text-red-700 text-sm font-bold rounded transition-colors w-full sm:w-auto">Borrar Equipo</button>
@@ -647,12 +683,12 @@
                             <div><span class="font-semibold text-gray-800">CÓDIGO SAP:</span> ${a.sapNumber||'-'}</div>
                             <div class="sm:col-span-2 mt-1"><span class="font-semibold text-gray-800">OBSERVACIONES:</span> ${a.observations||'-'}</div>
                         </div>
-                        ${adminButtons(a.id)}
+                        ${editButtons(a.id)}
                     </div>
                     <div class="flex flex-col items-start md:items-end justify-center bg-slate-50 md:bg-transparent p-4 md:p-0 rounded-lg md:border-l md:border-gray-200 md:pl-6 min-w-[150px]">
                         <span class="text-xs text-gray-500 uppercase tracking-widest font-bold mb-1">Stock Actual</span>
-                        <span class="block text-4xl font-black ${a.stock < a.minStock ? 'text-red-600' : 'text-[#0099cc]'}">${a.stock || 0}</span>
-                        <span class="block text-xs font-semibold mt-1 ${a.stock < a.minStock ? 'text-red-500' : 'text-gray-500'}">ALERTA MÍN: ${a.minStock}</span>
+                        <span class="block text-4xl font-black ${a.stock <= a.minStock ? 'text-red-600' : 'text-[#0099cc]'}">${a.stock || 0}</span>
+                        <span class="block text-xs font-semibold mt-1 ${a.stock <= a.minStock ? 'text-red-500' : 'text-gray-500'}">ALERTA MÍN: ${a.minStock}</span>
                     </div>
                 </div>
             `).join('') || '<div class="text-center text-gray-500 py-8 font-bold">No se encontraron equipos con esa búsqueda.</div>';
@@ -673,7 +709,7 @@
 
         function updateDashboard() {
             document.getElementById('totalItems').textContent = articles.length;
-            document.getElementById('alertCount').textContent = articles.filter(a => (a.stock || 0) < a.minStock).length;
+            document.getElementById('alertCount').textContent = articles.filter(a => (a.stock || 0) <= a.minStock).length;
             document.getElementById('todayMovements').textContent = movements.filter(m => {
                 if(!m.timestamp) return true; return m.timestamp.toDate() >= new Date().setHours(0,0,0,0);
             }).length;
@@ -694,23 +730,26 @@
         window.exportCatalogToExcel = function() {
             if (articles.length === 0) return alert("No hay equipos registrados para exportar.");
             const data = articles.sort((a,b) => a.name.localeCompare(b.name)).map(a => ({
-                "EQUIPO / ACCESORIO / HERRAMIENTA": a.name,
-                "MARCA": a.brand,
-                "MODELO": a.model,
-                "N° PARTE": a.partNumber,
-                "CODIGO SAP (MCP)": a.sapNumber,
-                "CANTIDAD ACTUAL": a.stock || 0,
-                "ALERTA MINIMA": a.minStock || 0,
-                "OBSERVACIONES / COMENTARIOS": a.observations
+                "EQUIPO / ACCESORIO / HERRAMIENTA": a.name, "MARCA": a.brand, "MODELO": a.model, "N° PARTE": a.partNumber,
+                "CODIGO SAP (MCP)": a.sapNumber, "CANTIDAD ACTUAL": a.stock || 0, "ALERTA MINIMA": a.minStock || 0, "OBSERVACIONES / COMENTARIOS": a.observations
             }));
-            const ws = XLSX.utils.json_to_sheet(data);
-            const wb = XLSX.utils.book_new(); XLSX.utils.book_append_sheet(wb, ws, "Catálogo General");
+            const wb = XLSX.utils.book_new(); XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(data), "Catálogo General");
             XLSX.writeFile(wb, "Inventario_Chinalco_Completo.xlsx");
         }
 
+        window.exportFilteredCatalogToExcel = function() {
+            if (currentFilteredArticles.length === 0) return alert("No hay resultados en el filtro actual.");
+            const data = currentFilteredArticles.map(a => ({
+                "EQUIPO / ACCESORIO / HERRAMIENTA": a.name, "MARCA": a.brand, "MODELO": a.model, "N° PARTE": a.partNumber,
+                "CODIGO SAP (MCP)": a.sapNumber, "CANTIDAD ACTUAL": a.stock || 0, "ALERTA MINIMA": a.minStock || 0, "OBSERVACIONES / COMENTARIOS": a.observations
+            }));
+            const wb = XLSX.utils.book_new(); XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(data), "Equipos Filtrados");
+            XLSX.writeFile(wb, "Inventario_Filtrado_Chinalco.xlsx");
+        }
+
         window.downloadCatalogTemplate = function() { 
-            const ws = XLSX.utils.aoa_to_sheet([["EQUIPO / ACCESORIO / HERRAMIENTA", "MARCA", "MODELO", "N° PARTE", "CODIGO SAP (MCP)", "CANTIDAD ACTUAL", "ALERTA MINIMA", "OBSERVACIONES / COMENTARIOS"]]); 
-            const wb = XLSX.utils.book_new(); XLSX.utils.book_append_sheet(wb, ws, "Catálogo"); XLSX.writeFile(wb, "Plantilla_Catalogo_Chinalco.xlsx"); 
+            const wb = XLSX.utils.book_new(); XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet([["EQUIPO / ACCESORIO / HERRAMIENTA", "MARCA", "MODELO", "N° PARTE", "CODIGO SAP (MCP)", "CANTIDAD ACTUAL", "ALERTA MINIMA", "OBSERVACIONES / COMENTARIOS"]]), "Catálogo"); 
+            XLSX.writeFile(wb, "Plantilla_Catalogo_Chinalco.xlsx"); 
         }
 
         window.importExcelCatalog = async function(event) {
@@ -735,17 +774,16 @@
                             stock: parseInt(row['CANTIDAD ACTUAL'])||0, minStock: parseInt(row['ALERTA MINIMA'])||0, observations: (row['OBSERVACIONES / COMENTARIOS']||'').toString().trim(), createdAt: firebase.firestore.FieldValue.serverTimestamp() 
                         };
                         const docRef = await db.collection('articles').add(payload);
-                        articles.push({ id: docRef.id, ...payload }); 
-                        success++;
+                        articles.push({ id: docRef.id, ...payload }); success++;
                     }
-                    alert(`✅ Carga procesada.\nAgregados: ${success}\nOmitidos (Ya existían): ${omitted}`); document.getElementById('excelUploadCatalog').value = '';
+                    alert(`✅ Carga procesada.\nAgregados: ${success}\nOmitidos (Duplicados): ${omitted}`); document.getElementById('excelUploadCatalog').value = '';
                 } catch(error) { alert("Error al leer Excel."); }
             }; reader.readAsArrayBuffer(file);
         }
 
         window.downloadMovementTemplate = function() { 
-            const ws = XLSX.utils.aoa_to_sheet([["FECHA", "EQUIPO / ACCESORIO / HERRAMIENTA", "MARCA", "MODELO", "CANTIDAD", "RESPONSABLE DE ENTREGA", "RESPONSABLE DE RECEPCION", "OBSERVACIONES / COMENTARIOS"]]); 
-            const wb = XLSX.utils.book_new(); XLSX.utils.book_append_sheet(wb, ws, "Movimientos"); XLSX.writeFile(wb, "Plantilla_Movimientos_Chinalco.xlsx"); 
+            const wb = XLSX.utils.book_new(); XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet([["FECHA", "EQUIPO / ACCESORIO / HERRAMIENTA", "MARCA", "MODELO", "CANTIDAD", "RESPONSABLE DE ENTREGA", "RESPONSABLE DE RECEPCION", "OBSERVACIONES / COMENTARIOS"]]), "Movimientos"); 
+            XLSX.writeFile(wb, "Plantilla_Movimientos_Chinalco.xlsx"); 
         }
 
         window.importExcelMovements = async function(event, type) {
@@ -761,39 +799,33 @@
                         const row = json[i]; const name = (row['EQUIPO / ACCESORIO / HERRAMIENTA']||'').toString().trim(); const qty = parseInt(row['CANTIDAD']);
                         const rowModel = (row['MODELO']||'').toString().trim();
 
-                        if(!name || isNaN(qty)) { errs.push(`Fila ${i+2}: Faltan datos obligatorios.`); continue; }
-                        
+                        if(!name || isNaN(qty)) { errs.push(`Fila ${i+2}: Faltan datos.`); continue; }
                         let art = articles.find(a => a.name.toLowerCase() === name.toLowerCase() && (a.model||'').toLowerCase() === rowModel.toLowerCase());
                         
                         if(!art) { 
                             if(type === 'ingreso') {
-                                const payload = {
-                                    name: name, brand: (row['MARCA']||'').toString().trim(), model: rowModel,
-                                    partNumber: '', sapNumber: '', stock: qty, minStock: 0, observations: 'Auto-creado por Ingreso Masivo Excel',
-                                    createdAt: firebase.firestore.FieldValue.serverTimestamp()
-                                };
+                                const payload = { name: name, brand: (row['MARCA']||'').toString().trim(), model: rowModel, partNumber: '', sapNumber: '', stock: qty, minStock: 0, observations: 'Auto-creado masivo', createdAt: firebase.firestore.FieldValue.serverTimestamp() };
                                 const docRef = await db.collection('articles').add(payload);
-                                art = { id: docRef.id, ...payload };
-                                articles.push(art); 
-                            } else {
-                                errs.push(`Fila ${i+2}: "${name} - ${rowModel||'Sin Modelo'}" no existe en el catálogo.`); continue; 
-                            }
+                                art = { id: docRef.id, ...payload }; articles.push(art); 
+                            } else { errs.push(`Fila ${i+2}: No existe.`); continue; }
                         } else {
-                            if(type === 'salida' && (art.stock||0) < qty) { errs.push(`Fila ${i+2}: Stock insuficiente para "${name}".`); continue; }
-                            await db.collection('articles').doc(art.id).update({ stock: firebase.firestore.FieldValue.increment(type === 'ingreso' ? qty : -qty) });
-                            art.stock += (type === 'ingreso' ? qty : -qty); 
+                            if(type === 'salida' && (art.stock||0) < qty) { errs.push(`Fila ${i+2}: Stock insuficiente.`); continue; }
+                            const newStock = (art.stock || 0) + (type === 'ingreso' ? qty : -qty);
+                            await db.collection('articles').doc(art.id).update({ stock: newStock });
+                            art.stock = newStock; 
                         }
 
+                        const obsFinal = (row['OBSERVACIONES / COMENTARIOS']||'').toString().trim() || 'Ingreso Masivo Excel';
                         await db.collection('movements').add({
-                            articleId: art.id, articleName: art.name, articleModel: art.model||'', type: type, quantity: qty,
+                            articleId: art.id, articleName: art.name, articleModel: art.model||'', type: type, quantity: qty, newStock: art.stock,
                             respDelivery: (row['RESPONSABLE DE ENTREGA']||'').toString().trim(), respReception: (row['RESPONSABLE DE RECEPCION']||'').toString().trim(),
-                            observations: (row['OBSERVACIONES / COMENTARIOS']||'').toString().trim(), timestamp: firebase.firestore.FieldValue.serverTimestamp(), registeredBy: currentUser.email
+                            observations: obsFinal, timestamp: firebase.firestore.FieldValue.serverTimestamp(), registeredBy: currentUser.email
                         });
                         success++;
                     }
-                    alert(`✅ Excel procesado.\nÉxitos: ${success}\nErrores: ${errs.length}\n${errs.slice(0,10).join('\n')}${errs.length>10?'...':''}`);
+                    alert(`✅ Procesado.\nÉxitos: ${success}\nErrores: ${errs.length}\n${errs.slice(0,10).join('\n')}`);
                     event.target.value = '';
-                } catch(error) { alert("Error procesando Excel de Movimientos."); }
+                } catch(error) { alert("Error procesando Movimientos."); }
             }; reader.readAsArrayBuffer(file);
         }
     </script>
