@@ -12,15 +12,17 @@
     <style>
         .fade-in { animation: fadeIn 0.4s ease-out; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
-        ::-webkit-scrollbar { width: 6px; height: 6px; }
-        ::-webkit-scrollbar-track { background: #f1f1f1; }
+        /* Scrollbar styling corporativo */
+        ::-webkit-scrollbar { width: 8px; height: 8px; }
+        ::-webkit-scrollbar-track { background: #f1f5f9; }
         ::-webkit-scrollbar-thumb { background: #0099cc; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: #007799; }
     </style>
 </head>
-<body class="bg-slate-100 min-h-screen font-sans">
+<body class="bg-slate-100 font-sans overflow-hidden">
 
-    <div id="authScreen" class="min-h-screen flex items-center justify-center bg-[#003366] px-4 absolute inset-0 z-[100] fade-in">
-        <div class="bg-white p-8 rounded-lg shadow-2xl w-full max-w-md">
+    <div id="authScreen" class="h-screen w-full flex items-center justify-center bg-[#003366] px-4 absolute inset-0 z-[100] fade-in overflow-y-auto">
+        <div class="bg-white p-8 rounded-lg shadow-2xl w-full max-w-md my-auto">
             <div class="text-center mb-8">
                 <svg class="w-16 h-16 text-[#0099cc] mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path></svg>
                 <h1 class="text-2xl font-bold text-[#003366]">INVENTARIO DE RESCATE</h1>
@@ -37,15 +39,13 @@
                     <div class="relative">
                         <input type="password" id="loginPassword" class="w-full px-4 py-2 border border-gray-300 rounded focus:ring-1 focus:ring-[#003366] pr-10" required>
                         <button type="button" onclick="togglePassword('loginPassword', 'eyeLogin')" class="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-500 hover:text-gray-700">
-                            <svg id="eyeLogin" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-                            </svg>
+                            <svg id="eyeLogin" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" /></svg>
                         </button>
                     </div>
                 </div>
                 <button type="submit" id="btnLogin" class="w-full bg-[#003366] hover:bg-[#002244] text-white py-2 px-4 rounded font-bold transition-colors">Ingresar</button>
                 <div class="text-center mt-4">
-                    <button type="button" onclick="toggleAuthMode()" class="text-[#0099cc] text-sm hover:underline font-semibold">¿No tienes cuenta? Solicitar acceso</button>
+                    <button type="button" id="btnShowRegister" class="text-[#0099cc] text-sm hover:underline font-semibold">¿No tienes cuenta? Solicitar acceso</button>
                 </div>
             </form>
 
@@ -63,21 +63,19 @@
                     <div class="relative">
                         <input type="password" id="regPassword" class="w-full px-4 py-2 border border-gray-300 rounded focus:ring-1 focus:ring-[#003366] pr-10" required>
                         <button type="button" onclick="togglePassword('regPassword', 'eyeReg')" class="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-500 hover:text-gray-700">
-                            <svg id="eyeReg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-                            </svg>
+                            <svg id="eyeReg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" /></svg>
                         </button>
                     </div>
                 </div>
                 <button type="submit" id="btnRegister" class="w-full bg-[#0099cc] hover:bg-[#007799] text-white py-2 px-4 rounded font-bold transition-colors">Crear Cuenta</button>
                 <div class="text-center mt-4">
-                    <button type="button" onclick="toggleAuthMode()" class="text-gray-500 text-sm hover:underline font-semibold">Volver al inicio de sesión</button>
+                    <button type="button" id="btnShowLogin" class="text-gray-500 text-sm hover:underline font-semibold">Volver al inicio de sesión</button>
                 </div>
             </form>
         </div>
     </div>
 
-    <div id="pendingScreen" class="min-h-screen flex items-center justify-center bg-slate-100 px-4 hidden absolute inset-0 z-[90]">
+    <div id="pendingScreen" class="h-screen w-full flex items-center justify-center bg-slate-100 px-4 hidden absolute inset-0 z-[90]">
         <div class="bg-white p-8 rounded-lg shadow-xl w-full max-w-lg text-center border-t-4 border-orange-500">
             <h2 class="text-2xl font-bold text-gray-800 mb-4">⏳ Cuenta en Revisión</h2>
             <p class="text-gray-600 mb-6">Tu cuenta ha sido creada exitosamente, pero requiere autorización de la Jefatura para acceder al sistema.</p>
@@ -85,248 +83,277 @@
                 Por favor, envía un correo solicitando tu habilitación a:<br>
                 <a href="mailto:supervision.rescate@gmail.com" class="font-bold text-blue-600 underline text-lg">supervision.rescate@gmail.com</a>
             </div>
-            <button onclick="logout()" class="bg-[#003366] hover:bg-[#002244] text-white py-2 px-6 rounded font-bold transition-colors">Cerrar sesión / Volver</button>
+            <button id="btnLogoutPending" class="bg-[#003366] hover:bg-[#002244] text-white py-2 px-6 rounded font-bold transition-colors">Cerrar sesión / Volver</button>
         </div>
     </div>
 
-    <div id="mainApp" class="hidden fade-in">
-        <nav class="bg-[#003366] text-white shadow-md sticky top-0 z-50 border-b-4 border-[#0099cc]">
-            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                <div class="flex justify-between h-16">
-                    <div class="flex items-center space-x-4">
-                        <div class="bg-white p-1.5 rounded hidden sm:block">
-                            <svg class="w-8 h-8 text-[#003366]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path></svg>
-                        </div>
-                        <div>
-                            <h1 class="text-lg sm:text-xl font-bold tracking-wide">INVENTARIO DE RESCATE</h1>
-                            <p class="text-xs text-[#0099cc] font-semibold tracking-wider uppercase">Minera Chinalco Perú</p>
-                        </div>
-                    </div>
-                    <div class="flex items-center space-x-3">
-                        <span id="userNameBadge" class="hidden md:inline-block text-sm font-semibold text-gray-200"></span>
-                        <span id="userRoleBadge" class="px-2 py-1 text-white rounded text-xs font-bold uppercase tracking-wider">Lector</span>
-                        <span id="userCount" class="px-2 sm:px-3 py-1 bg-[#002244] text-white border border-[#0099cc] rounded text-sm font-medium">0 en línea</span>
-                        <button onclick="logout()" class="p-1.5 bg-red-600 hover:bg-red-700 rounded text-white transition-colors" title="Cerrar Sesión">
-                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path></svg>
-                        </button>
-                    </div>
-                </div>
-            </div>
-        </nav>
+    <div id="mainApp" class="hidden h-screen w-full flex bg-slate-100 fade-in">
+        
+        <div id="sidebarOverlay" class="fixed inset-0 bg-black bg-opacity-50 z-40 hidden md:hidden" onclick="toggleSidebar()"></div>
 
-        <div class="max-w-7xl mx-auto px-4 py-8 sm:px-6 lg:px-8">
-            <div class="flex flex-wrap bg-white rounded-lg shadow-sm border border-gray-200 p-1 mb-8">
-                <button class="tab-btn px-6 py-3 font-semibold text-sm uppercase tracking-wide flex-1 min-w-[120px] rounded transition-colors text-[#003366] bg-slate-100" data-tab="dashboard">📊 Resumen e Historial</button>
-                <button class="tab-btn admin-editor-only hidden px-6 py-3 font-semibold text-sm uppercase tracking-wide flex-1 min-w-[120px] rounded transition-colors text-gray-500 hover:bg-slate-50" data-tab="movements">🔄 Ingresos / Salidas</button>
-                <button class="tab-btn px-6 py-3 font-semibold text-sm uppercase tracking-wide flex-1 min-w-[120px] rounded transition-colors text-gray-500 hover:bg-slate-50" data-tab="catalog">📦 Catálogo</button>
-                <button class="tab-btn admin-only hidden px-6 py-3 font-semibold text-sm uppercase tracking-wide flex-1 min-w-[120px] rounded transition-colors text-gray-500 hover:bg-slate-50" data-tab="users">👥 Usuarios</button>
-            </div>
-
-            <div id="dashboard" class="tab-content fade-in">
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
-                    <div class="bg-white rounded-lg p-6 shadow-sm border-l-4 border-[#003366]">
-                        <p class="text-sm font-medium text-gray-500 uppercase tracking-wide">Total Equipos</p>
-                        <p class="text-3xl font-bold text-[#003366] mt-2" id="totalItems">0</p>
-                    </div>
-                    <div class="bg-white rounded-lg p-6 shadow-sm border-l-4 border-[#0099cc]">
-                        <p class="text-sm font-medium text-gray-500 uppercase tracking-wide">Movimientos Hoy</p>
-                        <p class="text-3xl font-bold text-[#0099cc] mt-2" id="todayMovements">0</p>
-                    </div>
-                    <div class="bg-white rounded-lg p-6 shadow-sm border-l-4 border-red-600">
-                        <p class="text-sm font-medium text-gray-500 uppercase tracking-wide">Stock Crítico</p>
-                        <p class="text-3xl font-bold text-red-600 mt-2" id="alertCount">0</p>
-                    </div>
-                </div>
-
-                <div class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
-                    <div class="p-6 border-b border-gray-200 flex flex-col sm:flex-row justify-between items-center bg-slate-50 gap-4">
-                        <h2 class="text-lg font-bold text-[#003366] uppercase">📋 Historial de Movimientos</h2>
-                        <select id="movementFilter" onchange="updateMovementsTable()" class="px-3 py-1.5 border border-gray-300 rounded text-sm focus:outline-none focus:border-[#003366] w-full sm:w-auto">
-                            <option value="all">Todos los movimientos</option>
-                            <option value="ingreso">Solo Ingresos (+)</option>
-                            <option value="salida">Solo Salidas (-)</option>
-                        </select>
-                    </div>
-                    <div class="overflow-x-auto">
-                        <table class="w-full">
-                            <thead class="bg-gray-100 border-b border-gray-200">
-                                <tr>
-                                    <th class="px-6 py-3 text-left text-xs font-bold text-gray-600 uppercase tracking-wider">Fecha / Hora</th>
-                                    <th class="px-6 py-3 text-left text-xs font-bold text-gray-600 uppercase tracking-wider">Equipo / Modelo</th>
-                                    <th class="px-6 py-3 text-left text-xs font-bold text-gray-600 uppercase tracking-wider">Cant.</th>
-                                    <th class="px-6 py-3 text-left text-xs font-bold text-gray-600 uppercase tracking-wider">Operación</th>
-                                    <th class="px-6 py-3 text-left text-xs font-bold text-blue-800 uppercase tracking-wider">Stock Nuevo</th>
-                                    <th class="px-6 py-3 text-left text-xs font-bold text-gray-600 uppercase tracking-wider">Responsables</th>
-                                    <th class="px-6 py-3 text-left text-xs font-bold text-gray-600 uppercase tracking-wider">Observaciones</th>
-                                </tr>
-                            </thead>
-                            <tbody id="movementsTable" class="divide-y divide-gray-200 bg-white">
-                                <tr><td colspan="7" class="px-6 py-8 text-center text-gray-500">Cargando base de datos...</td></tr>
-                            </tbody>
-                        </table>
-                    </div>
+        <aside id="sidebar" class="bg-[#002244] text-white w-64 flex-shrink-0 flex flex-col transition-transform duration-300 z-50 fixed inset-y-0 left-0 transform -translate-x-full md:relative md:translate-x-0 shadow-2xl">
+            <div class="h-16 flex items-center px-4 border-b border-gray-700 bg-[#001a33]">
+                <svg class="w-8 h-8 text-[#0099cc] mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path></svg>
+                <div class="leading-tight">
+                    <h1 class="text-sm font-bold tracking-wide">INV. RESCATE</h1>
+                    <p class="text-[10px] text-[#0099cc] font-bold tracking-widest uppercase">Minera Chinalco</p>
                 </div>
             </div>
 
-            <div id="movements" class="tab-content hidden fade-in admin-editor-only">
+            <nav class="flex-1 px-4 py-6 space-y-2 overflow-y-auto">
+                <button class="tab-btn w-full flex items-center gap-3 px-4 py-3 rounded-lg font-bold text-sm transition-all bg-[#0099cc] text-white shadow-md" data-tab="dashboard">
+                    <span class="text-lg">📊</span> Resumen / Historial
+                </button>
+                <button class="tab-btn admin-editor-only hidden w-full flex items-center gap-3 px-4 py-3 rounded-lg font-bold text-sm transition-all text-gray-400 hover:bg-[#003366] hover:text-white" data-tab="movements">
+                    <span class="text-lg">🔄</span> Ingresos / Salidas
+                </button>
+                <button class="tab-btn w-full flex items-center gap-3 px-4 py-3 rounded-lg font-bold text-sm transition-all text-gray-400 hover:bg-[#003366] hover:text-white" data-tab="catalog">
+                    <span class="text-lg">📦</span> Catálogo y Excel
+                </button>
+                <button class="tab-btn admin-only hidden w-full flex items-center gap-3 px-4 py-3 rounded-lg font-bold text-sm transition-all text-gray-400 hover:bg-[#003366] hover:text-white" data-tab="users">
+                    <span class="text-lg">👥</span> Adm. Usuarios
+                </button>
+            </nav>
+
+            <div class="p-4 border-t border-gray-700 bg-[#001a33]">
+                <button id="btnLogoutMain" class="w-full flex items-center justify-center gap-2 bg-red-600 hover:bg-red-700 text-white py-2 px-4 rounded-lg font-bold text-sm transition-colors">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path></svg>
+                    Cerrar Sesión
+                </button>
+            </div>
+        </aside>
+
+        <div class="flex-1 flex flex-col h-screen overflow-hidden relative">
+            
+            <header class="bg-white shadow-sm border-b border-gray-200 h-16 flex items-center justify-between px-4 sm:px-6 z-30 flex-shrink-0">
+                <div class="flex items-center">
+                    <button onclick="toggleSidebar()" class="text-[#003366] hover:bg-slate-100 p-2 rounded-lg transition-colors focus:outline-none mr-2">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
+                    </button>
+                    <h2 class="text-lg font-bold text-[#003366] hidden sm:block">Panel de Control</h2>
+                </div>
+                <div class="flex items-center space-x-3">
+                    <span id="userCount" class="hidden sm:inline-block px-3 py-1 bg-slate-100 text-[#003366] border border-gray-200 rounded-full text-xs font-bold">0 en línea</span>
+                    <span id="userNameBadge" class="text-sm font-bold text-gray-700 max-w-[100px] sm:max-w-[200px] truncate"></span>
+                    <span id="userRoleBadge" class="px-2 py-1 text-white rounded text-[10px] sm:text-xs font-bold uppercase tracking-wider shadow-sm">Lector</span>
+                </div>
+            </header>
+
+            <main class="flex-1 overflow-x-hidden overflow-y-auto bg-slate-100 p-4 sm:p-6 lg:p-8">
                 
-                <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6 mb-8 max-w-4xl mx-auto admin-only hidden">
-                    <h2 class="text-lg font-bold text-[#003366] mb-4 border-b pb-2">📊 Carga Masiva de Movimientos (Excel)</h2>
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                        <button onclick="downloadMovementTemplate()" class="bg-slate-600 hover:bg-slate-700 text-white py-2 px-4 rounded font-bold text-sm transition-colors w-full">⬇️ Descargar Plantilla</button>
-                        <div class="w-full relative">
-                            <input type="file" id="excelUploadIngreso" accept=".xlsx, .xls" class="hidden" onchange="importExcelMovements(event, 'ingreso')">
-                            <button onclick="document.getElementById('excelUploadIngreso').click()" class="bg-green-600 hover:bg-green-700 text-white py-2 px-4 rounded font-bold text-sm transition-colors w-full">⬆️ Subir Excel INGRESOS (+)</button>
+                <div class="max-w-7xl mx-auto">
+                    <div id="dashboard" class="tab-content fade-in block">
+                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+                            <div class="bg-white rounded-lg p-6 shadow-sm border-l-4 border-[#003366]">
+                                <p class="text-sm font-medium text-gray-500 uppercase tracking-wide">Total Equipos</p>
+                                <p class="text-3xl font-black text-[#003366] mt-2" id="totalItems">0</p>
+                            </div>
+                            <div class="bg-white rounded-lg p-6 shadow-sm border-l-4 border-[#0099cc]">
+                                <p class="text-sm font-medium text-gray-500 uppercase tracking-wide">Movimientos Hoy</p>
+                                <p class="text-3xl font-black text-[#0099cc] mt-2" id="todayMovements">0</p>
+                            </div>
+                            <div class="bg-white rounded-lg p-6 shadow-sm border-l-4 border-red-600">
+                                <p class="text-sm font-medium text-gray-500 uppercase tracking-wide">Stock Crítico</p>
+                                <p class="text-3xl font-black text-red-600 mt-2" id="alertCount">0</p>
+                            </div>
                         </div>
-                        <div class="w-full relative">
-                            <input type="file" id="excelUploadSalida" accept=".xlsx, .xls" class="hidden" onchange="importExcelMovements(event, 'salida')">
-                            <button onclick="document.getElementById('excelUploadSalida').click()" class="bg-red-600 hover:bg-red-700 text-white py-2 px-4 rounded font-bold text-sm transition-colors w-full">⬆️ Subir Excel SALIDAS (-)</button>
-                        </div>
-                    </div>
-                </div>
 
-                <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-8 max-w-4xl mx-auto">
-                    <h2 class="text-2xl font-bold text-[#003366] mb-6 border-b pb-4">Registrar Movimiento Individual</h2>
-                    <form id="movementForm" class="space-y-5" onsubmit="event.preventDefault(); handleMovement();">
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <div>
-                                <label class="block text-sm font-bold text-gray-700 mb-1">Tipo de Operación</label>
-                                <select id="movementType" onchange="updateMovementNameSelect()" class="w-full px-4 py-2 border rounded focus:ring-1 focus:ring-[#003366] bg-slate-50" required>
-                                    <option value="">Seleccione el tipo...</option>
-                                    <option value="ingreso">🟢 INGRESO (Sumar al almacén)</option>
-                                    <option value="salida">🔴 SALIDA (Asignar a terreno/persona)</option>
+                        <div class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
+                            <div class="p-6 border-b border-gray-200 flex flex-col sm:flex-row justify-between items-center bg-slate-50 gap-4">
+                                <h2 class="text-lg font-bold text-[#003366] uppercase">📋 Historial de Movimientos</h2>
+                                <select id="movementFilter" class="px-3 py-2 border border-gray-300 rounded-lg text-sm font-semibold focus:outline-none focus:border-[#003366] w-full sm:w-auto shadow-sm">
+                                    <option value="all">Todos los movimientos</option>
+                                    <option value="ingreso">Solo Ingresos (+)</option>
+                                    <option value="salida">Solo Salidas (-)</option>
                                 </select>
                             </div>
-                            <div>
-                                <label class="block text-sm font-bold text-gray-700 mb-1">Cantidad</label>
-                                <input type="number" id="quantity" min="1" class="w-full px-4 py-2 border rounded focus:ring-1 focus:ring-[#003366]" required>
+                            <div class="overflow-x-auto">
+                                <table class="w-full">
+                                    <thead class="bg-gray-100 border-b border-gray-200">
+                                        <tr>
+                                            <th class="px-6 py-3 text-left text-xs font-bold text-gray-600 uppercase tracking-wider">Fecha / Hora</th>
+                                            <th class="px-6 py-3 text-left text-xs font-bold text-gray-600 uppercase tracking-wider">Equipo / Modelo</th>
+                                            <th class="px-6 py-3 text-left text-xs font-bold text-gray-600 uppercase tracking-wider">Cant.</th>
+                                            <th class="px-6 py-3 text-left text-xs font-bold text-gray-600 uppercase tracking-wider">Operación</th>
+                                            <th class="px-6 py-3 text-left text-xs font-bold text-blue-800 uppercase tracking-wider">Stock Nuevo</th>
+                                            <th class="px-6 py-3 text-left text-xs font-bold text-gray-600 uppercase tracking-wider">Responsables</th>
+                                            <th class="px-6 py-3 text-left text-xs font-bold text-gray-600 uppercase tracking-wider">Observaciones</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="movementsTable" class="divide-y divide-gray-200 bg-white">
+                                        <tr><td colspan="7" class="px-6 py-8 text-center text-gray-500 font-semibold">Cargando base de datos...</td></tr>
+                                    </tbody>
+                                </table>
                             </div>
                         </div>
+                    </div>
+
+                    <div id="movements" class="tab-content hidden fade-in admin-editor-only">
                         
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <div>
-                                <label class="block text-sm font-bold text-gray-700 mb-1">Nombre del Equipo</label>
-                                <select id="movementNameSelect" onchange="updateModelSelect()" class="w-full px-4 py-2 border rounded focus:ring-1 focus:ring-[#003366] bg-slate-50 disabled:bg-gray-100" disabled required></select>
-                            </div>
-                            <div>
-                                <label class="block text-sm font-bold text-gray-700 mb-1">Modelo Específico</label>
-                                <select id="movementModelSelect" onchange="checkMovementForm()" class="w-full px-4 py-2 border rounded focus:ring-1 focus:ring-[#003366] bg-slate-50 disabled:bg-gray-100" disabled required></select>
-                            </div>
-                        </div>
-
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <div>
-                                <label class="block text-sm font-bold text-gray-700 mb-1">Responsable de Entrega</label>
-                                <input type="text" id="respDelivery" class="w-full px-4 py-2 border rounded focus:ring-1 focus:ring-[#003366]" placeholder="Nombre completo" required>
-                            </div>
-                            <div>
-                                <label class="block text-sm font-bold text-gray-700 mb-1">Responsable de Recepción</label>
-                                <input type="text" id="respReception" class="w-full px-4 py-2 border rounded focus:ring-1 focus:ring-[#003366]" placeholder="Nombre completo" required>
+                        <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6 mb-8 admin-only hidden">
+                            <h2 class="text-lg font-bold text-[#003366] mb-4 border-b pb-2">📊 Carga Masiva de Movimientos (Excel)</h2>
+                            <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                                <button id="btnDownloadMovementExcel" class="bg-slate-600 hover:bg-slate-700 text-white py-3 px-4 rounded-lg font-bold text-sm transition-colors w-full shadow-sm">⬇️ Descargar Plantilla</button>
+                                <div class="w-full relative">
+                                    <input type="file" id="excelUploadIngreso" accept=".xlsx, .xls" class="hidden">
+                                    <button onclick="document.getElementById('excelUploadIngreso').click()" class="bg-green-600 hover:bg-green-700 text-white py-3 px-4 rounded-lg font-bold text-sm transition-colors w-full shadow-sm">⬆️ Subir Excel INGRESOS (+)</button>
+                                </div>
+                                <div class="w-full relative">
+                                    <input type="file" id="excelUploadSalida" accept=".xlsx, .xls" class="hidden">
+                                    <button onclick="document.getElementById('excelUploadSalida').click()" class="bg-red-600 hover:bg-red-700 text-white py-3 px-4 rounded-lg font-bold text-sm transition-colors w-full shadow-sm">⬆️ Subir Excel SALIDAS (-)</button>
+                                </div>
                             </div>
                         </div>
 
-                        <div>
-                            <label class="block text-sm font-bold text-gray-700 mb-1">Observaciones / Comentarios</label>
-                            <textarea id="observations" rows="2" class="w-full px-4 py-2 border rounded focus:ring-1 focus:ring-[#003366]"></textarea>
+                        <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6 md:p-8">
+                            <h2 class="text-2xl font-bold text-[#003366] mb-6 border-b pb-4">Registrar Movimiento Manual</h2>
+                            <form id="movementForm" class="space-y-6">
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                    <div>
+                                        <label class="block text-sm font-bold text-gray-700 mb-2">Tipo de Operación *</label>
+                                        <select id="movementType" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#003366] bg-slate-50 font-semibold" required>
+                                            <option value="">Seleccione el tipo...</option>
+                                            <option value="ingreso">🟢 INGRESO (Sumar al almacén)</option>
+                                            <option value="salida">🔴 SALIDA (Asignar a terreno/persona)</option>
+                                        </select>
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-bold text-gray-700 mb-2">Cantidad *</label>
+                                        <input type="number" id="quantity" min="1" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#003366] font-semibold" placeholder="Ej: 5" required>
+                                    </div>
+                                </div>
+                                
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                    <div>
+                                        <label class="block text-sm font-bold text-gray-700 mb-2">Nombre del Equipo *</label>
+                                        <select id="movementNameSelect" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#003366] bg-slate-50 disabled:bg-gray-100 font-semibold" disabled required></select>
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-bold text-gray-700 mb-2">Modelo Específico *</label>
+                                        <select id="movementModelSelect" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#003366] bg-slate-50 disabled:bg-gray-100 font-semibold" disabled required></select>
+                                    </div>
+                                </div>
+
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                    <div>
+                                        <label class="block text-sm font-bold text-gray-700 mb-2">Responsable de Entrega *</label>
+                                        <input type="text" id="respDelivery" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#003366]" placeholder="¿Quién entrega?" required>
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-bold text-gray-700 mb-2">Responsable de Recepción *</label>
+                                        <input type="text" id="respReception" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#003366]" placeholder="¿Quién recibe?" required>
+                                    </div>
+                                </div>
+
+                                <div>
+                                    <label class="block text-sm font-bold text-gray-700 mb-2">Observaciones / Comentarios</label>
+                                    <textarea id="observations" rows="2" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#003366]" placeholder="Opcional..."></textarea>
+                                </div>
+                                <button type="submit" id="btnSaveMovement" class="w-full bg-[#003366] hover:bg-[#002244] text-white py-4 px-4 rounded-lg font-bold text-lg uppercase tracking-wide shadow-md disabled:opacity-50 transition-colors" disabled>Guardar Registro</button>
+                            </form>
                         </div>
-                        <button type="submit" id="btnSaveMovement" class="w-full bg-[#003366] hover:bg-[#002244] text-white py-3 px-4 rounded font-bold uppercase disabled:opacity-50" disabled>Guardar Registro Manual</button>
-                    </form>
+                    </div>
+
+                    <div id="catalog" class="tab-content hidden fade-in">
+                        
+                        <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6 mb-6 flex flex-col xl:flex-row gap-4 justify-between items-center">
+                            <div class="w-full xl:w-2/5">
+                                <h2 class="text-lg font-bold text-[#003366] mb-2">🔍 Buscador Inteligente</h2>
+                                <input type="text" id="searchCatalog" placeholder="Buscar palabras clave (Ej: Petzl Vertex 1234)..." class="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:border-[#0099cc] focus:outline-none focus:ring-2 focus:ring-[#0099cc] text-lg transition-all">
+                            </div>
+                            <div class="w-full xl:w-3/5 flex flex-col sm:flex-row gap-3 items-end justify-end mt-auto">
+                                <button id="btnFilterCritical" onclick="toggleCriticalFilter()" class="w-full sm:w-auto bg-orange-500 hover:bg-orange-600 text-white py-3 px-4 rounded-lg font-bold transition-colors shadow-sm whitespace-nowrap">
+                                    ⚠️ Ver Críticos
+                                </button>
+                                <button id="btnExportFiltered" onclick="exportFilteredCatalogToExcel()" class="w-full sm:w-auto bg-[#0099cc] hover:bg-[#007799] text-white py-3 px-4 rounded-lg font-bold transition-colors shadow-sm whitespace-nowrap">
+                                    ⬇️ Exp. Filtrados
+                                </button>
+                                <button id="btnExportAll" onclick="exportCatalogToExcel()" class="w-full sm:w-auto bg-green-600 hover:bg-green-700 text-white py-3 px-4 rounded-lg font-bold transition-colors shadow-sm whitespace-nowrap">
+                                    ⬇️ Exportar Todo
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6 mb-6 admin-only hidden">
+                            <h2 class="text-lg font-bold text-[#003366] mb-4 border-b pb-2">📊 Carga Masiva de Catálogo (Excel)</h2>
+                            <div class="flex flex-col md:flex-row gap-4 items-center">
+                                <button onclick="downloadCatalogTemplate()" class="bg-slate-600 hover:bg-slate-700 text-white py-3 px-4 rounded-lg font-bold text-sm transition-colors flex-1 w-full shadow-sm">⬇️ 1. Descargar Plantilla</button>
+                                <div class="flex-1 w-full relative">
+                                    <input type="file" id="excelUploadCatalog" accept=".xlsx, .xls" class="hidden">
+                                    <button onclick="document.getElementById('excelUploadCatalog').click()" class="bg-[#0099cc] hover:bg-[#007799] text-white py-3 px-4 rounded-lg font-bold text-sm transition-colors w-full shadow-sm">⬆️ 2. Subir Archivo Excel</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="flex flex-col xl:flex-row gap-6">
+                            <div class="xl:w-1/3 bg-white rounded-lg shadow-sm border border-gray-200 p-6 h-fit admin-editor-only hidden">
+                                <h2 class="text-xl font-bold text-[#003366] mb-6 border-b pb-4" id="catalogFormTitle">Agregar Nuevo Equipo</h2>
+                                <form id="catalogForm" class="space-y-4">
+                                    <input type="hidden" id="articleId">
+                                    <div>
+                                        <label class="block text-xs font-bold text-gray-700 mb-1">EQUIPO / ACCESORIO *</label>
+                                        <input type="text" id="articleName" class="w-full px-3 py-2.5 border border-gray-300 rounded focus:border-[#0099cc] focus:ring-1 focus:ring-[#0099cc] outline-none" required>
+                                    </div>
+                                    <div class="grid grid-cols-2 gap-3">
+                                        <div><label class="block text-xs font-bold text-gray-700 mb-1">MARCA</label><input type="text" id="brand" class="w-full px-3 py-2.5 border border-gray-300 rounded focus:border-[#0099cc] focus:ring-1 focus:ring-[#0099cc] outline-none"></div>
+                                        <div><label class="block text-xs font-bold text-gray-700 mb-1">MODELO</label><input type="text" id="model" class="w-full px-3 py-2.5 border border-gray-300 rounded focus:border-[#0099cc] focus:ring-1 focus:ring-[#0099cc] outline-none"></div>
+                                    </div>
+                                    <div class="grid grid-cols-2 gap-3">
+                                        <div><label class="block text-xs font-bold text-gray-700 mb-1">N° PARTE</label><input type="text" id="partNumber" class="w-full px-3 py-2.5 border border-gray-300 rounded focus:border-[#0099cc] focus:ring-1 focus:ring-[#0099cc] outline-none"></div>
+                                        <div><label class="block text-xs font-bold text-gray-700 mb-1">CÓDIGO SAP (MCP)</label><input type="text" id="sapNumber" class="w-full px-3 py-2.5 border border-gray-300 rounded focus:border-[#0099cc] focus:ring-1 focus:ring-[#0099cc] outline-none"></div>
+                                    </div>
+                                    <div class="grid grid-cols-2 gap-3">
+                                        <div><label class="block text-xs font-bold text-gray-700 mb-1">CANT. ACTUAL *</label><input type="number" id="initialStock" class="w-full px-3 py-2.5 border border-gray-300 rounded focus:border-[#0099cc] focus:ring-1 focus:ring-[#0099cc] outline-none" required></div>
+                                        <div><label class="block text-xs font-bold text-gray-700 mb-1">ALERTA MÍNIMA *</label><input type="number" id="minStock" class="w-full px-3 py-2.5 border border-gray-300 rounded focus:border-[#0099cc] focus:ring-1 focus:ring-[#0099cc] outline-none" required></div>
+                                    </div>
+                                    <div><label class="block text-xs font-bold text-gray-700 mb-1">OBSERVACIONES</label><textarea id="catalogObs" rows="2" class="w-full px-3 py-2.5 border border-gray-300 rounded focus:border-[#0099cc] focus:ring-1 focus:ring-[#0099cc] outline-none"></textarea></div>
+                                    <div class="flex gap-3 pt-4">
+                                        <button type="submit" id="btnSaveArticle" class="flex-1 bg-[#003366] hover:bg-[#002244] text-white py-3 px-4 rounded-lg font-bold text-sm transition-colors shadow-md">Guardar</button>
+                                        <button type="button" id="cancelEdit" class="flex-1 bg-gray-200 text-gray-800 rounded-lg font-bold hidden text-sm hover:bg-gray-300 transition-colors" onclick="resetArticleForm()">Cancelar</button>
+                                    </div>
+                                </form>
+                            </div>
+                            
+                            <div id="catalogContainerClass" class="w-full bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden flex flex-col h-[700px]">
+                                <div class="p-6 border-b border-gray-200 bg-slate-50 flex justify-between items-center flex-shrink-0">
+                                    <h3 class="text-xl font-bold text-[#003366]">Catálogo (A-Z)</h3>
+                                </div>
+                                <div class="p-4 sm:p-6 bg-slate-50 flex-1 overflow-y-auto">
+                                    <div id="catalogList" class="flex flex-col gap-4 pr-2"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="users" class="tab-content hidden fade-in admin-only">
+                        <div class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
+                            <div class="p-6 border-b border-gray-200 bg-slate-50">
+                                <h3 class="text-xl font-bold text-[#003366]">Gestión de Accesos</h3>
+                                <p class="text-sm text-gray-500 mt-1">Aprueba, cambia roles o elimina usuarios del sistema.</p>
+                            </div>
+                            <div class="overflow-x-auto">
+                                <table class="w-full">
+                                    <thead class="bg-gray-100">
+                                        <tr>
+                                            <th class="px-6 py-4 text-left text-xs font-bold text-gray-600 uppercase tracking-wider">Nombre</th>
+                                            <th class="px-6 py-4 text-left text-xs font-bold text-gray-600 uppercase tracking-wider">Correo</th>
+                                            <th class="px-6 py-4 text-left text-xs font-bold text-gray-600 uppercase tracking-wider">Fecha Solicitud</th>
+                                            <th class="px-6 py-4 text-left text-xs font-bold text-gray-600 uppercase tracking-wider">Rol Actual</th>
+                                            <th class="px-6 py-4 text-left text-xs font-bold text-gray-600 uppercase tracking-wider">Autorización / Acción</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="personnelList" class="divide-y divide-gray-200 bg-white"></tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-            </div>
-
-            <div id="catalog" class="tab-content hidden fade-in">
-                
-                <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6 mb-6 flex flex-col xl:flex-row gap-4 justify-between items-center">
-                    <div class="w-full xl:w-2/5">
-                        <h2 class="text-lg font-bold text-[#003366] mb-2">🔍 Buscador de Equipos</h2>
-                        <input type="text" id="searchCatalog" onkeyup="updateCatalogList()" placeholder="Buscar palabras clave (Ej: Petzl Vertex 1234)..." class="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:border-[#0099cc] focus:outline-none text-lg">
-                    </div>
-                    <div class="w-full xl:w-3/5 flex flex-col sm:flex-row gap-2 items-end justify-end mt-auto">
-                        <button id="btnFilterCritical" onclick="toggleCriticalFilter()" class="w-full sm:w-auto bg-orange-500 hover:bg-orange-600 text-white py-3 px-4 rounded-lg font-bold transition-colors shadow-sm">
-                            ⚠️ Ver Críticos
-                        </button>
-                        <button id="btnExportFiltered" onclick="exportFilteredCatalogToExcel()" class="w-full sm:w-auto bg-[#0099cc] hover:bg-[#007799] text-white py-3 px-4 rounded-lg font-bold transition-colors shadow-sm">
-                            ⬇️ Exp. Filtrados
-                        </button>
-                        <button id="btnExportAll" onclick="exportCatalogToExcel()" class="w-full sm:w-auto bg-green-600 hover:bg-green-700 text-white py-3 px-4 rounded-lg font-bold transition-colors shadow-sm">
-                            ⬇️ Exportar Todo
-                        </button>
-                    </div>
-                </div>
-
-                <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6 mb-6 admin-only hidden">
-                    <h2 class="text-lg font-bold text-[#003366] mb-4 border-b pb-2">📊 Carga Masiva de Catálogo (Excel)</h2>
-                    <div class="flex flex-col md:flex-row gap-4 items-center">
-                        <button onclick="downloadCatalogTemplate()" class="bg-slate-600 hover:bg-slate-700 text-white py-2 px-4 rounded font-bold text-sm transition-colors flex-1 w-full">⬇️ 1. Descargar Plantilla Catálogo</button>
-                        <div class="flex-1 w-full relative">
-                            <input type="file" id="excelUploadCatalog" accept=".xlsx, .xls" class="hidden" onchange="importExcelCatalog(event)">
-                            <button onclick="document.getElementById('excelUploadCatalog').click()" class="bg-[#0099cc] hover:bg-[#007799] text-white py-2 px-4 rounded font-bold text-sm transition-colors w-full">⬆️ 2. Subir Archivo Excel</button>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="flex flex-col lg:flex-row gap-6">
-                    <div class="lg:w-1/3 bg-white rounded-lg shadow-sm border border-gray-200 p-6 h-fit admin-editor-only hidden">
-                        <h2 class="text-xl font-bold text-[#003366] mb-6 border-b pb-4" id="catalogFormTitle">Agregar / Editar Equipo</h2>
-                        <form id="catalogForm" class="space-y-4" onsubmit="event.preventDefault(); handleArticle();">
-                            <input type="hidden" id="articleId">
-                            <div><label class="block text-xs font-bold text-gray-700 mb-1">EQUIPO / ACCESORIO *</label><input type="text" id="articleName" class="w-full px-3 py-2 border rounded focus:border-[#0099cc] focus:outline-none" required></div>
-                            <div class="grid grid-cols-2 gap-3">
-                                <div><label class="block text-xs font-bold text-gray-700 mb-1">MARCA</label><input type="text" id="brand" class="w-full px-3 py-2 border rounded focus:outline-none focus:border-[#0099cc]"></div>
-                                <div><label class="block text-xs font-bold text-gray-700 mb-1">MODELO</label><input type="text" id="model" class="w-full px-3 py-2 border rounded focus:outline-none focus:border-[#0099cc]"></div>
-                            </div>
-                            <div class="grid grid-cols-2 gap-3">
-                                <div><label class="block text-xs font-bold text-gray-700 mb-1">N° PARTE</label><input type="text" id="partNumber" class="w-full px-3 py-2 border rounded focus:outline-none focus:border-[#0099cc]"></div>
-                                <div><label class="block text-xs font-bold text-gray-700 mb-1">CÓDIGO SAP (MCP)</label><input type="text" id="sapNumber" class="w-full px-3 py-2 border rounded focus:outline-none focus:border-[#0099cc]"></div>
-                            </div>
-                            <div class="grid grid-cols-2 gap-3">
-                                <div><label class="block text-xs font-bold text-gray-700 mb-1">CANT. ACTUAL *</label><input type="number" id="initialStock" class="w-full px-3 py-2 border rounded focus:outline-none focus:border-[#0099cc]" required></div>
-                                <div><label class="block text-xs font-bold text-gray-700 mb-1">ALERTA MÍNIMA *</label><input type="number" id="minStock" class="w-full px-3 py-2 border rounded focus:outline-none focus:border-[#0099cc]" required></div>
-                            </div>
-                            <div><label class="block text-xs font-bold text-gray-700 mb-1">OBSERVACIONES</label><textarea id="catalogObs" rows="2" class="w-full px-3 py-2 border rounded focus:outline-none focus:border-[#0099cc]"></textarea></div>
-                            <div class="flex gap-2 pt-4">
-                                <button type="submit" id="btnSaveArticle" class="flex-1 bg-[#003366] hover:bg-[#002244] text-white py-2 px-4 rounded font-bold text-sm transition-colors">Guardar</button>
-                                <button type="button" id="cancelEdit" class="flex-1 bg-gray-200 text-gray-800 rounded font-bold hidden text-sm hover:bg-gray-300" onclick="resetArticleForm()">Cancelar</button>
-                            </div>
-                        </form>
-                    </div>
-                    
-                    <div id="catalogContainerClass" class="w-full bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
-                        <div class="p-6 border-b border-gray-200 bg-slate-50 flex justify-between items-center">
-                            <h3 class="text-xl font-bold text-[#003366]">Base de Datos (A-Z)</h3>
-                        </div>
-                        <div class="p-4 sm:p-6 bg-slate-50 h-full">
-                            <div id="catalogList" class="flex flex-col gap-4 max-h-[800px] overflow-y-auto pr-2"></div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div id="users" class="tab-content hidden fade-in admin-only">
-                <div class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
-                    <div class="p-6 border-b border-gray-200 bg-slate-50">
-                        <h3 class="text-xl font-bold text-[#003366]">Gestión de Accesos</h3>
-                    </div>
-                    <div class="overflow-x-auto">
-                        <table class="w-full">
-                            <thead class="bg-gray-100">
-                                <tr>
-                                    <th class="px-6 py-3 text-left text-xs font-bold text-gray-600 uppercase">Nombre</th>
-                                    <th class="px-6 py-3 text-left text-xs font-bold text-gray-600 uppercase">Correo</th>
-                                    <th class="px-6 py-3 text-left text-xs font-bold text-gray-600 uppercase">Fecha de Solicitud</th>
-                                    <th class="px-6 py-3 text-left text-xs font-bold text-gray-600 uppercase">Rol Actual</th>
-                                    <th class="px-6 py-3 text-left text-xs font-bold text-gray-600 uppercase">Autorización</th>
-                                </tr>
-                            </thead>
-                            <tbody id="personnelList" class="divide-y divide-gray-200 bg-white"></tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
+            </main>
         </div>
     </div>
 
     <script>
+        // --- 1. CONFIGURACIÓN FIREBASE ---
         const firebaseConfig = {
             apiKey: "AIzaSyCJPSncnUWIua1CiAceFbv1tmClpRKjj2U",
             authDomain: "gestion-de-inventarios-rescate.firebaseapp.com",
@@ -343,10 +370,21 @@
         let currentUser = null;
         let currentUserRole = 'lector'; 
         let articles = [], movements = [], usersData = [];
-        let currentFilteredArticles = []; // Guarda lo que se está viendo actualmente
-        let showOnlyCritical = false; // Estado del botón naranja
+        let currentFilteredArticles = []; 
+        let showOnlyCritical = false; 
 
-        // Mostrar Ojo de Contraseña
+        // Manejo Menú Lateral
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('sidebarOverlay');
+            if (window.innerWidth < 768) {
+                sidebar.classList.toggle('-translate-x-full');
+                overlay.classList.toggle('hidden');
+            } else {
+                sidebar.classList.toggle('md:hidden');
+            }
+        }
+
         function togglePassword(inputId, iconId) {
             const input = document.getElementById(inputId);
             const icon = document.getElementById(iconId);
@@ -359,12 +397,45 @@
             }
         }
 
+        // --- 2. PROTECCIÓN GLOBAL DE EVENTOS ---
+        document.addEventListener('DOMContentLoaded', () => {
+            document.getElementById('btnShowRegister').addEventListener('click', toggleAuthMode);
+            document.getElementById('btnShowLogin').addEventListener('click', toggleAuthMode);
+            
+            document.getElementById('loginForm').addEventListener('submit', handleLogin);
+            document.getElementById('registerForm').addEventListener('submit', handleRegister);
+            
+            document.getElementById('btnLogoutPending').addEventListener('click', () => auth.signOut());
+            document.getElementById('btnLogoutMain').addEventListener('click', () => auth.signOut());
+
+            // Listeners de Movimientos
+            document.getElementById('movementForm').addEventListener('submit', handleMovement);
+            document.getElementById('movementType').addEventListener('change', updateMovementNameSelect);
+            document.getElementById('movementNameSelect').addEventListener('change', updateModelSelect);
+            document.getElementById('movementModelSelect').addEventListener('change', checkMovementForm);
+            document.getElementById('movementFilter').addEventListener('change', updateMovementsTable);
+
+            // Listeners Catálogo
+            document.getElementById('catalogForm').addEventListener('submit', handleArticle);
+            document.getElementById('cancelEdit').addEventListener('click', resetArticleForm);
+            document.getElementById('searchCatalog').addEventListener('keyup', updateCatalogList);
+
+            // Excel Botones
+            document.getElementById('excelUploadCatalog').addEventListener('change', importExcelCatalog);
+            document.getElementById('excelUploadIngreso').addEventListener('change', (e) => importExcelMovements(e, 'ingreso'));
+            document.getElementById('excelUploadSalida').addEventListener('change', (e) => importExcelMovements(e, 'salida'));
+
+            setupTabs();
+        });
+
+        // --- 3. FUNCIONES DE AUTENTICACIÓN ---
         function toggleAuthMode() {
             document.getElementById('loginForm').classList.toggle('hidden');
             document.getElementById('registerForm').classList.toggle('hidden');
         }
 
-        async function handleLogin() {
+        async function handleLogin(e) {
+            if(e) e.preventDefault();
             const email = document.getElementById('loginEmail').value.trim().toLowerCase();
             const pass = document.getElementById('loginPassword').value;
             const btn = document.getElementById('btnLogin');
@@ -390,7 +461,8 @@
             } finally { btn.textContent = "Ingresar"; btn.disabled = false; }
         }
 
-        async function handleRegister() {
+        async function handleRegister(e) {
+            if(e) e.preventDefault();
             const name = document.getElementById('regName').value;
             const email = document.getElementById('regEmail').value.trim();
             const pass = document.getElementById('regPassword').value;
@@ -439,7 +511,7 @@
             
             const badge = document.getElementById('userRoleBadge');
             badge.textContent = userData.rol;
-            badge.className = `px-2 py-1 text-white rounded text-xs font-bold uppercase tracking-wider ${userData.rol === 'admin' ? 'bg-red-600' : (userData.rol === 'editor' ? 'bg-purple-600' : 'bg-[#0099cc]')}`;
+            badge.className = `px-2 py-1 text-white rounded text-[10px] sm:text-xs font-bold uppercase tracking-wider shadow-sm ${userData.rol === 'admin' ? 'bg-red-600' : (userData.rol === 'editor' ? 'bg-purple-600' : 'bg-[#0099cc]')}`;
 
             const adminEditorElements = document.querySelectorAll('.admin-editor-only');
             const adminOnlyElements = document.querySelectorAll('.admin-only');
@@ -447,20 +519,19 @@
             if (userData.rol === 'admin') {
                 adminEditorElements.forEach(el => el.classList.remove('hidden'));
                 adminOnlyElements.forEach(el => el.classList.remove('hidden'));
-                document.getElementById('catalogContainerClass').classList.replace('w-full', 'lg:w-2/3');
+                document.getElementById('catalogContainerClass').classList.replace('w-full', 'xl:w-2/3');
             } else if (userData.rol === 'editor') {
                 adminEditorElements.forEach(el => el.classList.remove('hidden'));
-                adminOnlyElements.forEach(el => el.classList.add('hidden')); // Escondemos las cargas masivas
-                document.getElementById('catalogContainerClass').classList.replace('w-full', 'lg:w-2/3');
+                adminOnlyElements.forEach(el => el.classList.add('hidden')); 
+                document.getElementById('catalogContainerClass').classList.replace('w-full', 'xl:w-2/3');
             } else {
                 adminEditorElements.forEach(el => el.classList.add('hidden'));
                 adminOnlyElements.forEach(el => el.classList.add('hidden'));
-                document.getElementById('catalogContainerClass').classList.replace('lg:w-2/3', 'w-full');
+                document.getElementById('catalogContainerClass').classList.replace('xl:w-2/3', 'w-full');
             }
             
             trackOnlineStatus(); loadArticles(); loadMovements(); 
             if (userData.rol === 'admin') loadUsersList();
-            setupTabs();
         }
 
         function trackOnlineStatus() {
@@ -475,6 +546,7 @@
             });
         }
 
+        // --- 4. LECTURA DE DATOS ---
         function loadArticles() {
             db.collection('articles').onSnapshot(snapshot => {
                 articles = []; snapshot.forEach(doc => articles.push({ id: doc.id, ...doc.data() }));
@@ -496,22 +568,22 @@
                 document.getElementById('personnelList').innerHTML = usersData.map(u => {
                     const fecha = u.creado ? u.creado.toDate().toLocaleString('es-PE') : 'N/A';
                     return `
-                    <tr class="border-b hover:bg-slate-50">
-                        <td class="px-6 py-4 font-bold text-sm">${u.nombre}</td>
+                    <tr class="border-b hover:bg-slate-50 transition-colors">
+                        <td class="px-6 py-4 font-bold text-sm text-gray-800">${u.nombre}</td>
                         <td class="px-6 py-4 text-sm text-gray-600">${u.email}</td>
-                        <td class="px-6 py-4 text-xs text-gray-500">${fecha}</td>
-                        <td class="px-6 py-4 text-sm font-bold uppercase ${u.rol==='admin'?'text-red-600':u.rol==='editor'?'text-purple-600':u.rol==='lector'?'text-blue-600':'text-orange-500'}">
+                        <td class="px-6 py-4 text-xs font-semibold text-gray-500">${fecha}</td>
+                        <td class="px-6 py-4 text-xs font-bold uppercase ${u.rol==='admin'?'text-red-600':u.rol==='editor'?'text-purple-600':u.rol==='lector'?'text-blue-600':'text-orange-500'}">
                             ${u.rol === 'pendiente' ? '⚠️ PENDIENTE' : u.rol}
                         </td>
                         <td class="px-6 py-4 flex gap-2">
-                            <select onchange="window.changeUserRole('${u.id}', this.value)" class="border border-gray-300 rounded px-2 py-1 text-sm bg-white cursor-pointer focus:outline-none">
+                            <select onchange="window.changeUserRole('${u.id}', this.value)" class="border border-gray-300 rounded-lg px-3 py-1.5 text-xs font-semibold bg-white cursor-pointer focus:outline-none focus:ring-1 focus:ring-[#003366]">
                                 <option value="" disabled selected>Autorizar como...</option>
                                 <option value="admin">Administrador</option>
                                 <option value="editor">Editor</option>
-                                <option value="lector">Solo Lector</option>
-                                <option value="pendiente">Bloquear (Pendiente)</option>
+                                <option value="lector">Lector</option>
+                                <option value="pendiente">Bloquear</option>
                             </select>
-                            <button onclick="window.deleteUser('${u.id}')" class="px-3 py-1 bg-red-100 hover:bg-red-200 text-red-700 rounded font-bold text-xs transition-colors">❌ Eliminar</button>
+                            <button onclick="window.deleteUser('${u.id}')" class="px-3 py-1.5 bg-red-100 hover:bg-red-200 text-red-700 rounded-lg font-bold text-xs transition-colors">❌ Eliminar</button>
                         </td>
                     </tr>`;
                 }).join('');
@@ -530,6 +602,7 @@
             }
         }
 
+        // --- 5. MOVIMIENTOS Y LÓGICA DE STOCKS ---
         function updateMovementNameSelect() {
             const nameSelect = document.getElementById('movementNameSelect');
             const modelSelect = document.getElementById('movementModelSelect');
@@ -566,7 +639,8 @@
 
         function checkMovementForm() { document.getElementById('btnSaveMovement').disabled = !document.getElementById('movementModelSelect').value; }
 
-        async function handleMovement() {
+        async function handleMovement(e) {
+            if(e) e.preventDefault();
             const btn = document.getElementById('btnSaveMovement');
             btn.textContent = "Guardando..."; btn.disabled = true;
 
@@ -574,8 +648,8 @@
                 const articleId = document.getElementById('movementModelSelect').value; 
                 const mType = document.getElementById('movementType').value;
                 const qty = parseInt(document.getElementById('quantity').value);
-                
                 const article = articles.find(a => a.id === articleId);
+
                 if (mType === 'salida' && (article.stock || 0) < qty) { alert('Stock insuficiente.'); return; }
 
                 const newStock = (article.stock || 0) + (mType === 'ingreso' ? qty : -qty);
@@ -585,8 +659,7 @@
                 await db.collection('movements').add({
                     articleId: articleId, articleName: article.name, articleModel: article.model || '',
                     type: mType, quantity: qty, newStock: newStock,
-                    respDelivery: document.getElementById('respDelivery').value, 
-                    respReception: document.getElementById('respReception').value, 
+                    respDelivery: document.getElementById('respDelivery').value, respReception: document.getElementById('respReception').value, 
                     observations: obsFinal,
                     timestamp: firebase.firestore.FieldValue.serverTimestamp(), registeredBy: currentUser.email
                 });
@@ -600,18 +673,19 @@
             const filter = document.getElementById('movementFilter').value;
             const filtered = movements.filter(m => filter === 'all' || m.type === filter);
             document.getElementById('movementsTable').innerHTML = filtered.map(m => `
-                <tr class="hover:bg-slate-50 border-b">
-                    <td class="px-6 py-3 text-sm">${m.timestamp ? m.timestamp.toDate().toLocaleString() : 'Cargando...'}</td>
-                    <td class="px-6 py-3 text-sm"><div class="font-bold text-gray-900">${m.articleName}</div><div class="text-xs text-gray-500">Mod: ${m.articleModel||'-'}</div></td>
-                    <td class="px-6 py-3 font-bold ${m.type==='ingreso'?'text-green-600':'text-red-600'}">${m.type==='ingreso'?'+':'-'}${m.quantity}</td>
-                    <td class="px-6 py-3 text-sm"><span class="px-2 py-1 rounded text-xs font-bold ${m.type==='ingreso'?'bg-green-100 text-green-800':'bg-red-100 text-red-800'} uppercase">${m.type}</span></td>
-                    <td class="px-6 py-3 font-bold text-blue-700">${m.newStock !== undefined ? m.newStock : '-'}</td>
-                    <td class="px-6 py-3 text-sm font-semibold text-gray-700"><div class="text-xs text-blue-800">Entrega: ${m.respDelivery||'-'}</div><div class="text-xs text-green-800">Recibe: ${m.respReception||'-'}</div></td>
-                    <td class="px-6 py-3 text-xs text-gray-600 max-w-[200px] truncate" title="${m.observations || '-'}">${m.observations || '-'}</td>
+                <tr class="hover:bg-slate-50 border-b transition-colors">
+                    <td class="px-6 py-4 text-sm font-medium text-gray-700 whitespace-nowrap">${m.timestamp ? m.timestamp.toDate().toLocaleString('es-PE', {day:'2-digit', month:'2-digit', year:'numeric', hour:'2-digit', minute:'2-digit'}) : 'Cargando...'}</td>
+                    <td class="px-6 py-4 text-sm"><div class="font-bold text-[#003366] uppercase">${m.articleName}</div><div class="text-xs text-gray-500 font-semibold">Mod: ${m.articleModel||'-'}</div></td>
+                    <td class="px-6 py-4 text-lg font-black ${m.type==='ingreso'?'text-green-600':'text-red-600'}">${m.type==='ingreso'?'+':'-'}${m.quantity}</td>
+                    <td class="px-6 py-4 text-sm"><span class="px-2 py-1 rounded-md text-[10px] font-bold ${m.type==='ingreso'?'bg-green-100 text-green-800':'bg-red-100 text-red-800'} uppercase tracking-wider">${m.type}</span></td>
+                    <td class="px-6 py-4 text-lg font-black text-[#0099cc]">${m.newStock !== undefined ? m.newStock : '-'}</td>
+                    <td class="px-6 py-4 text-xs font-semibold text-gray-700 whitespace-nowrap"><div class="text-blue-800 mb-1">📤 Ent: ${m.respDelivery||'-'}</div><div class="text-green-800">📥 Rec: ${m.respReception||'-'}</div></td>
+                    <td class="px-6 py-4 text-xs font-medium text-gray-600 max-w-[200px] truncate" title="${m.observations || '-'}">${m.observations || '-'}</td>
                 </tr>
-            `).join('') || '<tr><td colspan="7" class="px-6 py-8 text-center text-gray-500">No hay registros</td></tr>';
+            `).join('') || '<tr><td colspan="7" class="px-6 py-12 text-center text-gray-500 font-semibold text-lg">No hay registros de movimientos</td></tr>';
         }
 
+        // --- 6. CATÁLOGO ---
         function toggleCriticalFilter() {
             showOnlyCritical = !showOnlyCritical;
             const btn = document.getElementById('btnFilterCritical');
@@ -667,31 +741,32 @@
             currentFilteredArticles = filteredAndSorted; 
 
             const editButtons = (id) => (currentUserRole === 'admin' || currentUserRole === 'editor') ? `
-                <div class="flex gap-2 mt-4 pt-4 border-t border-gray-200">
-                    <button onclick="window.editArticle('${id}')" class="px-6 py-2 bg-gray-200 hover:bg-gray-300 text-gray-800 text-sm font-bold rounded transition-colors w-full sm:w-auto">Editar</button>
-                    <button onclick="if(confirm('¿Eliminar equipo por completo de la base de datos?')) db.collection('articles').doc('${id}').delete()" class="px-6 py-2 bg-red-100 hover:bg-red-200 text-red-700 text-sm font-bold rounded transition-colors w-full sm:w-auto">Borrar Equipo</button>
+                <div class="flex gap-3 mt-4 pt-4 border-t border-gray-100">
+                    <button onclick="window.editArticle('${id}')" class="px-6 py-2 bg-gray-100 hover:bg-gray-200 text-[#003366] text-xs font-bold rounded-lg transition-colors w-full sm:w-auto shadow-sm">Editar</button>
+                    <button onclick="if(confirm('¿Eliminar equipo por completo de la base de datos?')) db.collection('articles').doc('${id}').delete()" class="px-6 py-2 bg-red-50 hover:bg-red-100 text-red-600 text-xs font-bold rounded-lg transition-colors w-full sm:w-auto shadow-sm">Borrar Equipo</button>
                 </div>` : '';
 
             document.getElementById('catalogList').innerHTML = filteredAndSorted.map(a => `
-                <div class="bg-white p-5 rounded-xl border border-gray-200 shadow-sm hover:shadow-md transition-shadow flex flex-col md:flex-row gap-4 w-full">
-                    <div class="flex-1">
-                        <h4 class="font-bold text-[#003366] text-lg uppercase mb-2">${a.name}</h4>
-                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-x-4 gap-y-1 text-sm text-gray-600">
-                            <div><span class="font-semibold text-gray-800">MARCA:</span> ${a.brand||'-'}</div>
-                            <div><span class="font-semibold text-gray-800">MODELO:</span> ${a.model||'-'}</div>
-                            <div><span class="font-semibold text-gray-800">N° PARTE:</span> ${a.partNumber||'-'}</div>
-                            <div><span class="font-semibold text-gray-800">CÓDIGO SAP:</span> ${a.sapNumber||'-'}</div>
-                            <div class="sm:col-span-2 mt-1"><span class="font-semibold text-gray-800">OBSERVACIONES:</span> ${a.observations||'-'}</div>
+                <div class="bg-white p-5 rounded-xl border border-gray-200 shadow-sm hover:shadow-md transition-all flex flex-col md:flex-row gap-4 w-full relative overflow-hidden">
+                    ${a.stock <= a.minStock ? '<div class="absolute left-0 top-0 bottom-0 w-1.5 bg-red-500"></div>' : '<div class="absolute left-0 top-0 bottom-0 w-1.5 bg-[#0099cc]"></div>'}
+                    <div class="flex-1 pl-2">
+                        <h4 class="font-black text-[#003366] text-lg uppercase mb-3 tracking-wide">${a.name}</h4>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-2 text-xs text-gray-600">
+                            <div><span class="font-bold text-gray-400 block text-[10px] uppercase mb-0.5">MARCA</span> <span class="font-semibold text-gray-800 text-sm">${a.brand||'-'}</span></div>
+                            <div><span class="font-bold text-gray-400 block text-[10px] uppercase mb-0.5">MODELO</span> <span class="font-semibold text-gray-800 text-sm">${a.model||'-'}</span></div>
+                            <div><span class="font-bold text-gray-400 block text-[10px] uppercase mb-0.5">N° PARTE</span> <span class="font-semibold text-gray-800 text-sm">${a.partNumber||'-'}</span></div>
+                            <div><span class="font-bold text-gray-400 block text-[10px] uppercase mb-0.5">CÓDIGO SAP</span> <span class="font-semibold text-gray-800 text-sm">${a.sapNumber||'-'}</span></div>
+                            <div class="sm:col-span-2 pt-1"><span class="font-bold text-gray-400 block text-[10px] uppercase mb-0.5">OBSERVACIONES</span> <span class="font-medium text-gray-700">${a.observations||'-'}</span></div>
                         </div>
                         ${editButtons(a.id)}
                     </div>
-                    <div class="flex flex-col items-start md:items-end justify-center bg-slate-50 md:bg-transparent p-4 md:p-0 rounded-lg md:border-l md:border-gray-200 md:pl-6 min-w-[150px]">
-                        <span class="text-xs text-gray-500 uppercase tracking-widest font-bold mb-1">Stock Actual</span>
-                        <span class="block text-4xl font-black ${a.stock <= a.minStock ? 'text-red-600' : 'text-[#0099cc]'}">${a.stock || 0}</span>
-                        <span class="block text-xs font-semibold mt-1 ${a.stock <= a.minStock ? 'text-red-500' : 'text-gray-500'}">ALERTA MÍN: ${a.minStock}</span>
+                    <div class="flex flex-col items-center md:items-end justify-center bg-slate-50 md:bg-transparent p-4 md:p-0 rounded-lg md:border-l md:border-gray-200 md:pl-8 min-w-[140px] flex-shrink-0">
+                        <span class="text-[10px] text-gray-400 uppercase tracking-widest font-bold mb-1">Stock Actual</span>
+                        <span class="block text-5xl font-black ${a.stock <= a.minStock ? 'text-red-600' : 'text-[#003366]'}">${a.stock || 0}</span>
+                        <span class="block text-xs font-bold mt-2 px-2 py-1 rounded ${a.stock <= a.minStock ? 'bg-red-100 text-red-700' : 'bg-slate-200 text-gray-600'}">ALERTA MÍN: ${a.minStock}</span>
                     </div>
                 </div>
-            `).join('') || '<div class="text-center text-gray-500 py-8 font-bold">No se encontraron equipos con esa búsqueda.</div>';
+            `).join('') || '<div class="text-center text-gray-500 py-12 font-bold text-lg">No se encontraron equipos con esa búsqueda.</div>';
         }
 
         window.editArticle = function(id) {
@@ -705,7 +780,7 @@
             document.getElementById('catalogFormTitle').scrollIntoView({behavior: 'smooth'});
         }
 
-        function resetArticleForm() { document.getElementById('catalogForm').reset(); document.getElementById('articleId').value = ''; document.getElementById('cancelEdit').classList.add('hidden'); document.getElementById('catalogFormTitle').textContent = 'Agregar Equipo'; }
+        function resetArticleForm() { document.getElementById('catalogForm').reset(); document.getElementById('articleId').value = ''; document.getElementById('cancelEdit').classList.add('hidden'); document.getElementById('catalogFormTitle').textContent = 'Agregar Nuevo Equipo'; }
 
         function updateDashboard() {
             document.getElementById('totalItems').textContent = articles.length;
@@ -719,14 +794,22 @@
             document.querySelectorAll('.tab-btn').forEach(btn => {
                 btn.addEventListener('click', () => {
                     document.querySelectorAll('.tab-content').forEach(c => c.classList.add('hidden'));
-                    document.querySelectorAll('.tab-btn').forEach(b => { b.classList.remove('text-[#003366]', 'bg-slate-100'); b.classList.add('text-gray-500'); });
+                    document.querySelectorAll('.tab-btn').forEach(b => { 
+                        b.classList.remove('bg-[#0099cc]', 'text-white', 'shadow-md'); 
+                        b.classList.add('text-gray-400', 'bg-transparent'); 
+                    });
                     document.getElementById(btn.dataset.tab).classList.remove('hidden');
-                    btn.classList.remove('text-gray-500'); btn.classList.add('text-[#003366]', 'bg-slate-100');
+                    btn.classList.remove('text-gray-400', 'bg-transparent'); 
+                    btn.classList.add('bg-[#0099cc]', 'text-white', 'shadow-md');
+
+                    if (window.innerWidth < 768 && !document.getElementById('sidebar').classList.contains('-translate-x-full')) {
+                        toggleSidebar(); // Cierra el menú en móvil al hacer clic
+                    }
                 });
             });
         }
         
-        // --- SISTEMAS EXCEL MEJORADOS ---
+        // --- 7. SISTEMA EXCEL (EXPORTACIÓN E IMPORTACIÓN) ---
         window.exportCatalogToExcel = function() {
             if (articles.length === 0) return alert("No hay equipos registrados para exportar.");
             const data = articles.sort((a,b) => a.name.localeCompare(b.name)).map(a => ({
@@ -765,9 +848,7 @@
                         const name = (row['EQUIPO / ACCESORIO / HERRAMIENTA']||'').toString().trim();
                         const model = (row['MODELO']||'').toString().trim();
                         if(!name) continue;
-
-                        const exists = articles.find(a => a.name.toLowerCase() === name.toLowerCase() && (a.model||'').toLowerCase() === model.toLowerCase());
-                        if(exists) { omitted++; continue; }
+                        if(articles.find(a => a.name.toLowerCase() === name.toLowerCase() && (a.model||'').toLowerCase() === model.toLowerCase())) { omitted++; continue; }
 
                         const payload = { 
                             name: name, brand: (row['MARCA']||'').toString().trim(), model: model, partNumber: (row['N° PARTE']||'').toString().trim(), sapNumber: (row['CODIGO SAP (MCP)']||'').toString().trim(), 
@@ -776,8 +857,8 @@
                         const docRef = await db.collection('articles').add(payload);
                         articles.push({ id: docRef.id, ...payload }); success++;
                     }
-                    alert(`✅ Carga procesada.\nAgregados: ${success}\nOmitidos (Duplicados): ${omitted}`); document.getElementById('excelUploadCatalog').value = '';
-                } catch(error) { alert("Error al leer Excel."); }
+                    alert(`✅ Carga procesada.\nNuevos: ${success}\nOmitidos (Duplicados): ${omitted}`); document.getElementById('excelUploadCatalog').value = '';
+                } catch(error) { alert("Error leyendo Excel."); }
             }; reader.readAsArrayBuffer(file);
         }
 
