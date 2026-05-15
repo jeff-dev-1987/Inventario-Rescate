@@ -12,78 +12,53 @@
     <style>
         .fade-in { animation: fadeIn 0.4s ease-out; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
-        /* Scrollbar styling corporativo */
-        ::-webkit-scrollbar { width: 8px; height: 8px; }
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
         ::-webkit-scrollbar-track { background: #f1f5f9; }
         ::-webkit-scrollbar-thumb { background: #0099cc; border-radius: 10px; }
         ::-webkit-scrollbar-thumb:hover { background: #007799; }
     </style>
 </head>
-<body class="bg-slate-100 font-sans overflow-hidden">
+<body class="bg-slate-100 min-h-screen font-sans overflow-hidden">
 
     <div id="authScreen" class="h-screen w-full flex items-center justify-center bg-[#003366] px-4 absolute inset-0 z-[100] fade-in overflow-y-auto">
-        <div class="bg-white p-8 rounded-lg shadow-2xl w-full max-w-md my-auto">
+        <div class="bg-white p-8 rounded-lg shadow-2xl w-full max-w-md my-auto border-t-4 border-[#0099cc]">
             <div class="text-center mb-8">
                 <svg class="w-16 h-16 text-[#0099cc] mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path></svg>
                 <h1 class="text-2xl font-bold text-[#003366]">INVENTARIO DE RESCATE</h1>
                 <p class="text-sm text-gray-500 uppercase tracking-widest mt-1">Minera Chinalco Perú</p>
+                <div class="mt-4 inline-block bg-blue-50 text-blue-800 text-xs font-semibold px-3 py-1 rounded-full border border-blue-200">
+                    🔒 Acceso Privado a Personal
+                </div>
             </div>
 
-            <form id="loginForm" class="space-y-4" onsubmit="event.preventDefault(); handleLogin();">
+            <form id="loginForm" class="space-y-5">
                 <div>
                     <label class="block text-sm font-bold text-gray-700 mb-1">Correo Electrónico</label>
-                    <input type="email" id="loginEmail" class="w-full px-4 py-2 border border-gray-300 rounded focus:ring-1 focus:ring-[#003366]" required>
+                    <input type="email" id="loginEmail" class="w-full px-4 py-3 border border-gray-300 rounded focus:ring-2 focus:ring-[#003366] outline-none" placeholder="usuario@ejemplo.com" required>
                 </div>
                 <div>
                     <label class="block text-sm font-bold text-gray-700 mb-1">Contraseña</label>
                     <div class="relative">
-                        <input type="password" id="loginPassword" class="w-full px-4 py-2 border border-gray-300 rounded focus:ring-1 focus:ring-[#003366] pr-10" required>
-                        <button type="button" onclick="togglePassword('loginPassword', 'eyeLogin')" class="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-500 hover:text-gray-700">
-                            <svg id="eyeLogin" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" /></svg>
+                        <input type="password" id="loginPassword" class="w-full px-4 py-3 border border-gray-300 rounded focus:ring-2 focus:ring-[#003366] pr-10 outline-none" placeholder="••••••••" required>
+                        <button type="button" onclick="togglePassword('loginPassword', 'eyeLogin')" class="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-500 hover:text-gray-700 focus:outline-none">
+                            <svg id="eyeLogin" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                            </svg>
                         </button>
                     </div>
                 </div>
-                <button type="submit" id="btnLogin" class="w-full bg-[#003366] hover:bg-[#002244] text-white py-2 px-4 rounded font-bold transition-colors">Ingresar</button>
-                <div class="text-center mt-4">
-                    <button type="button" id="btnShowRegister" class="text-[#0099cc] text-sm hover:underline font-semibold">¿No tienes cuenta? Solicitar acceso</button>
-                </div>
-            </form>
-
-            <form id="registerForm" class="space-y-4 hidden" onsubmit="event.preventDefault(); handleRegister();">
-                <div>
-                    <label class="block text-sm font-bold text-gray-700 mb-1">Nombre y Apellidos</label>
-                    <input type="text" id="regName" class="w-full px-4 py-2 border border-gray-300 rounded focus:ring-1 focus:ring-[#003366]" required>
-                </div>
-                <div>
-                    <label class="block text-sm font-bold text-gray-700 mb-1">Correo Electrónico</label>
-                    <input type="email" id="regEmail" class="w-full px-4 py-2 border border-gray-300 rounded focus:ring-1 focus:ring-[#003366]" required>
-                </div>
-                <div>
-                    <label class="block text-sm font-bold text-gray-700 mb-1">Contraseña (Mín. 6 caracteres)</label>
-                    <div class="relative">
-                        <input type="password" id="regPassword" class="w-full px-4 py-2 border border-gray-300 rounded focus:ring-1 focus:ring-[#003366] pr-10" required>
-                        <button type="button" onclick="togglePassword('regPassword', 'eyeReg')" class="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-500 hover:text-gray-700">
-                            <svg id="eyeReg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" /></svg>
-                        </button>
-                    </div>
-                </div>
-                <button type="submit" id="btnRegister" class="w-full bg-[#0099cc] hover:bg-[#007799] text-white py-2 px-4 rounded font-bold transition-colors">Crear Cuenta</button>
-                <div class="text-center mt-4">
-                    <button type="button" id="btnShowLogin" class="text-gray-500 text-sm hover:underline font-semibold">Volver al inicio de sesión</button>
-                </div>
+                <button type="submit" id="btnLogin" class="w-full bg-[#003366] hover:bg-[#002244] text-white py-3 px-4 rounded font-bold transition-colors shadow-md text-lg">
+                    Ingresar al Sistema
+                </button>
             </form>
         </div>
     </div>
 
     <div id="pendingScreen" class="h-screen w-full flex items-center justify-center bg-slate-100 px-4 hidden absolute inset-0 z-[90]">
         <div class="bg-white p-8 rounded-lg shadow-xl w-full max-w-lg text-center border-t-4 border-orange-500">
-            <h2 class="text-2xl font-bold text-gray-800 mb-4">⏳ Cuenta en Revisión</h2>
-            <p class="text-gray-600 mb-6">Tu cuenta ha sido creada exitosamente, pero requiere autorización de la Jefatura para acceder al sistema.</p>
-            <div class="bg-orange-50 border border-orange-200 rounded p-4 mb-6 text-sm text-orange-800">
-                Por favor, envía un correo solicitando tu habilitación a:<br>
-                <a href="mailto:supervision.rescate@gmail.com" class="font-bold text-blue-600 underline text-lg">supervision.rescate@gmail.com</a>
-            </div>
-            <button id="btnLogoutPending" class="bg-[#003366] hover:bg-[#002244] text-white py-2 px-6 rounded font-bold transition-colors">Cerrar sesión / Volver</button>
+            <h2 class="text-2xl font-bold text-gray-800 mb-4">⏳ Acceso Restringido</h2>
+            <p class="text-gray-600 mb-6">Tu cuenta ha sido bloqueada o no tiene permisos activos para ingresar al sistema de inventarios.</p>
+            <button class="btn-logout bg-[#003366] hover:bg-[#002244] text-white py-2 px-6 rounded font-bold transition-colors">Volver al inicio</button>
         </div>
     </div>
 
@@ -108,7 +83,7 @@
                     <span class="text-lg">🔄</span> Ingresos / Salidas
                 </button>
                 <button class="tab-btn w-full flex items-center gap-3 px-4 py-3 rounded-lg font-bold text-sm transition-all text-gray-400 hover:bg-[#003366] hover:text-white" data-tab="catalog">
-                    <span class="text-lg">📦</span> Catálogo y Excel
+                    <span class="text-lg">📦</span> Catálogo / Excel
                 </button>
                 <button class="tab-btn admin-only hidden w-full flex items-center gap-3 px-4 py-3 rounded-lg font-bold text-sm transition-all text-gray-400 hover:bg-[#003366] hover:text-white" data-tab="users">
                     <span class="text-lg">👥</span> Adm. Usuarios
@@ -116,7 +91,7 @@
             </nav>
 
             <div class="p-4 border-t border-gray-700 bg-[#001a33]">
-                <button id="btnLogoutMain" class="w-full flex items-center justify-center gap-2 bg-red-600 hover:bg-red-700 text-white py-2 px-4 rounded-lg font-bold text-sm transition-colors">
+                <button class="btn-logout w-full flex items-center justify-center gap-2 bg-red-600 hover:bg-red-700 text-white py-2 px-4 rounded-lg font-bold text-sm transition-colors">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path></svg>
                     Cerrar Sesión
                 </button>
@@ -140,8 +115,8 @@
             </header>
 
             <main class="flex-1 overflow-x-hidden overflow-y-auto bg-slate-100 p-4 sm:p-6 lg:p-8">
-                
                 <div class="max-w-7xl mx-auto">
+                    
                     <div id="dashboard" class="tab-content fade-in block">
                         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
                             <div class="bg-white rounded-lg p-6 shadow-sm border-l-4 border-[#003366]">
@@ -190,7 +165,7 @@
 
                     <div id="movements" class="tab-content hidden fade-in admin-editor-only">
                         
-                        <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6 mb-8 admin-only hidden">
+                        <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6 mb-8 max-w-4xl mx-auto admin-only hidden">
                             <h2 class="text-lg font-bold text-[#003366] mb-4 border-b pb-2">📊 Carga Masiva de Movimientos (Excel)</h2>
                             <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
                                 <button id="btnDownloadMovementExcel" class="bg-slate-600 hover:bg-slate-700 text-white py-3 px-4 rounded-lg font-bold text-sm transition-colors w-full shadow-sm">⬇️ Descargar Plantilla</button>
@@ -205,7 +180,7 @@
                             </div>
                         </div>
 
-                        <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6 md:p-8">
+                        <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6 md:p-8 max-w-4xl mx-auto">
                             <h2 class="text-2xl font-bold text-[#003366] mb-6 border-b pb-4">Registrar Movimiento Manual</h2>
                             <form id="movementForm" class="space-y-6">
                                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -262,13 +237,13 @@
                                 <input type="text" id="searchCatalog" placeholder="Buscar palabras clave (Ej: Petzl Vertex 1234)..." class="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:border-[#0099cc] focus:outline-none focus:ring-2 focus:ring-[#0099cc] text-lg transition-all">
                             </div>
                             <div class="w-full xl:w-3/5 flex flex-col sm:flex-row gap-3 items-end justify-end mt-auto">
-                                <button id="btnFilterCritical" onclick="toggleCriticalFilter()" class="w-full sm:w-auto bg-orange-500 hover:bg-orange-600 text-white py-3 px-4 rounded-lg font-bold transition-colors shadow-sm whitespace-nowrap">
+                                <button id="btnFilterCritical" class="w-full sm:w-auto bg-orange-500 hover:bg-orange-600 text-white py-3 px-4 rounded-lg font-bold transition-colors shadow-sm whitespace-nowrap">
                                     ⚠️ Ver Críticos
                                 </button>
-                                <button id="btnExportFiltered" onclick="exportFilteredCatalogToExcel()" class="w-full sm:w-auto bg-[#0099cc] hover:bg-[#007799] text-white py-3 px-4 rounded-lg font-bold transition-colors shadow-sm whitespace-nowrap">
+                                <button id="btnExportFiltered" class="w-full sm:w-auto bg-[#0099cc] hover:bg-[#007799] text-white py-3 px-4 rounded-lg font-bold transition-colors shadow-sm whitespace-nowrap">
                                     ⬇️ Exp. Filtrados
                                 </button>
-                                <button id="btnExportAll" onclick="exportCatalogToExcel()" class="w-full sm:w-auto bg-green-600 hover:bg-green-700 text-white py-3 px-4 rounded-lg font-bold transition-colors shadow-sm whitespace-nowrap">
+                                <button id="btnExportAll" class="w-full sm:w-auto bg-green-600 hover:bg-green-700 text-white py-3 px-4 rounded-lg font-bold transition-colors shadow-sm whitespace-nowrap">
                                     ⬇️ Exportar Todo
                                 </button>
                             </div>
@@ -277,7 +252,7 @@
                         <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6 mb-6 admin-only hidden">
                             <h2 class="text-lg font-bold text-[#003366] mb-4 border-b pb-2">📊 Carga Masiva de Catálogo (Excel)</h2>
                             <div class="flex flex-col md:flex-row gap-4 items-center">
-                                <button onclick="downloadCatalogTemplate()" class="bg-slate-600 hover:bg-slate-700 text-white py-3 px-4 rounded-lg font-bold text-sm transition-colors flex-1 w-full shadow-sm">⬇️ 1. Descargar Plantilla</button>
+                                <button id="btnDownloadCatalogExcel" class="bg-slate-600 hover:bg-slate-700 text-white py-3 px-4 rounded-lg font-bold text-sm transition-colors flex-1 w-full shadow-sm">⬇️ 1. Descargar Plantilla Catálogo</button>
                                 <div class="flex-1 w-full relative">
                                     <input type="file" id="excelUploadCatalog" accept=".xlsx, .xls" class="hidden">
                                     <button onclick="document.getElementById('excelUploadCatalog').click()" class="bg-[#0099cc] hover:bg-[#007799] text-white py-3 px-4 rounded-lg font-bold text-sm transition-colors w-full shadow-sm">⬆️ 2. Subir Archivo Excel</button>
@@ -309,7 +284,7 @@
                                     <div><label class="block text-xs font-bold text-gray-700 mb-1">OBSERVACIONES</label><textarea id="catalogObs" rows="2" class="w-full px-3 py-2.5 border border-gray-300 rounded focus:border-[#0099cc] focus:ring-1 focus:ring-[#0099cc] outline-none"></textarea></div>
                                     <div class="flex gap-3 pt-4">
                                         <button type="submit" id="btnSaveArticle" class="flex-1 bg-[#003366] hover:bg-[#002244] text-white py-3 px-4 rounded-lg font-bold text-sm transition-colors shadow-md">Guardar</button>
-                                        <button type="button" id="cancelEdit" class="flex-1 bg-gray-200 text-gray-800 rounded-lg font-bold hidden text-sm hover:bg-gray-300 transition-colors" onclick="resetArticleForm()">Cancelar</button>
+                                        <button type="button" id="cancelEdit" class="flex-1 bg-gray-200 text-gray-800 rounded-lg font-bold hidden text-sm hover:bg-gray-300 transition-colors">Cancelar</button>
                                     </div>
                                 </form>
                             </div>
@@ -326,27 +301,69 @@
                     </div>
 
                     <div id="users" class="tab-content hidden fade-in admin-only">
-                        <div class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
-                            <div class="p-6 border-b border-gray-200 bg-slate-50">
-                                <h3 class="text-xl font-bold text-[#003366]">Gestión de Accesos</h3>
-                                <p class="text-sm text-gray-500 mt-1">Aprueba, cambia roles o elimina usuarios del sistema.</p>
+                        <div class="flex flex-col lg:flex-row gap-6">
+                            
+                            <div class="lg:w-1/3 bg-white rounded-lg shadow-sm border border-gray-200 p-6 h-fit">
+                                <h2 class="text-xl font-bold text-[#003366] mb-6 border-b pb-4" id="userFormTitle">Agregar Nuevo Usuario</h2>
+                                <form id="userAdminForm" class="space-y-4">
+                                    <input type="hidden" id="adminUserId">
+                                    <div>
+                                        <label class="block text-xs font-bold text-gray-700 mb-1">NOMBRE COMPLETO *</label>
+                                        <input type="text" id="adminUserName" class="w-full px-3 py-2 border border-gray-300 rounded focus:border-[#0099cc] focus:outline-none focus:ring-1 focus:ring-[#0099cc]" required>
+                                    </div>
+                                    <div>
+                                        <label class="block text-xs font-bold text-gray-700 mb-1">CORREO ELECTRÓNICO *</label>
+                                        <input type="email" id="adminUserEmail" class="w-full px-3 py-2 border border-gray-300 rounded focus:border-[#0099cc] focus:outline-none focus:ring-1 focus:ring-[#0099cc]" required>
+                                    </div>
+                                    <div id="passwordContainer">
+                                        <label class="block text-xs font-bold text-gray-700 mb-1">CONTRASEÑA (Mín. 6) *</label>
+                                        <div class="relative">
+                                            <input type="password" id="adminUserPass" class="w-full px-3 py-2 border border-gray-300 rounded focus:border-[#0099cc] focus:outline-none focus:ring-1 focus:ring-[#0099cc] pr-10">
+                                            <button type="button" onclick="togglePassword('adminUserPass', 'eyeAdminReg')" class="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-500 hover:text-gray-700 focus:outline-none">
+                                                <svg id="eyeAdminReg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                                                </svg>
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <label class="block text-xs font-bold text-gray-700 mb-1">ASIGNAR ROL *</label>
+                                        <select id="adminUserRole" class="w-full px-3 py-2 border border-gray-300 rounded focus:border-[#0099cc] focus:outline-none focus:ring-1 focus:ring-[#0099cc] font-semibold" required>
+                                            <option value="lector">Lector (Solo Ver)</option>
+                                            <option value="editor">Editor (Agrega/Edita, No Masivos)</option>
+                                            <option value="admin">Administrador (Total)</option>
+                                        </select>
+                                    </div>
+                                    <div class="flex gap-2 pt-4">
+                                        <button type="submit" id="btnSaveUser" class="flex-1 bg-[#003366] hover:bg-[#002244] text-white py-2 px-4 rounded font-bold text-sm transition-colors shadow-md">Guardar Usuario</button>
+                                        <button type="button" id="cancelUserEdit" class="flex-1 bg-gray-200 text-gray-800 rounded font-bold hidden text-sm hover:bg-gray-300 transition-colors">Cancelar</button>
+                                    </div>
+                                </form>
                             </div>
-                            <div class="overflow-x-auto">
-                                <table class="w-full">
-                                    <thead class="bg-gray-100">
-                                        <tr>
-                                            <th class="px-6 py-4 text-left text-xs font-bold text-gray-600 uppercase tracking-wider">Nombre</th>
-                                            <th class="px-6 py-4 text-left text-xs font-bold text-gray-600 uppercase tracking-wider">Correo</th>
-                                            <th class="px-6 py-4 text-left text-xs font-bold text-gray-600 uppercase tracking-wider">Fecha Solicitud</th>
-                                            <th class="px-6 py-4 text-left text-xs font-bold text-gray-600 uppercase tracking-wider">Rol Actual</th>
-                                            <th class="px-6 py-4 text-left text-xs font-bold text-gray-600 uppercase tracking-wider">Autorización / Acción</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody id="personnelList" class="divide-y divide-gray-200 bg-white"></tbody>
-                                </table>
+
+                            <div class="lg:w-2/3 bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden flex flex-col">
+                                <div class="p-6 border-b border-gray-200 bg-slate-50">
+                                    <h3 class="text-xl font-bold text-[#003366]">Usuarios Registrados</h3>
+                                    <p class="text-xs text-gray-500 mt-1">Crea nuevos usuarios, edita sus roles o elimínalos para revocar su acceso inmediatamente.</p>
+                                </div>
+                                <div class="overflow-x-auto flex-1">
+                                    <table class="w-full">
+                                        <thead class="bg-gray-100 border-b border-gray-200">
+                                            <tr>
+                                                <th class="px-6 py-4 text-left text-xs font-bold text-gray-600 uppercase tracking-wider">Nombre</th>
+                                                <th class="px-6 py-4 text-left text-xs font-bold text-gray-600 uppercase tracking-wider">Correo</th>
+                                                <th class="px-6 py-4 text-left text-xs font-bold text-gray-600 uppercase tracking-wider">Creado</th>
+                                                <th class="px-6 py-4 text-left text-xs font-bold text-gray-600 uppercase tracking-wider">Rol Asignado</th>
+                                                <th class="px-6 py-4 text-left text-xs font-bold text-gray-600 uppercase tracking-wider">Acciones</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="personnelList" class="divide-y divide-gray-200 bg-white"></tbody>
+                                    </table>
+                                </div>
                             </div>
                         </div>
                     </div>
+
                 </div>
             </main>
         </div>
@@ -366,6 +383,9 @@
         firebase.initializeApp(firebaseConfig);
         const auth = firebase.auth();
         const db = firebase.firestore();
+        
+        // App Secundaria para registrar usuarios en background (SÓLO ADMIN)
+        const secondaryApp = firebase.initializeApp(firebaseConfig, "Secondary");
 
         let currentUser = null;
         let currentUserRole = 'lector'; 
@@ -388,6 +408,7 @@
         function togglePassword(inputId, iconId) {
             const input = document.getElementById(inputId);
             const icon = document.getElementById(iconId);
+            if(!input || !icon) return;
             if (input.type === "password") {
                 input.type = "text";
                 icon.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21" />';
@@ -397,43 +418,47 @@
             }
         }
 
-        // --- 2. PROTECCIÓN GLOBAL DE EVENTOS ---
+        // --- 2. PROTECCIÓN GLOBAL DE EVENTOS (Evita que el JS se congele) ---
         document.addEventListener('DOMContentLoaded', () => {
-            document.getElementById('btnShowRegister').addEventListener('click', toggleAuthMode);
-            document.getElementById('btnShowLogin').addEventListener('click', toggleAuthMode);
+            const safeAddListener = (id, event, handler) => {
+                const el = document.getElementById(id);
+                if (el) el.addEventListener(event, handler);
+            };
+
+            safeAddListener('loginForm', 'submit', handleLogin);
             
-            document.getElementById('loginForm').addEventListener('submit', handleLogin);
-            document.getElementById('registerForm').addEventListener('submit', handleRegister);
-            
-            document.getElementById('btnLogoutPending').addEventListener('click', () => auth.signOut());
-            document.getElementById('btnLogoutMain').addEventListener('click', () => auth.signOut());
+            document.querySelectorAll('.btn-logout').forEach(b => b.addEventListener('click', () => auth.signOut()));
 
             // Listeners de Movimientos
-            document.getElementById('movementForm').addEventListener('submit', handleMovement);
-            document.getElementById('movementType').addEventListener('change', updateMovementNameSelect);
-            document.getElementById('movementNameSelect').addEventListener('change', updateModelSelect);
-            document.getElementById('movementModelSelect').addEventListener('change', checkMovementForm);
-            document.getElementById('movementFilter').addEventListener('change', updateMovementsTable);
+            safeAddListener('movementForm', 'submit', handleMovement);
+            safeAddListener('movementType', 'change', updateMovementNameSelect);
+            safeAddListener('movementNameSelect', 'change', updateModelSelect);
+            safeAddListener('movementModelSelect', 'change', checkMovementForm);
+            safeAddListener('movementFilter', 'change', updateMovementsTable);
 
             // Listeners Catálogo
-            document.getElementById('catalogForm').addEventListener('submit', handleArticle);
-            document.getElementById('cancelEdit').addEventListener('click', resetArticleForm);
-            document.getElementById('searchCatalog').addEventListener('keyup', updateCatalogList);
+            safeAddListener('catalogForm', 'submit', handleArticle);
+            safeAddListener('cancelEdit', 'click', resetArticleForm);
+            safeAddListener('searchCatalog', 'keyup', updateCatalogList);
+            safeAddListener('btnFilterCritical', 'click', toggleCriticalFilter);
+            safeAddListener('btnExportAll', 'click', exportCatalogToExcel);
+            safeAddListener('btnExportFiltered', 'click', exportFilteredCatalogToExcel);
+
+            // Listeners Usuarios
+            safeAddListener('userAdminForm', 'submit', handleUserAdmin);
+            safeAddListener('cancelUserEdit', 'click', resetUserForm);
 
             // Excel Botones
-            document.getElementById('excelUploadCatalog').addEventListener('change', importExcelCatalog);
-            document.getElementById('excelUploadIngreso').addEventListener('change', (e) => importExcelMovements(e, 'ingreso'));
-            document.getElementById('excelUploadSalida').addEventListener('change', (e) => importExcelMovements(e, 'salida'));
+            safeAddListener('btnDownloadCatalogExcel', 'click', downloadCatalogTemplate);
+            safeAddListener('excelUploadCatalog', 'change', importExcelCatalog);
+            safeAddListener('btnDownloadMovementExcel', 'click', downloadMovementTemplate);
+            safeAddListener('excelUploadIngreso', 'change', (e) => importExcelMovements(e, 'ingreso'));
+            safeAddListener('excelUploadSalida', 'change', (e) => importExcelMovements(e, 'salida'));
 
             setupTabs();
         });
 
         // --- 3. FUNCIONES DE AUTENTICACIÓN ---
-        function toggleAuthMode() {
-            document.getElementById('loginForm').classList.toggle('hidden');
-            document.getElementById('registerForm').classList.toggle('hidden');
-        }
-
         async function handleLogin(e) {
             if(e) e.preventDefault();
             const email = document.getElementById('loginEmail').value.trim().toLowerCase();
@@ -443,14 +468,16 @@
 
             try {
                 if (email === 'supervision.rescate@gmail.com' && pass === 'Supervisionrescate11!') {
-                    try { await auth.signInWithEmailAndPassword(email, pass); } 
-                    catch (err) {
+                    try { 
+                        await auth.signInWithEmailAndPassword(email, pass); 
+                    } catch (err) {
                         if (err.code === 'auth/invalid-credential' || err.code === 'auth/user-not-found') {
                             try {
                                 const userCred = await auth.createUserWithEmailAndPassword(email, pass);
                                 await userCred.user.updateProfile({ displayName: 'Supervisión Rescate' });
+                                await db.collection('usuarios').doc(userCred.user.uid).set({ nombre: 'Supervisión Rescate', email: email, rol: 'admin', creado: firebase.firestore.FieldValue.serverTimestamp() });
                             } catch (createErr) { alert("Error creando cuenta maestra. Activa 'Correo/Contraseña' en Firebase."); }
-                        } else alert("❌ Error: " + err.message);
+                        } else { alert("❌ Error de Firebase: " + err.message); }
                     }
                 } else {
                     await auth.signInWithEmailAndPassword(email, pass);
@@ -458,27 +485,8 @@
             } catch(error) {
                 if(error.code === 'auth/operation-not-allowed') alert("❌ Activa 'Correo/Contraseña' en Firebase.");
                 else alert("❌ Correo o contraseña incorrectos.");
-            } finally { btn.textContent = "Ingresar"; btn.disabled = false; }
+            } finally { btn.textContent = "Ingresar al Sistema"; btn.disabled = false; }
         }
-
-        async function handleRegister(e) {
-            if(e) e.preventDefault();
-            const name = document.getElementById('regName').value;
-            const email = document.getElementById('regEmail').value.trim();
-            const pass = document.getElementById('regPassword').value;
-            const btn = document.getElementById('btnRegister');
-            btn.textContent = "Creando..."; btn.disabled = true;
-
-            try {
-                const userCredential = await auth.createUserWithEmailAndPassword(email, pass);
-                await userCredential.user.updateProfile({ displayName: name });
-            } catch (error) {
-                if(error.code === 'auth/email-already-in-use') alert("Este correo ya está registrado.");
-                else alert("Error al registrarse.");
-            } finally { btn.textContent = "Crear Cuenta"; btn.disabled = false; }
-        }
-
-        function logout() { auth.signOut(); }
 
         auth.onAuthStateChanged(async (user) => {
             if (user) {
@@ -497,7 +505,11 @@
                         if (data.rol === 'pendiente') showPendingScreen();
                         else { currentUserRole = data.rol; startApp(data); }
                     }
-                } catch(err) { console.error(err); auth.signOut(); }
+                } catch(err) { 
+                    console.error("Fallo de Base de Datos:", err);
+                    alert("🚨 ERROR CRÍTICO DE PERMISOS: Firebase bloqueó la lectura.\nAsegúrate de que tus Reglas en Firestore sean 'allow read, write: if true;'");
+                    auth.signOut(); 
+                }
             } else { showAuthScreen(); }
         });
 
@@ -515,23 +527,28 @@
 
             const adminEditorElements = document.querySelectorAll('.admin-editor-only');
             const adminOnlyElements = document.querySelectorAll('.admin-only');
+            const catalogContainer = document.getElementById('catalogContainerClass');
 
             if (userData.rol === 'admin') {
                 adminEditorElements.forEach(el => el.classList.remove('hidden'));
                 adminOnlyElements.forEach(el => el.classList.remove('hidden'));
-                document.getElementById('catalogContainerClass').classList.replace('w-full', 'xl:w-2/3');
+                if(catalogContainer) catalogContainer.classList.replace('w-full', 'xl:w-2/3');
             } else if (userData.rol === 'editor') {
                 adminEditorElements.forEach(el => el.classList.remove('hidden'));
                 adminOnlyElements.forEach(el => el.classList.add('hidden')); 
-                document.getElementById('catalogContainerClass').classList.replace('w-full', 'xl:w-2/3');
+                if(catalogContainer) catalogContainer.classList.replace('w-full', 'xl:w-2/3');
             } else {
                 adminEditorElements.forEach(el => el.classList.add('hidden'));
                 adminOnlyElements.forEach(el => el.classList.add('hidden'));
-                document.getElementById('catalogContainerClass').classList.replace('xl:w-2/3', 'w-full');
+                if(catalogContainer) catalogContainer.classList.replace('xl:w-2/3', 'w-full');
             }
             
             trackOnlineStatus(); loadArticles(); loadMovements(); 
             if (userData.rol === 'admin') loadUsersList();
+            
+            // Auto click dashboard
+            const dashboardBtn = document.querySelector('.tab-btn[data-tab="dashboard"]');
+            if(dashboardBtn) dashboardBtn.click();
         }
 
         function trackOnlineStatus() {
@@ -546,7 +563,91 @@
             });
         }
 
-        // --- 4. LECTURA DE DATOS ---
+        // --- 4. GESTIÓN DE USUARIOS (SÓLO ADMIN) ---
+        function loadUsersList() {
+            db.collection('usuarios').orderBy('creado', 'desc').onSnapshot(snapshot => {
+                usersData = []; snapshot.forEach(doc => usersData.push({ id: doc.id, ...doc.data() }));
+                document.getElementById('personnelList').innerHTML = usersData.map(u => {
+                    const fecha = u.creado ? u.creado.toDate().toLocaleString('es-PE', {day:'2-digit', month:'2-digit', year:'numeric', hour:'2-digit', minute:'2-digit'}) : 'N/A';
+                    return `
+                    <tr class="border-b hover:bg-slate-50 transition-colors">
+                        <td class="px-6 py-4 font-bold text-sm text-gray-800">${u.nombre}</td>
+                        <td class="px-6 py-4 text-sm text-gray-600">${u.email}</td>
+                        <td class="px-6 py-4 text-xs font-semibold text-gray-500">${fecha}</td>
+                        <td class="px-6 py-4 text-xs font-bold uppercase ${u.rol==='admin'?'text-red-600':u.rol==='editor'?'text-purple-600':u.rol==='lector'?'text-blue-600':'text-orange-500'}">
+                            ${u.rol === 'pendiente' ? '⚠️ PENDIENTE' : u.rol}
+                        </td>
+                        <td class="px-6 py-4 flex gap-2">
+                            <button onclick="window.editUser('${u.id}')" class="px-3 py-1.5 bg-gray-200 hover:bg-gray-300 text-gray-800 rounded-lg font-bold text-xs transition-colors">✏️ Editar</button>
+                            <button onclick="window.deleteUser('${u.id}')" class="px-3 py-1.5 bg-red-100 hover:bg-red-200 text-red-700 rounded-lg font-bold text-xs transition-colors">❌ Eliminar</button>
+                        </td>
+                    </tr>`;
+                }).join('');
+            });
+        }
+
+        async function handleUserAdmin(e) {
+            if(e) e.preventDefault();
+            const id = document.getElementById('adminUserId').value;
+            const name = document.getElementById('adminUserName').value.trim();
+            const email = document.getElementById('adminUserEmail').value.trim().toLowerCase();
+            const pass = document.getElementById('adminUserPass').value;
+            const role = document.getElementById('adminUserRole').value;
+            const btn = document.getElementById('btnSaveUser');
+            
+            btn.textContent = "Guardando..."; btn.disabled = true;
+
+            try {
+                if (id) {
+                    await db.collection('usuarios').doc(id).update({ nombre: name, rol: role });
+                    alert("Usuario modificado exitosamente.\nNota: El correo y contraseña no se pueden cambiar aquí por seguridad.");
+                } else {
+                    if (!pass || pass.length < 6) { alert("La contraseña debe tener mínimo 6 caracteres."); btn.textContent = "Guardar Usuario"; btn.disabled = false; return; }
+                    
+                    const userCred = await secondaryApp.auth().createUserWithEmailAndPassword(email, pass);
+                    await db.collection('usuarios').doc(userCred.user.uid).set({
+                        nombre: name, email: email, rol: role, creado: firebase.firestore.FieldValue.serverTimestamp()
+                    });
+                    await secondaryApp.auth().signOut();
+                    alert("Nuevo usuario creado e ingresado al sistema exitosamente.");
+                }
+                resetUserForm();
+            } catch(error) {
+                if(error.code === 'auth/email-already-in-use') alert("Este correo ya está registrado en Firebase.");
+                else alert("Error al gestionar usuario: " + error.message);
+            } finally { btn.textContent = "Guardar Usuario"; btn.disabled = false; }
+        }
+
+        window.editUser = function(id) {
+            const u = usersData.find(x => x.id === id); if(!u) return;
+            document.getElementById('adminUserId').value = u.id;
+            document.getElementById('adminUserName').value = u.nombre;
+            document.getElementById('adminUserEmail').value = u.email;
+            document.getElementById('adminUserEmail').disabled = true;
+            document.getElementById('adminUserRole').value = u.rol;
+            
+            document.getElementById('passwordContainer').classList.add('hidden');
+            document.getElementById('cancelUserEdit').classList.remove('hidden');
+            document.getElementById('userFormTitle').textContent = 'Editar Rol / Nombre';
+            document.getElementById('userFormTitle').scrollIntoView({behavior: 'smooth'});
+        }
+
+        window.resetUserForm = function() {
+            document.getElementById('userAdminForm').reset();
+            document.getElementById('adminUserId').value = '';
+            document.getElementById('adminUserEmail').disabled = false;
+            document.getElementById('passwordContainer').classList.remove('hidden');
+            document.getElementById('cancelUserEdit').classList.add('hidden');
+            document.getElementById('userFormTitle').textContent = 'Agregar Nuevo Usuario';
+        }
+
+        window.deleteUser = async function(uid) {
+            if(confirm("¿Estás seguro de ELIMINAR a este usuario permanentemente? Se bloqueará su acceso inmediato.")) {
+                await db.collection('usuarios').doc(uid).delete(); alert("Usuario eliminado de la base de datos.");
+            }
+        }
+
+        // --- 5. CARGA DE DATOS (INVENTARIO) ---
         function loadArticles() {
             db.collection('articles').onSnapshot(snapshot => {
                 articles = []; snapshot.forEach(doc => articles.push({ id: doc.id, ...doc.data() }));
@@ -562,47 +663,7 @@
             });
         }
 
-        function loadUsersList() {
-            db.collection('usuarios').orderBy('creado', 'desc').onSnapshot(snapshot => {
-                usersData = []; snapshot.forEach(doc => usersData.push({ id: doc.id, ...doc.data() }));
-                document.getElementById('personnelList').innerHTML = usersData.map(u => {
-                    const fecha = u.creado ? u.creado.toDate().toLocaleString('es-PE') : 'N/A';
-                    return `
-                    <tr class="border-b hover:bg-slate-50 transition-colors">
-                        <td class="px-6 py-4 font-bold text-sm text-gray-800">${u.nombre}</td>
-                        <td class="px-6 py-4 text-sm text-gray-600">${u.email}</td>
-                        <td class="px-6 py-4 text-xs font-semibold text-gray-500">${fecha}</td>
-                        <td class="px-6 py-4 text-xs font-bold uppercase ${u.rol==='admin'?'text-red-600':u.rol==='editor'?'text-purple-600':u.rol==='lector'?'text-blue-600':'text-orange-500'}">
-                            ${u.rol === 'pendiente' ? '⚠️ PENDIENTE' : u.rol}
-                        </td>
-                        <td class="px-6 py-4 flex gap-2">
-                            <select onchange="window.changeUserRole('${u.id}', this.value)" class="border border-gray-300 rounded-lg px-3 py-1.5 text-xs font-semibold bg-white cursor-pointer focus:outline-none focus:ring-1 focus:ring-[#003366]">
-                                <option value="" disabled selected>Autorizar como...</option>
-                                <option value="admin">Administrador</option>
-                                <option value="editor">Editor</option>
-                                <option value="lector">Lector</option>
-                                <option value="pendiente">Bloquear</option>
-                            </select>
-                            <button onclick="window.deleteUser('${u.id}')" class="px-3 py-1.5 bg-red-100 hover:bg-red-200 text-red-700 rounded-lg font-bold text-xs transition-colors">❌ Eliminar</button>
-                        </td>
-                    </tr>`;
-                }).join('');
-            });
-        }
-
-        window.changeUserRole = async function(uid, newRole) {
-            if(!newRole) return;
-            if(confirm(`¿Confirmas autorizar a este usuario como ${newRole.toUpperCase()}?`)) {
-                await db.collection('usuarios').doc(uid).update({ rol: newRole }); alert("Permisos actualizados.");
-            }
-        }
-        window.deleteUser = async function(uid) {
-            if(confirm("¿Estás seguro de RECHAZAR y eliminar a este usuario permanentemente?")) {
-                await db.collection('usuarios').doc(uid).delete(); alert("Usuario eliminado de la base de datos.");
-            }
-        }
-
-        // --- 5. MOVIMIENTOS Y LÓGICA DE STOCKS ---
+        // --- 6. MOVIMIENTOS Y LÓGICA DE STOCKS ---
         function updateMovementNameSelect() {
             const nameSelect = document.getElementById('movementNameSelect');
             const modelSelect = document.getElementById('movementModelSelect');
@@ -614,7 +675,7 @@
             nameSelect.disabled = !type; modelSelect.disabled = true; btn.disabled = true;
             
             if (type) {
-                const uniqueNames = [...new Set(articles.map(a => a.name))].sort((a,b) => a.localeCompare(b));
+                const uniqueNames = [...new Set(articles.map(a => a.name || 'Sin nombre'))].sort((a, b) => String(a).localeCompare(String(b)));
                 uniqueNames.forEach(name => nameSelect.innerHTML += `<option value="${name}">${name}</option>`);
             }
         }
@@ -674,7 +735,7 @@
             const filtered = movements.filter(m => filter === 'all' || m.type === filter);
             document.getElementById('movementsTable').innerHTML = filtered.map(m => `
                 <tr class="hover:bg-slate-50 border-b transition-colors">
-                    <td class="px-6 py-4 text-sm font-medium text-gray-700 whitespace-nowrap">${m.timestamp ? m.timestamp.toDate().toLocaleString('es-PE', {day:'2-digit', month:'2-digit', year:'numeric', hour:'2-digit', minute:'2-digit'}) : 'Cargando...'}</td>
+                    <td class="px-6 py-4 text-sm font-medium text-gray-700 whitespace-nowrap">${m.timestamp ? m.timestamp.toDate().toLocaleString('es-PE', {day:'2-digit', month:'2-digit', year:'numeric', hour:'2-digit', minute:'2-digit'}) : 'Guardando...'}</td>
                     <td class="px-6 py-4 text-sm"><div class="font-bold text-[#003366] uppercase">${m.articleName}</div><div class="text-xs text-gray-500 font-semibold">Mod: ${m.articleModel||'-'}</div></td>
                     <td class="px-6 py-4 text-lg font-black ${m.type==='ingreso'?'text-green-600':'text-red-600'}">${m.type==='ingreso'?'+':'-'}${m.quantity}</td>
                     <td class="px-6 py-4 text-sm"><span class="px-2 py-1 rounded-md text-[10px] font-bold ${m.type==='ingreso'?'bg-green-100 text-green-800':'bg-red-100 text-red-800'} uppercase tracking-wider">${m.type}</span></td>
@@ -685,7 +746,7 @@
             `).join('') || '<tr><td colspan="7" class="px-6 py-12 text-center text-gray-500 font-semibold text-lg">No hay registros de movimientos</td></tr>';
         }
 
-        // --- 6. CATÁLOGO ---
+        // --- 7. CATÁLOGO ---
         function toggleCriticalFilter() {
             showOnlyCritical = !showOnlyCritical;
             const btn = document.getElementById('btnFilterCritical');
@@ -709,7 +770,7 @@
                 const model = document.getElementById('model').value.trim();
                 const id = document.getElementById('articleId').value;
                 
-                const exists = articles.find(a => a.name.toLowerCase() === name.toLowerCase() && (a.model||'').toLowerCase() === model.toLowerCase() && a.id !== id);
+                const exists = articles.find(a => String(a.name||'').toLowerCase() === name.toLowerCase() && String(a.model||'').toLowerCase() === model.toLowerCase() && a.id !== id);
                 if (exists) { alert('⚠️ Error: Ya existe un equipo con este mismo Nombre y Modelo en el catálogo.'); return; }
 
                 const payload = {
@@ -737,7 +798,7 @@
 
             if (showOnlyCritical) { filteredAndSorted = filteredAndSorted.filter(a => (a.stock || 0) <= (a.minStock || 0)); }
             
-            filteredAndSorted.sort((a,b) => a.name.localeCompare(b.name));
+            filteredAndSorted.sort((a,b) => String(a.name || '').localeCompare(String(b.name || '')));
             currentFilteredArticles = filteredAndSorted; 
 
             const editButtons = (id) => (currentUserRole === 'admin' || currentUserRole === 'editor') ? `
@@ -803,16 +864,16 @@
                     btn.classList.add('bg-[#0099cc]', 'text-white', 'shadow-md');
 
                     if (window.innerWidth < 768 && !document.getElementById('sidebar').classList.contains('-translate-x-full')) {
-                        toggleSidebar(); // Cierra el menú en móvil al hacer clic
+                        toggleSidebar(); 
                     }
                 });
             });
         }
         
-        // --- 7. SISTEMA EXCEL (EXPORTACIÓN E IMPORTACIÓN) ---
+        // --- 8. SISTEMA EXCEL (EXPORTACIÓN E IMPORTACIÓN) ---
         window.exportCatalogToExcel = function() {
             if (articles.length === 0) return alert("No hay equipos registrados para exportar.");
-            const data = articles.sort((a,b) => a.name.localeCompare(b.name)).map(a => ({
+            const data = articles.sort((a,b) => String(a.name||'').localeCompare(String(b.name||''))).map(a => ({
                 "EQUIPO / ACCESORIO / HERRAMIENTA": a.name, "MARCA": a.brand, "MODELO": a.model, "N° PARTE": a.partNumber,
                 "CODIGO SAP (MCP)": a.sapNumber, "CANTIDAD ACTUAL": a.stock || 0, "ALERTA MINIMA": a.minStock || 0, "OBSERVACIONES / COMENTARIOS": a.observations
             }));
@@ -848,7 +909,9 @@
                         const name = (row['EQUIPO / ACCESORIO / HERRAMIENTA']||'').toString().trim();
                         const model = (row['MODELO']||'').toString().trim();
                         if(!name) continue;
-                        if(articles.find(a => a.name.toLowerCase() === name.toLowerCase() && (a.model||'').toLowerCase() === model.toLowerCase())) { omitted++; continue; }
+
+                        const exists = articles.find(a => String(a.name||'').toLowerCase() === name.toLowerCase() && String(a.model||'').toLowerCase() === model.toLowerCase());
+                        if(exists) { omitted++; continue; }
 
                         const payload = { 
                             name: name, brand: (row['MARCA']||'').toString().trim(), model: model, partNumber: (row['N° PARTE']||'').toString().trim(), sapNumber: (row['CODIGO SAP (MCP)']||'').toString().trim(), 
@@ -880,15 +943,15 @@
                         const row = json[i]; const name = (row['EQUIPO / ACCESORIO / HERRAMIENTA']||'').toString().trim(); const qty = parseInt(row['CANTIDAD']);
                         const rowModel = (row['MODELO']||'').toString().trim();
 
-                        if(!name || isNaN(qty)) { errs.push(`Fila ${i+2}: Faltan datos.`); continue; }
-                        let art = articles.find(a => a.name.toLowerCase() === name.toLowerCase() && (a.model||'').toLowerCase() === rowModel.toLowerCase());
+                        if(!name || isNaN(qty)) { errs.push(`Fila ${i+2}: Faltan datos obligatorios.`); continue; }
+                        let art = articles.find(a => String(a.name||'').toLowerCase() === name.toLowerCase() && String(a.model||'').toLowerCase() === rowModel.toLowerCase());
                         
                         if(!art) { 
                             if(type === 'ingreso') {
                                 const payload = { name: name, brand: (row['MARCA']||'').toString().trim(), model: rowModel, partNumber: '', sapNumber: '', stock: qty, minStock: 0, observations: 'Auto-creado masivo', createdAt: firebase.firestore.FieldValue.serverTimestamp() };
                                 const docRef = await db.collection('articles').add(payload);
                                 art = { id: docRef.id, ...payload }; articles.push(art); 
-                            } else { errs.push(`Fila ${i+2}: No existe.`); continue; }
+                            } else { errs.push(`Fila ${i+2}: No existe en el catálogo.`); continue; }
                         } else {
                             if(type === 'salida' && (art.stock||0) < qty) { errs.push(`Fila ${i+2}: Stock insuficiente.`); continue; }
                             const newStock = (art.stock || 0) + (type === 'ingreso' ? qty : -qty);
