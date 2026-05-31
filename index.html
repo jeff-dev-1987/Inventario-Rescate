@@ -12,7 +12,7 @@
     <style>
         .fade-in { animation: fadeIn 0.4s ease-out; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
-        /* Scrollbar styling corporativo */
+        /* Scrollbar corporativo */
         ::-webkit-scrollbar { width: 6px; height: 6px; }
         ::-webkit-scrollbar-track { background: #f1f5f9; }
         ::-webkit-scrollbar-thumb { background: #0099cc; border-radius: 10px; }
@@ -21,55 +21,55 @@
 </head>
 <body class="bg-slate-100 min-h-screen font-sans overflow-hidden">
 
-    <div id="authScreen" class="h-screen w-full flex items-center justify-center bg-[#003366] px-4 absolute inset-0 z-[100] fade-in overflow-y-auto">
+    <div id="authScreen" class="h-screen w-full flex items-center justify-center bg-[#003366] px-4 absolute inset-0 z-[100] fade-in overflow-y-auto" style="display: flex;">
         <div class="bg-white p-8 rounded-lg shadow-2xl w-full max-w-md my-auto border-t-4 border-[#0099cc]">
             <div class="text-center mb-8">
                 <svg class="w-16 h-16 text-[#0099cc] mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path></svg>
                 <h1 class="text-2xl font-bold text-[#003366]">INVENTARIO DE RESCATE</h1>
                 <p class="text-sm text-gray-500 uppercase tracking-widest mt-1">Minera Chinalco Perú</p>
-                <div class="mt-4 inline-block bg-blue-50 text-blue-800 text-xs font-semibold px-3 py-1 rounded-full border border-blue-200">
-                    🔒 Acceso Privado a Personal
+                <div class="mt-4 inline-block bg-blue-50 text-blue-800 text-xs font-semibold px-3 py-1 rounded-full border border-blue-200 shadow-sm">
+                    🔒 Acceso Restringido a Personal
                 </div>
             </div>
 
-            <form id="loginForm" class="space-y-5">
+            <form id="loginForm" class="space-y-5" onsubmit="event.preventDefault(); handleLogin();">
                 <div>
                     <label class="block text-sm font-bold text-gray-700 mb-1">Correo Electrónico</label>
-                    <input type="email" id="loginEmail" class="w-full px-4 py-3 border border-gray-300 rounded focus:ring-2 focus:ring-[#003366] outline-none" placeholder="usuario@ejemplo.com" required>
+                    <input type="email" id="loginEmail" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#003366] outline-none transition-all" placeholder="usuario@ejemplo.com" required>
                 </div>
                 <div>
                     <label class="block text-sm font-bold text-gray-700 mb-1">Contraseña</label>
                     <div class="relative">
-                        <input type="password" id="loginPassword" class="w-full px-4 py-3 border border-gray-300 rounded focus:ring-2 focus:ring-[#003366] pr-10 outline-none" placeholder="••••••••" required>
-                        <button type="button" onclick="togglePassword('loginPassword', 'eyeLogin')" class="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-500 hover:text-gray-700 focus:outline-none">
+                        <input type="password" id="loginPassword" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#003366] pr-10 outline-none transition-all" placeholder="••••••••" required>
+                        <button type="button" onclick="togglePassword('loginPassword', 'eyeLogin')" class="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-500 hover:text-[#0099cc] focus:outline-none transition-colors">
                             <svg id="eyeLogin" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
                             </svg>
                         </button>
                     </div>
                 </div>
-                <button type="submit" id="btnLogin" class="w-full bg-[#003366] hover:bg-[#002244] text-white py-3 px-4 rounded font-bold transition-colors shadow-md text-lg">
+                <button type="submit" id="btnLogin" class="w-full bg-[#003366] hover:bg-[#002244] text-white py-3 px-4 rounded-lg font-bold transition-all shadow-md text-lg mt-4">
                     Ingresar al Sistema
                 </button>
             </form>
         </div>
     </div>
 
-    <div id="pendingScreen" class="h-screen w-full flex items-center justify-center bg-slate-100 px-4 hidden absolute inset-0 z-[90]">
+    <div id="pendingScreen" class="h-screen w-full flex items-center justify-center bg-slate-100 px-4 absolute inset-0 z-[90] fade-in" style="display: none;">
         <div class="bg-white p-8 rounded-lg shadow-xl w-full max-w-lg text-center border-t-4 border-orange-500">
-            <h2 class="text-2xl font-bold text-gray-800 mb-4">⏳ Acceso Restringido</h2>
+            <h2 class="text-2xl font-bold text-gray-800 mb-4">⏳ Acceso Bloqueado</h2>
             <p class="text-gray-600 mb-6">Tu cuenta no tiene permisos activos para ingresar al sistema de inventarios.</p>
-            <div class="bg-orange-50 border border-orange-200 rounded p-4 mb-6 text-sm text-orange-800">
-                Contacta al administrador para solicitar tu habilitación:<br>
-                <a href="mailto:supervision.rescate@gmail.com" class="font-bold text-blue-600 underline text-lg">supervision.rescate@gmail.com</a>
+            <div class="bg-orange-50 border border-orange-200 rounded-lg p-4 mb-6 text-sm text-orange-800">
+                Contacta al administrador maestro para solicitar tu habilitación:<br>
+                <a href="mailto:supervision.rescate@gmail.com" class="font-bold text-blue-600 underline text-lg mt-2 inline-block">supervision.rescate@gmail.com</a>
             </div>
-            <button class="btn-logout bg-[#003366] hover:bg-[#002244] text-white py-2 px-6 rounded font-bold transition-colors">Cerrar Sesión</button>
+            <button class="btn-logout bg-[#003366] hover:bg-[#002244] text-white py-2 px-6 rounded-lg font-bold transition-colors shadow-sm">Cerrar Sesión</button>
         </div>
     </div>
 
-    <div id="mainApp" class="hidden h-screen w-full flex bg-slate-100 fade-in">
+    <div id="mainApp" class="h-screen w-full flex bg-slate-100 fade-in" style="display: none;">
         
-        <div id="sidebarOverlay" class="fixed inset-0 bg-black bg-opacity-50 z-40 hidden md:hidden" onclick="toggleSidebar()"></div>
+        <div id="sidebarOverlay" class="fixed inset-0 bg-black bg-opacity-50 z-40 md:hidden" style="display: none;" onclick="toggleSidebar()"></div>
 
         <aside id="sidebar" class="bg-[#002244] text-white w-64 flex-shrink-0 flex flex-col transition-transform duration-300 z-50 fixed inset-y-0 left-0 transform -translate-x-full md:relative md:translate-x-0 shadow-2xl">
             <div class="h-16 flex items-center px-4 border-b border-gray-700 bg-[#001a33]">
@@ -81,22 +81,22 @@
             </div>
 
             <nav class="flex-1 px-4 py-6 space-y-2 overflow-y-auto">
-                <button class="tab-btn w-full flex items-center gap-3 px-4 py-3 rounded-lg font-bold text-sm transition-all bg-[#0099cc] text-white shadow-md" data-tab="dashboard">
+                <button class="tab-btn w-full flex items-center gap-3 px-4 py-3 rounded-lg font-bold text-sm transition-all bg-[#0099cc] text-white shadow-md" data-tab="dashboard" onclick="switchTab('dashboard')">
                     <span class="text-lg">📊</span> Resumen / Historial
                 </button>
-                <button class="tab-btn admin-editor-only hidden w-full flex items-center gap-3 px-4 py-3 rounded-lg font-bold text-sm transition-all text-gray-400 hover:bg-[#003366] hover:text-white" data-tab="movements">
+                <button id="navMovements" class="tab-btn admin-editor-only w-full flex items-center gap-3 px-4 py-3 rounded-lg font-bold text-sm transition-all text-gray-400 hover:bg-[#003366] hover:text-white" data-tab="movements" onclick="switchTab('movements')" style="display: none;">
                     <span class="text-lg">🔄</span> Ingresos / Salidas
                 </button>
-                <button class="tab-btn w-full flex items-center gap-3 px-4 py-3 rounded-lg font-bold text-sm transition-all text-gray-400 hover:bg-[#003366] hover:text-white" data-tab="catalog">
+                <button class="tab-btn w-full flex items-center gap-3 px-4 py-3 rounded-lg font-bold text-sm transition-all text-gray-400 hover:bg-[#003366] hover:text-white" data-tab="catalog" onclick="switchTab('catalog')">
                     <span class="text-lg">📦</span> Catálogo y Excel
                 </button>
-                <button class="tab-btn admin-only hidden w-full flex items-center gap-3 px-4 py-3 rounded-lg font-bold text-sm transition-all text-gray-400 hover:bg-[#003366] hover:text-white" data-tab="users">
+                <button id="navUsers" class="tab-btn admin-only w-full flex items-center gap-3 px-4 py-3 rounded-lg font-bold text-sm transition-all text-gray-400 hover:bg-[#003366] hover:text-white" data-tab="users" onclick="switchTab('users')" style="display: none;">
                     <span class="text-lg">👥</span> Adm. Usuarios
                 </button>
             </nav>
 
             <div class="p-4 border-t border-gray-700 bg-[#001a33]">
-                <button class="btn-logout w-full flex items-center justify-center gap-2 bg-red-600 hover:bg-red-700 text-white py-2 px-4 rounded-lg font-bold text-sm transition-colors">
+                <button class="btn-logout w-full flex items-center justify-center gap-2 bg-red-600 hover:bg-red-700 text-white py-2 px-4 rounded-lg font-bold text-sm transition-colors shadow-sm">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path></svg>
                     Cerrar Sesión
                 </button>
@@ -107,7 +107,7 @@
             
             <header class="bg-white shadow-sm border-b border-gray-200 h-16 flex items-center justify-between px-4 sm:px-6 z-30 flex-shrink-0">
                 <div class="flex items-center">
-                    <button onclick="toggleSidebar()" class="text-[#003366] hover:bg-slate-100 p-2 rounded-lg transition-colors focus:outline-none mr-2">
+                    <button onclick="toggleSidebar()" class="text-[#003366] hover:bg-slate-100 p-2 rounded-lg transition-colors focus:outline-none mr-2 md:hidden">
                         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
                     </button>
                     <h2 class="text-lg font-bold text-[#003366] hidden sm:block">Panel de Control</h2>
@@ -119,9 +119,65 @@
                 </div>
             </header>
 
-            <main class="flex-1 overflow-x-hidden overflow-y-auto bg-slate-100 p-4 sm:p-6 lg:p-8">
+            <main class="flex-1 overflow-x-hidden overflow-y-auto bg-slate-100 p-4 sm:p-6 lg:p-8 relative">
                 
+                <div id="articleModal" class="fixed inset-0 bg-black bg-opacity-60 z-[110] items-center justify-center p-4 fade-in" style="display: none;">
+                    <div class="bg-white rounded-xl shadow-2xl w-full max-w-3xl flex flex-col max-h-[95vh]">
+                        <div class="p-5 border-b border-gray-200 bg-[#003366] flex justify-between items-center text-white rounded-t-xl">
+                            <h2 class="text-xl font-bold flex items-center gap-2" id="catalogFormTitle">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
+                                Agregar Nuevo Equipo
+                            </h2>
+                            <button type="button" onclick="closeArticleModal()" class="text-gray-300 hover:text-white transition-colors focus:outline-none">
+                                <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                            </button>
+                        </div>
+                        <div class="p-6 overflow-y-auto flex-1 bg-slate-50">
+                            <form id="catalogForm" class="space-y-5" onsubmit="event.preventDefault(); handleArticle();">
+                                <input type="hidden" id="articleId">
+                                <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                                    <div>
+                                        <label class="block text-xs font-bold text-gray-700 mb-1">EQUIPO / ACCESORIO *</label>
+                                        <input type="text" id="articleName" class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:border-[#0099cc] focus:ring-1 focus:ring-[#0099cc] outline-none text-sm shadow-sm" required>
+                                    </div>
+                                    <div>
+                                        <label class="block text-xs font-bold text-gray-700 mb-1">TIPO DE EQUIPO *</label>
+                                        <select id="itemType" class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:border-[#0099cc] focus:ring-1 focus:ring-[#0099cc] outline-none text-sm shadow-sm font-semibold text-gray-700 bg-white" required>
+                                            <option value="">Seleccione...</option>
+                                            <option value="EPP">EPP</option>
+                                            <option value="SCI">SCI</option>
+                                            <option value="EQUIPO LCI">EQUIPO LCI</option>
+                                            <option value="EQUIPO MATPEL">EQUIPO MATPEL</option>
+                                            <option value="EQUIPO LCR">EQUIPO LCR</option>
+                                            <option value="EQUIPO PPAA">EQUIPO PPAA</option>
+                                            <option value="MISCELANEO">MISCELANEO</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                                    <div><label class="block text-xs font-bold text-gray-700 mb-1">MARCA</label><input type="text" id="brand" class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:border-[#0099cc] focus:ring-1 focus:ring-[#0099cc] outline-none text-sm shadow-sm"></div>
+                                    <div><label class="block text-xs font-bold text-gray-700 mb-1">MODELO</label><input type="text" id="model" class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:border-[#0099cc] focus:ring-1 focus:ring-[#0099cc] outline-none text-sm shadow-sm"></div>
+                                </div>
+                                <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                                    <div><label class="block text-xs font-bold text-gray-700 mb-1">N° PARTE</label><input type="text" id="partNumber" class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:border-[#0099cc] focus:ring-1 focus:ring-[#0099cc] outline-none text-sm shadow-sm"></div>
+                                    <div><label class="block text-xs font-bold text-gray-700 mb-1">CÓDIGO SAP (MCP)</label><input type="text" id="sapNumber" class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:border-[#0099cc] focus:ring-1 focus:ring-[#0099cc] outline-none text-sm shadow-sm"></div>
+                                </div>
+                                <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                                    <div><label class="block text-xs font-bold text-gray-700 mb-1">CANTIDAD ACTUAL *</label><input type="number" id="initialStock" class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:border-[#0099cc] focus:ring-1 focus:ring-[#0099cc] outline-none text-sm shadow-sm font-bold" required></div>
+                                    <div><label class="block text-xs font-bold text-gray-700 mb-1">ALERTA MÍNIMA *</label><input type="number" id="minStock" class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:border-[#0099cc] focus:ring-1 focus:ring-[#0099cc] outline-none text-sm shadow-sm font-bold text-red-600" required></div>
+                                </div>
+                                <div><label class="block text-xs font-bold text-gray-700 mb-1">OBSERVACIONES / COMENTARIOS</label><textarea id="catalogObs" rows="2" class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:border-[#0099cc] focus:ring-1 focus:ring-[#0099cc] outline-none text-sm shadow-sm"></textarea></div>
+                                <div class="flex gap-3 pt-5 mt-2 border-t border-gray-200">
+                                    <button type="submit" id="btnSaveArticle" class="flex-1 bg-[#0099cc] hover:bg-[#007799] text-white py-3 px-4 rounded-lg font-bold text-sm transition-colors shadow-md">Guardar Equipo</button>
+                                    <button type="button" onclick="closeArticleModal()" class="flex-1 bg-gray-300 text-gray-800 rounded-lg font-bold text-sm hover:bg-gray-400 transition-colors shadow-sm">Cancelar</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
                 <div class="max-w-7xl mx-auto">
+                    
                     <div id="dashboard" class="tab-content fade-in block">
                         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
                             <div class="bg-white rounded-lg p-6 shadow-sm border-l-4 border-[#003366]">
@@ -139,9 +195,9 @@
                         </div>
 
                         <div class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
-                            <div class="p-6 border-b border-gray-200 flex flex-col sm:flex-row justify-between items-center bg-slate-50 gap-4">
+                            <div class="p-5 sm:p-6 border-b border-gray-200 flex flex-col sm:flex-row justify-between items-center bg-slate-50 gap-4">
                                 <h2 class="text-lg font-bold text-[#003366] uppercase">📋 Historial de Movimientos</h2>
-                                <select id="movementFilter" class="px-3 py-2 border border-gray-300 rounded-lg text-sm font-semibold focus:outline-none focus:border-[#003366] w-full sm:w-auto shadow-sm">
+                                <select id="movementFilter" onchange="updateMovementsTable()" class="px-4 py-2 border border-gray-300 rounded-lg text-sm font-semibold focus:outline-none focus:ring-1 focus:ring-[#003366] w-full sm:w-auto shadow-sm bg-white">
                                     <option value="all">Todos los movimientos</option>
                                     <option value="ingreso">Solo Ingresos (+)</option>
                                     <option value="salida">Solo Salidas (-)</option>
@@ -168,149 +224,122 @@
                         </div>
                     </div>
 
-                    <div id="movements" class="tab-content hidden fade-in admin-editor-only">
+                    <div id="movements" class="tab-content hidden fade-in">
                         
-                        <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6 mb-8 max-w-4xl mx-auto admin-only hidden">
+                        <div id="sectionMassMovement" class="bg-white rounded-lg shadow-sm border border-gray-200 p-6 mb-8 max-w-4xl mx-auto admin-only" style="display: none;">
                             <h2 class="text-lg font-bold text-[#003366] mb-4 border-b pb-2">📊 Carga Masiva de Movimientos (Excel)</h2>
                             <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                                <button id="btnDownloadMovementExcel" class="bg-slate-600 hover:bg-slate-700 text-white py-2 px-3 rounded text-sm font-bold transition-colors w-full shadow-sm">⬇️ Descargar Plantilla</button>
+                                <button onclick="downloadMovementTemplate()" class="bg-slate-600 hover:bg-slate-700 text-white py-3 px-4 rounded-lg font-bold text-sm transition-colors w-full shadow-sm">⬇️ Descargar Plantilla</button>
                                 <div class="w-full relative">
-                                    <input type="file" id="excelUploadIngreso" accept=".xlsx, .xls" class="hidden">
-                                    <button onclick="document.getElementById('excelUploadIngreso').click()" class="bg-green-600 hover:bg-green-700 text-white py-2 px-3 rounded text-sm font-bold transition-colors w-full shadow-sm">⬆️ Subir Excel INGRESOS (+)</button>
+                                    <input type="file" id="excelUploadIngreso" accept=".xlsx, .xls" class="hidden" onchange="importExcelMovements(event, 'ingreso')">
+                                    <button onclick="document.getElementById('excelUploadIngreso').click()" class="bg-green-600 hover:bg-green-700 text-white py-3 px-4 rounded-lg font-bold text-sm transition-colors w-full shadow-sm">⬆️ Subir Excel INGRESOS (+)</button>
                                 </div>
                                 <div class="w-full relative">
-                                    <input type="file" id="excelUploadSalida" accept=".xlsx, .xls" class="hidden">
-                                    <button onclick="document.getElementById('excelUploadSalida').click()" class="bg-red-600 hover:bg-red-700 text-white py-2 px-3 rounded text-sm font-bold transition-colors w-full shadow-sm">⬆️ Subir Excel SALIDAS (-)</button>
+                                    <input type="file" id="excelUploadSalida" accept=".xlsx, .xls" class="hidden" onchange="importExcelMovements(event, 'salida')">
+                                    <button onclick="document.getElementById('excelUploadSalida').click()" class="bg-red-600 hover:bg-red-700 text-white py-3 px-4 rounded-lg font-bold text-sm transition-colors w-full shadow-sm">⬆️ Subir Excel SALIDAS (-)</button>
                                 </div>
                             </div>
                         </div>
 
                         <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6 md:p-8 max-w-4xl mx-auto">
-                            <h2 class="text-xl font-bold text-[#003366] mb-6 border-b pb-4">Registrar Movimiento Manual</h2>
-                            <form id="movementForm" class="space-y-6">
+                            <h2 class="text-2xl font-bold text-[#003366] mb-6 border-b pb-4">Registrar Movimiento Manual</h2>
+                            <form id="movementForm" class="space-y-6" onsubmit="event.preventDefault(); handleMovement();">
                                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                                     <div>
-                                        <label class="block text-xs font-bold text-gray-700 mb-2">TIPO DE OPERACIÓN *</label>
-                                        <select id="movementType" class="w-full px-4 py-2 border border-gray-300 rounded focus:ring-2 focus:ring-[#003366] outline-none bg-slate-50 font-semibold" required>
+                                        <label class="block text-sm font-bold text-gray-700 mb-2">TIPO DE OPERACIÓN *</label>
+                                        <select id="movementType" onchange="updateMovementNameSelect()" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#003366] bg-slate-50 font-semibold outline-none transition-all" required>
                                             <option value="">Seleccione el tipo...</option>
                                             <option value="ingreso">🟢 INGRESO (Sumar al almacén)</option>
                                             <option value="salida">🔴 SALIDA (Asignar a terreno/persona)</option>
                                         </select>
                                     </div>
                                     <div>
-                                        <label class="block text-xs font-bold text-gray-700 mb-2">CANTIDAD *</label>
-                                        <input type="number" id="quantity" min="1" class="w-full px-4 py-2 border border-gray-300 rounded focus:ring-2 focus:ring-[#003366] outline-none font-semibold" placeholder="Ej: 5" required>
+                                        <label class="block text-sm font-bold text-gray-700 mb-2">CANTIDAD *</label>
+                                        <input type="number" id="quantity" min="1" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#003366] font-semibold outline-none transition-all" placeholder="Ej: 5" required>
                                     </div>
                                 </div>
                                 
                                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                                     <div>
-                                        <label class="block text-xs font-bold text-gray-700 mb-2">NOMBRE DEL EQUIPO *</label>
-                                        <select id="movementNameSelect" class="w-full px-4 py-2 border border-gray-300 rounded focus:ring-2 focus:ring-[#003366] outline-none bg-slate-50 disabled:bg-gray-100 font-semibold" disabled required></select>
+                                        <label class="block text-sm font-bold text-gray-700 mb-2">NOMBRE DEL EQUIPO *</label>
+                                        <select id="movementNameSelect" onchange="updateModelSelect()" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#003366] bg-slate-50 disabled:bg-gray-100 font-semibold outline-none transition-all" disabled required></select>
                                     </div>
                                     <div>
-                                        <label class="block text-xs font-bold text-gray-700 mb-2">MODELO ESPECÍFICO *</label>
-                                        <select id="movementModelSelect" class="w-full px-4 py-2 border border-gray-300 rounded focus:ring-2 focus:ring-[#003366] outline-none bg-slate-50 disabled:bg-gray-100 font-semibold" disabled required></select>
+                                        <label class="block text-sm font-bold text-gray-700 mb-2">MODELO ESPECÍFICO *</label>
+                                        <select id="movementModelSelect" onchange="checkMovementForm()" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#003366] bg-slate-50 disabled:bg-gray-100 font-semibold outline-none transition-all" disabled required></select>
                                     </div>
                                 </div>
 
                                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                                     <div>
-                                        <label class="block text-xs font-bold text-gray-700 mb-2">RESPONSABLE DE ENTREGA *</label>
-                                        <input type="text" id="respDelivery" class="w-full px-4 py-2 border border-gray-300 rounded focus:ring-2 focus:ring-[#003366] outline-none" placeholder="¿Quién entrega?" required>
+                                        <label class="block text-sm font-bold text-gray-700 mb-2">RESPONSABLE DE ENTREGA *</label>
+                                        <input type="text" id="respDelivery" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#003366] outline-none transition-all" placeholder="¿Quién entrega?" required>
                                     </div>
                                     <div>
-                                        <label class="block text-xs font-bold text-gray-700 mb-2">RESPONSABLE DE RECEPCIÓN *</label>
-                                        <input type="text" id="respReception" class="w-full px-4 py-2 border border-gray-300 rounded focus:ring-2 focus:ring-[#003366] outline-none" placeholder="¿Quién recibe?" required>
+                                        <label class="block text-sm font-bold text-gray-700 mb-2">RESPONSABLE DE RECEPCIÓN *</label>
+                                        <input type="text" id="respReception" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#003366] outline-none transition-all" placeholder="¿Quién recibe?" required>
                                     </div>
                                 </div>
 
                                 <div>
-                                    <label class="block text-xs font-bold text-gray-700 mb-2">OBSERVACIONES / COMENTARIOS</label>
-                                    <textarea id="observations" rows="2" class="w-full px-4 py-2 border border-gray-300 rounded focus:ring-2 focus:ring-[#003366] outline-none" placeholder="Opcional..."></textarea>
+                                    <label class="block text-sm font-bold text-gray-700 mb-2">OBSERVACIONES / COMENTARIOS</label>
+                                    <textarea id="observations" rows="2" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#003366] outline-none transition-all" placeholder="Opcional..."></textarea>
                                 </div>
-                                <button type="submit" id="btnSaveMovement" class="w-full bg-[#003366] hover:bg-[#002244] text-white py-3 px-4 rounded font-bold text-base tracking-wide shadow-md disabled:opacity-50 transition-colors" disabled>Guardar Registro</button>
+                                <button type="submit" id="btnSaveMovement" class="w-full bg-[#003366] hover:bg-[#002244] text-white py-4 px-4 rounded-lg font-bold text-lg uppercase tracking-wide shadow-md disabled:opacity-50 transition-colors" disabled>Guardar Registro Manual</button>
                             </form>
                         </div>
                     </div>
 
                     <div id="catalog" class="tab-content hidden fade-in">
                         
-                        <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-4 sm:p-6 mb-6 flex flex-col xl:flex-row gap-4 justify-between items-center xl:items-end">
+                        <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-4 sm:p-6 mb-6 flex flex-col xl:flex-row gap-4 justify-between items-center xl:items-end w-full">
                             
-                            <div class="w-full xl:w-1/3">
-                                <h2 class="text-sm font-bold text-[#003366] mb-1">🔍 Buscador Inteligente</h2>
-                                <input type="text" id="searchCatalog" placeholder="Buscar nombre, marca, modelo, P/N..." class="w-full px-3 py-2 border border-gray-300 rounded focus:border-[#0099cc] focus:outline-none focus:ring-1 focus:ring-[#0099cc] text-sm transition-all">
+                            <div class="w-full xl:w-5/12 flex flex-col sm:flex-row gap-3">
+                                <div class="flex-1">
+                                    <h2 class="text-xs font-bold text-gray-500 uppercase tracking-wider mb-1">Buscador Inteligente</h2>
+                                    <input type="text" id="searchCatalog" onkeyup="updateCatalogList()" placeholder="Buscar equipo, marca, modelo, P/N..." class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:border-[#0099cc] focus:outline-none focus:ring-1 focus:ring-[#0099cc] text-sm transition-all shadow-sm">
+                                </div>
+                                <div class="sm:w-1/3">
+                                    <h2 class="text-xs font-bold text-gray-500 uppercase tracking-wider mb-1">Filtrar por Tipo</h2>
+                                    <select id="filterTypeCatalog" onchange="updateCatalogList()" class="w-full px-3 py-2.5 border border-gray-300 rounded-lg focus:border-[#0099cc] focus:outline-none focus:ring-1 focus:ring-[#0099cc] text-sm font-semibold text-gray-700 transition-all bg-white shadow-sm">
+                                        <option value="all">Todos los Tipos</option>
+                                        <option value="EPP">EPP</option>
+                                        <option value="SCI">SCI</option>
+                                        <option value="EQUIPO LCI">EQUIPO LCI</option>
+                                        <option value="EQUIPO MATPEL">EQUIPO MATPEL</option>
+                                        <option value="EQUIPO LCR">EQUIPO LCR</option>
+                                        <option value="EQUIPO PPAA">EQUIPO PPAA</option>
+                                        <option value="MISCELANEO">MISCELANEO</option>
+                                    </select>
+                                </div>
                             </div>
                             
-                            <div class="w-full xl:w-2/3 flex flex-wrap gap-2 items-center justify-start xl:justify-end">
-                                <button id="btnFilterCritical" class="px-3 py-2 bg-orange-500 hover:bg-orange-600 text-white rounded text-xs font-bold transition-colors shadow-sm whitespace-nowrap">
-                                    ⚠️ Ver Críticos
-                                </button>
-                                <button id="btnExportFiltered" class="px-3 py-2 bg-[#0099cc] hover:bg-[#007799] text-white rounded text-xs font-bold transition-colors shadow-sm whitespace-nowrap">
-                                    ⬇️ Exp. Filtrados
-                                </button>
-                                <button id="btnExportAll" class="px-3 py-2 bg-green-600 hover:bg-green-700 text-white rounded text-xs font-bold transition-colors shadow-sm whitespace-nowrap">
-                                    ⬇️ Exportar Todo
-                                </button>
+                            <div class="w-full xl:w-7/12 flex flex-wrap gap-2 items-center justify-start xl:justify-end">
+                                <button id="btnFilterCritical" onclick="toggleCriticalFilter()" class="flex-1 sm:flex-none px-3 py-2.5 bg-orange-500 hover:bg-orange-600 text-white rounded-lg text-xs font-bold transition-colors shadow-sm whitespace-nowrap">⚠️ Ver Críticos</button>
+                                <button id="btnExportFiltered" onclick="exportFilteredCatalogToExcel()" class="flex-1 sm:flex-none px-3 py-2.5 bg-[#0099cc] hover:bg-[#007799] text-white rounded-lg text-xs font-bold transition-colors shadow-sm whitespace-nowrap">⬇️ Exp. Filtrados</button>
+                                <button id="btnExportAll" onclick="exportCatalogToExcel()" class="flex-1 sm:flex-none px-3 py-2.5 bg-green-600 hover:bg-green-700 text-white rounded-lg text-xs font-bold transition-colors shadow-sm whitespace-nowrap">⬇️ Exportar Todo</button>
                                 
-                                <div class="admin-only hidden w-full sm:w-auto flex flex-wrap gap-2 items-center sm:pl-4 sm:border-l border-gray-200">
-                                    <button onclick="downloadCatalogTemplate()" class="bg-slate-600 hover:bg-slate-700 text-white py-2 px-3 rounded text-xs font-bold transition-colors shadow-sm whitespace-nowrap">⬇️ Plantilla</button>
-                                    <input type="file" id="excelUploadCatalog" accept=".xlsx, .xls" class="hidden">
-                                    <button onclick="document.getElementById('excelUploadCatalog').click()" class="bg-[#0099cc] hover:bg-[#007799] text-white py-2 px-3 rounded text-xs font-bold transition-colors shadow-sm whitespace-nowrap">⬆️ Subir Excel</button>
+                                <div id="sectionMassCatalog" class="admin-only w-full sm:w-auto flex flex-wrap gap-2 items-center sm:pl-3 sm:ml-1 sm:border-l border-gray-200 mt-2 sm:mt-0" style="display: none;">
+                                    <button onclick="downloadCatalogTemplate()" class="flex-1 sm:flex-none bg-slate-600 hover:bg-slate-700 text-white py-2.5 px-3 rounded-lg text-xs font-bold transition-colors shadow-sm whitespace-nowrap">⬇️ Plantilla</button>
+                                    <input type="file" id="excelUploadCatalog" accept=".xlsx, .xls" class="hidden" onchange="importExcelCatalog(event)">
+                                    <button onclick="document.getElementById('excelUploadCatalog').click()" class="flex-1 sm:flex-none bg-[#003366] hover:bg-[#002244] text-white py-2.5 px-3 rounded-lg text-xs font-bold transition-colors shadow-sm whitespace-nowrap">⬆️ Subir Excel</button>
                                 </div>
                             </div>
                         </div>
 
-                        <div class="flex flex-col lg:flex-row gap-6">
-                            <div class="lg:w-1/3 bg-white rounded-lg shadow-sm border border-gray-200 p-5 sm:p-6 h-fit admin-editor-only hidden">
-                                <h2 class="text-lg font-bold text-[#003366] mb-5 border-b pb-3" id="catalogFormTitle">Agregar Nuevo Equipo</h2>
-                                <form id="catalogForm" class="space-y-4">
-                                    <input type="hidden" id="articleId">
-                                    <div>
-                                        <label class="block text-xs font-bold text-gray-700 mb-1">EQUIPO / ACCESORIO *</label>
-                                        <input type="text" id="articleName" class="w-full px-3 py-2 border border-gray-300 rounded focus:border-[#0099cc] focus:ring-1 focus:ring-[#0099cc] outline-none text-sm" required>
-                                    </div>
-                                    <div>
-                                        <label class="block text-xs font-bold text-gray-700 mb-1">TIPO DE EQUIPO *</label>
-                                        <select id="itemType" class="w-full px-3 py-2 border border-gray-300 rounded focus:border-[#0099cc] focus:ring-1 focus:ring-[#0099cc] outline-none text-sm" required>
-                                            <option value="">Seleccione...</option>
-                                            <option value="EPP">EPP</option>
-                                            <option value="SCI">SCI</option>
-                                            <option value="EQUIPO LCI">EQUIPO LCI</option>
-                                            <option value="EQUIPO MATPEL">EQUIPO MATPEL</option>
-                                            <option value="EQUIPO LCR">EQUIPO LCR</option>
-                                            <option value="EQUIPO PPAA">EQUIPO PPAA</option>
-                                            <option value="MISCELANEO">MISCELANEO</option>
-                                        </select>
-                                    </div>
-                                    <div class="grid grid-cols-2 gap-3">
-                                        <div><label class="block text-xs font-bold text-gray-700 mb-1">MARCA</label><input type="text" id="brand" class="w-full px-3 py-2 border border-gray-300 rounded focus:border-[#0099cc] focus:ring-1 focus:ring-[#0099cc] outline-none text-sm"></div>
-                                        <div><label class="block text-xs font-bold text-gray-700 mb-1">MODELO</label><input type="text" id="model" class="w-full px-3 py-2 border border-gray-300 rounded focus:border-[#0099cc] focus:ring-1 focus:ring-[#0099cc] outline-none text-sm"></div>
-                                    </div>
-                                    <div class="grid grid-cols-2 gap-3">
-                                        <div><label class="block text-xs font-bold text-gray-700 mb-1">N° PARTE</label><input type="text" id="partNumber" class="w-full px-3 py-2 border border-gray-300 rounded focus:border-[#0099cc] focus:ring-1 focus:ring-[#0099cc] outline-none text-sm"></div>
-                                        <div><label class="block text-xs font-bold text-gray-700 mb-1">CÓDIGO SAP (MCP)</label><input type="text" id="sapNumber" class="w-full px-3 py-2 border border-gray-300 rounded focus:border-[#0099cc] focus:ring-1 focus:ring-[#0099cc] outline-none text-sm"></div>
-                                    </div>
-                                    <div class="grid grid-cols-2 gap-3">
-                                        <div><label class="block text-xs font-bold text-gray-700 mb-1">CANT. ACTUAL *</label><input type="number" id="initialStock" class="w-full px-3 py-2 border border-gray-300 rounded focus:border-[#0099cc] focus:ring-1 focus:ring-[#0099cc] outline-none text-sm" required></div>
-                                        <div><label class="block text-xs font-bold text-gray-700 mb-1">ALERTA MÍN. *</label><input type="number" id="minStock" class="w-full px-3 py-2 border border-gray-300 rounded focus:border-[#0099cc] focus:ring-1 focus:ring-[#0099cc] outline-none text-sm" required></div>
-                                    </div>
-                                    <div><label class="block text-xs font-bold text-gray-700 mb-1">OBSERVACIONES</label><textarea id="catalogObs" rows="2" class="w-full px-3 py-2 border border-gray-300 rounded focus:border-[#0099cc] focus:ring-1 focus:ring-[#0099cc] outline-none text-sm"></textarea></div>
-                                    <div class="flex gap-2 pt-2">
-                                        <button type="submit" id="btnSaveArticle" class="flex-1 bg-[#003366] hover:bg-[#002244] text-white py-2 px-4 rounded font-bold text-sm transition-colors shadow-md">Guardar</button>
-                                        <button type="button" id="cancelEdit" class="flex-1 bg-gray-200 text-gray-800 rounded font-bold hidden text-sm hover:bg-gray-300 transition-colors">Cancelar</button>
-                                    </div>
-                                </form>
+                        <div id="catalogContainerClass" class="w-full bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden flex flex-col h-[75vh]">
+                            <div class="p-4 sm:p-5 border-b border-gray-200 bg-slate-50 flex justify-between items-center flex-shrink-0">
+                                <h3 class="text-xl font-bold text-[#003366] flex items-center gap-2">
+                                    <svg class="w-5 h-5 text-[#0099cc]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 10h16M4 14h16M4 18h16"></path></svg>
+                                    Catálogo (A-Z)
+                                </h3>
+                                <button id="btnNewArticleModal" onclick="openArticleModal()" class="admin-editor-only bg-[#0099cc] hover:bg-[#007799] text-white px-4 py-2 rounded-lg font-bold text-sm transition-colors shadow-sm flex items-center gap-2" style="display: none;">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
+                                    NUEVO EQUIPO (+)
+                                </button>
                             </div>
-                            
-                            <div id="catalogContainerClass" class="w-full bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden flex flex-col h-[700px]">
-                                <div class="p-4 sm:p-5 border-b border-gray-200 bg-slate-50 flex justify-between items-center flex-shrink-0">
-                                    <h3 class="text-lg font-bold text-[#003366]">Catálogo (A-Z)</h3>
-                                </div>
-                                <div class="p-4 bg-slate-50 flex-1 overflow-y-auto">
-                                    <div id="catalogList" class="flex flex-col gap-3 pr-1"></div>
-                                </div>
+                            <div class="p-4 bg-slate-50 flex-1 overflow-y-auto">
+                                <div id="catalogList" class="flex flex-col gap-3 pr-1"></div>
                             </div>
                         </div>
                     </div>
@@ -320,21 +349,21 @@
                             
                             <div class="lg:w-1/3 bg-white rounded-lg shadow-sm border border-gray-200 p-6 h-fit">
                                 <h2 class="text-xl font-bold text-[#003366] mb-6 border-b pb-4" id="userFormTitle">Agregar Nuevo Usuario</h2>
-                                <form id="userAdminForm" class="space-y-4">
+                                <form id="userAdminForm" class="space-y-4" onsubmit="event.preventDefault(); handleUserAdmin();">
                                     <input type="hidden" id="adminUserId">
                                     <div>
                                         <label class="block text-xs font-bold text-gray-700 mb-1">NOMBRE COMPLETO *</label>
-                                        <input type="text" id="adminUserName" class="w-full px-3 py-2 border border-gray-300 rounded focus:border-[#0099cc] focus:outline-none focus:ring-1 focus:ring-[#0099cc]" required>
+                                        <input type="text" id="adminUserName" class="w-full px-3 py-2 border border-gray-300 rounded focus:border-[#0099cc] focus:outline-none focus:ring-1 focus:ring-[#0099cc] transition-all" required>
                                     </div>
                                     <div>
                                         <label class="block text-xs font-bold text-gray-700 mb-1">CORREO ELECTRÓNICO *</label>
-                                        <input type="email" id="adminUserEmail" class="w-full px-3 py-2 border border-gray-300 rounded focus:border-[#0099cc] focus:outline-none focus:ring-1 focus:ring-[#0099cc]" required>
+                                        <input type="email" id="adminUserEmail" class="w-full px-3 py-2 border border-gray-300 rounded focus:border-[#0099cc] focus:outline-none focus:ring-1 focus:ring-[#0099cc] transition-all" required>
                                     </div>
                                     <div id="passwordContainer">
                                         <label class="block text-xs font-bold text-gray-700 mb-1">CONTRASEÑA (Mín. 6) *</label>
                                         <div class="relative">
-                                            <input type="password" id="adminUserPass" class="w-full px-3 py-2 border border-gray-300 rounded focus:border-[#0099cc] focus:outline-none focus:ring-1 focus:ring-[#0099cc] pr-10">
-                                            <button type="button" onclick="togglePassword('adminUserPass', 'eyeAdminReg')" class="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-500 hover:text-gray-700 focus:outline-none">
+                                            <input type="password" id="adminUserPass" class="w-full px-3 py-2 border border-gray-300 rounded focus:border-[#0099cc] focus:outline-none focus:ring-1 focus:ring-[#0099cc] pr-10 transition-all">
+                                            <button type="button" onclick="togglePassword('adminUserPass', 'eyeAdminReg')" class="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-500 hover:text-[#0099cc] focus:outline-none transition-colors">
                                                 <svg id="eyeAdminReg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
                                                 </svg>
@@ -343,15 +372,15 @@
                                     </div>
                                     <div>
                                         <label class="block text-xs font-bold text-gray-700 mb-1">ASIGNAR ROL *</label>
-                                        <select id="adminUserRole" class="w-full px-3 py-2 border border-gray-300 rounded focus:border-[#0099cc] focus:outline-none focus:ring-1 focus:ring-[#0099cc] font-semibold" required>
+                                        <select id="adminUserRole" class="w-full px-3 py-2 border border-gray-300 rounded focus:border-[#0099cc] focus:outline-none focus:ring-1 focus:ring-[#0099cc] font-semibold transition-all bg-white" required>
                                             <option value="lector">Lector (Solo Ver)</option>
-                                            <option value="editor">Editor (Agrega/Edita, No Masivos)</option>
+                                            <option value="editor">Editor (No Cargas Masivas)</option>
                                             <option value="admin">Administrador (Total)</option>
                                         </select>
                                     </div>
-                                    <div class="flex gap-2 pt-4">
-                                        <button type="submit" id="btnSaveUser" class="flex-1 bg-[#003366] hover:bg-[#002244] text-white py-2 px-4 rounded font-bold text-sm transition-colors shadow-md">Guardar Usuario</button>
-                                        <button type="button" id="cancelUserEdit" class="flex-1 bg-gray-200 text-gray-800 rounded font-bold hidden text-sm hover:bg-gray-300 transition-colors">Cancelar</button>
+                                    <div class="flex gap-2 pt-4 border-t border-gray-100">
+                                        <button type="submit" id="btnSaveUser" class="flex-1 bg-[#003366] hover:bg-[#002244] text-white py-2 px-4 rounded-lg font-bold text-sm transition-colors shadow-md">Guardar Usuario</button>
+                                        <button type="button" id="cancelUserEdit" class="flex-1 bg-gray-200 text-gray-800 rounded-lg font-bold text-sm hover:bg-gray-300 transition-colors shadow-sm" onclick="resetUserForm()" style="display: none;">Cancelar</button>
                                     </div>
                                 </form>
                             </div>
@@ -359,7 +388,7 @@
                             <div class="lg:w-2/3 bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden flex flex-col">
                                 <div class="p-6 border-b border-gray-200 bg-slate-50">
                                     <h3 class="text-xl font-bold text-[#003366]">Usuarios Registrados en el Sistema</h3>
-                                    <p class="text-xs text-gray-500 mt-1">Las cuentas maestras administran los roles y permisos. Eliminar un usuario revoca su acceso inmediatamente.</p>
+                                    <p class="text-xs text-gray-500 mt-1">Eliminar un usuario revoca su acceso inmediatamente.</p>
                                 </div>
                                 <div class="overflow-x-auto flex-1">
                                     <table class="w-full">
@@ -399,7 +428,7 @@
         const auth = firebase.auth();
         const db = firebase.firestore();
         
-        // App Secundaria para registrar usuarios en background (SÓLO ADMIN) sin cerrar sesión actual
+        // App Secundaria para registrar usuarios (SÓLO ADMIN)
         const secondaryApp = firebase.initializeApp(firebaseConfig, "Secondary");
 
         let currentUser = null;
@@ -408,21 +437,9 @@
         let currentFilteredArticles = []; 
         let showOnlyCritical = false; 
 
-        // Manejo Menú Lateral
-        function toggleSidebar() {
-            const sidebar = document.getElementById('sidebar');
-            const overlay = document.getElementById('sidebarOverlay');
-            if (window.innerWidth < 768) {
-                sidebar.classList.toggle('-translate-x-full');
-                overlay.classList.toggle('hidden');
-            } else {
-                sidebar.classList.toggle('md:hidden');
-            }
-        }
-
+        // Ojo de Contraseña
         function togglePassword(inputId, iconId) {
-            const input = document.getElementById(inputId);
-            const icon = document.getElementById(iconId);
+            const input = document.getElementById(inputId); const icon = document.getElementById(iconId);
             if(!input || !icon) return;
             if (input.type === "password") {
                 input.type = "text";
@@ -433,47 +450,59 @@
             }
         }
 
-        // --- 2. PROTECCIÓN GLOBAL DE EVENTOS ---
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('sidebarOverlay');
+            if (window.innerWidth < 768) {
+                sidebar.classList.toggle('-translate-x-full');
+                if(overlay.style.display === 'none' || overlay.style.display === '') {
+                    overlay.style.display = 'block';
+                } else {
+                    overlay.style.display = 'none';
+                }
+            } else {
+                sidebar.classList.toggle('md:hidden');
+            }
+        }
+
+        // Sistema de Pestañas Estricto (Previene conflictos Tailwind)
+        window.switchTab = function(tabId) {
+            document.querySelectorAll('.tab-content').forEach(c => { c.style.display = 'none'; c.classList.add('hidden'); });
+            document.querySelectorAll('.tab-btn').forEach(b => { 
+                b.classList.remove('bg-[#0099cc]', 'text-white', 'shadow-md'); 
+                b.classList.add('text-gray-400', 'hover:bg-[#003366]', 'hover:text-white');
+            });
+
+            const targetTab = document.getElementById(tabId);
+            if(targetTab) {
+                targetTab.classList.remove('hidden');
+                targetTab.style.display = 'block';
+            }
+
+            const activeBtn = document.querySelector(`.tab-btn[data-tab="${tabId}"]`);
+            if(activeBtn) {
+                activeBtn.classList.remove('text-gray-400', 'hover:bg-[#003366]', 'hover:text-white'); 
+                activeBtn.classList.add('bg-[#0099cc]', 'text-white', 'shadow-md');
+            }
+
+            if (window.innerWidth < 768) {
+                const sidebar = document.getElementById('sidebar');
+                if(!sidebar.classList.contains('-translate-x-full')) toggleSidebar();
+            }
+        }
+
+        // Inicialización Segura
         document.addEventListener('DOMContentLoaded', () => {
-            const safeAddListener = (id, event, handler) => {
-                const el = document.getElementById(id);
-                if (el) el.addEventListener(event, handler);
-            };
-
-            safeAddListener('loginForm', 'submit', handleLogin);
-            
             document.querySelectorAll('.btn-logout').forEach(b => b.addEventListener('click', () => auth.signOut()));
-
-            // Listeners de Movimientos
-            safeAddListener('movementForm', 'submit', handleMovement);
-            safeAddListener('movementType', 'change', updateMovementNameSelect);
-            safeAddListener('movementNameSelect', 'change', updateModelSelect);
-            safeAddListener('movementModelSelect', 'change', checkMovementForm);
-            safeAddListener('movementFilter', 'change', updateMovementsTable);
-
-            // Listeners Catálogo
-            safeAddListener('catalogForm', 'submit', handleArticle);
-            safeAddListener('cancelEdit', 'click', resetArticleForm);
-            safeAddListener('searchCatalog', 'keyup', updateCatalogList);
-            safeAddListener('btnFilterCritical', 'click', toggleCriticalFilter);
-            safeAddListener('btnExportAll', 'click', exportCatalogToExcel);
-            safeAddListener('btnExportFiltered', 'click', exportFilteredCatalogToExcel);
-
-            // Listeners Usuarios
-            safeAddListener('userAdminForm', 'submit', handleUserAdmin);
-            safeAddListener('cancelUserEdit', 'click', resetUserForm);
-
-            // Excel Botones
-            safeAddListener('excelUploadCatalog', 'change', importExcelCatalog);
-            safeAddListener('excelUploadIngreso', 'change', (e) => importExcelMovements(e, 'ingreso'));
-            safeAddListener('excelUploadSalida', 'change', (e) => importExcelMovements(e, 'salida'));
-
-            setupTabs();
+            
+            // Asigna los Tabs Visualmente para iniciar
+            document.querySelectorAll('.tab-content').forEach(c => { c.style.display = 'none'; c.classList.add('hidden'); });
+            document.getElementById('dashboard').style.display = 'block';
+            document.getElementById('dashboard').classList.remove('hidden');
         });
 
-        // --- 3. FUNCIONES DE AUTENTICACIÓN ---
-        async function handleLogin(e) {
-            if(e) e.preventDefault();
+        // --- 3. AUTENTICACIÓN Y ROLES ---
+        async function handleLogin() {
             const email = document.getElementById('loginEmail').value.trim().toLowerCase();
             const pass = document.getElementById('loginPassword').value;
             const btn = document.getElementById('btnLogin');
@@ -481,20 +510,17 @@
 
             try {
                 if (email === 'supervision.rescate@gmail.com' && pass === 'Supervisionrescate11!') {
-                    try { 
-                        await auth.signInWithEmailAndPassword(email, pass); 
-                    } catch (err) {
+                    try { await auth.signInWithEmailAndPassword(email, pass); } 
+                    catch (err) {
                         if (err.code === 'auth/invalid-credential' || err.code === 'auth/user-not-found') {
                             try {
                                 const userCred = await auth.createUserWithEmailAndPassword(email, pass);
                                 await userCred.user.updateProfile({ displayName: 'Supervisión Rescate' });
                                 await db.collection('usuarios').doc(userCred.user.uid).set({ nombre: 'Supervisión Rescate', email: email, rol: 'admin', creado: firebase.firestore.FieldValue.serverTimestamp() });
-                            } catch (createErr) { alert("Error creando cuenta maestra. Activa 'Correo/Contraseña' en Firebase Authentication."); }
-                        } else { alert("❌ Error de Firebase: " + err.message); }
+                            } catch (createErr) { alert("Error creando cuenta maestra. Activa 'Correo/Contraseña' en Firebase."); }
+                        } else alert("❌ Error: " + err.message);
                     }
-                } else {
-                    await auth.signInWithEmailAndPassword(email, pass);
-                }
+                } else await auth.signInWithEmailAndPassword(email, pass);
             } catch(error) {
                 if(error.code === 'auth/operation-not-allowed') alert("❌ Activa 'Correo/Contraseña' en Firebase.");
                 else alert("❌ Correo o contraseña incorrectos.");
@@ -518,51 +544,60 @@
                         if (data.rol === 'pendiente') showPendingScreen();
                         else { currentUserRole = data.rol; startApp(data); }
                     }
-                } catch(err) { 
-                    console.error("Fallo de Base de Datos:", err);
-                    alert("🚨 ERROR CRÍTICO DE PERMISOS: Firebase bloqueó la lectura.\nAsegúrate de que tus Reglas en Firestore sean 'allow read, write: if true;'");
-                    auth.signOut(); 
-                }
+                } catch(err) { console.error(err); alert("🚨 Firebase bloqueó la lectura de permisos."); auth.signOut(); }
             } else {
-                showAuthScreen();
+                document.getElementById('authScreen').style.display = 'flex';
+                document.getElementById('pendingScreen').style.display = 'none';
+                document.getElementById('mainApp').style.display = 'none';
             }
         });
 
-        function showAuthScreen() { document.getElementById('authScreen').classList.remove('hidden'); document.getElementById('pendingScreen').classList.add('hidden'); document.getElementById('mainApp').classList.add('hidden'); }
-        function showPendingScreen() { document.getElementById('authScreen').classList.add('hidden'); document.getElementById('pendingScreen').classList.remove('hidden'); document.getElementById('mainApp').classList.add('hidden'); }
+        function showPendingScreen() {
+            document.getElementById('authScreen').style.display = 'none';
+            document.getElementById('pendingScreen').style.display = 'flex';
+            document.getElementById('mainApp').style.display = 'none';
+        }
 
         function startApp(userData) {
-            document.getElementById('authScreen').classList.add('hidden'); 
-            document.getElementById('pendingScreen').classList.add('hidden'); 
-            document.getElementById('mainApp').classList.remove('hidden');
+            document.getElementById('authScreen').style.display = 'none';
+            document.getElementById('pendingScreen').style.display = 'none';
+            document.getElementById('mainApp').style.display = 'flex';
             
             const badge = document.getElementById('userRoleBadge');
             badge.textContent = userData.rol;
             badge.className = `px-2 py-1 text-white rounded text-[10px] sm:text-xs font-bold uppercase tracking-wider shadow-sm ${userData.rol === 'admin' ? 'bg-red-600' : (userData.rol === 'editor' ? 'bg-purple-600' : 'bg-[#0099cc]')}`;
 
-            const adminEditorElements = document.querySelectorAll('.admin-editor-only');
-            const adminOnlyElements = document.querySelectorAll('.admin-only');
-            const catalogContainer = document.getElementById('catalogContainerClass');
+            // Control de Visibilidad por Rol mediante JS Estricto
+            const btnNavMovements = document.getElementById('navMovements');
+            const btnNavUsers = document.getElementById('navUsers');
+            const btnNewArticleModal = document.getElementById('btnNewArticleModal');
+            const sectionMassCatalog = document.getElementById('sectionMassCatalog');
+            const sectionMassMovement = document.getElementById('sectionMassMovement');
 
             if (userData.rol === 'admin') {
-                adminEditorElements.forEach(el => el.classList.remove('hidden'));
-                adminOnlyElements.forEach(el => el.classList.remove('hidden'));
-                if(catalogContainer) catalogContainer.classList.replace('w-full', 'xl:w-2/3');
+                if(btnNavMovements) btnNavMovements.style.display = 'flex';
+                if(btnNavUsers) btnNavUsers.style.display = 'flex';
+                if(btnNewArticleModal) btnNewArticleModal.style.display = 'flex';
+                if(sectionMassCatalog) sectionMassCatalog.style.display = 'flex';
+                if(sectionMassMovement) sectionMassMovement.style.display = 'block';
             } else if (userData.rol === 'editor') {
-                adminEditorElements.forEach(el => el.classList.remove('hidden'));
-                adminOnlyElements.forEach(el => el.classList.add('hidden')); 
-                if(catalogContainer) catalogContainer.classList.replace('w-full', 'xl:w-2/3');
+                if(btnNavMovements) btnNavMovements.style.display = 'flex';
+                if(btnNavUsers) btnNavUsers.style.display = 'none';
+                if(btnNewArticleModal) btnNewArticleModal.style.display = 'flex';
+                if(sectionMassCatalog) sectionMassCatalog.style.display = 'none';
+                if(sectionMassMovement) sectionMassMovement.style.display = 'none';
             } else {
-                adminEditorElements.forEach(el => el.classList.add('hidden'));
-                adminOnlyElements.forEach(el => el.classList.add('hidden'));
-                if(catalogContainer) catalogContainer.classList.replace('xl:w-2/3', 'w-full');
+                if(btnNavMovements) btnNavMovements.style.display = 'none';
+                if(btnNavUsers) btnNavUsers.style.display = 'none';
+                if(btnNewArticleModal) btnNewArticleModal.style.display = 'none';
+                if(sectionMassCatalog) sectionMassCatalog.style.display = 'none';
+                if(sectionMassMovement) sectionMassMovement.style.display = 'none';
             }
             
             trackOnlineStatus(); loadArticles(); loadMovements(); 
             if (userData.rol === 'admin') loadUsersList();
             
-            const dashboardBtn = document.querySelector('.tab-btn[data-tab="dashboard"]');
-            if(dashboardBtn) dashboardBtn.click();
+            window.switchTab('dashboard');
         }
 
         function trackOnlineStatus() {
@@ -577,7 +612,23 @@
             });
         }
 
-        // --- 4. GESTIÓN DE USUARIOS (SÓLO ADMIN) ---
+        // --- 4. CARGA DE DATOS (INVENTARIO) ---
+        function loadArticles() {
+            db.collection('articles').onSnapshot(snapshot => {
+                articles = []; snapshot.forEach(doc => articles.push({ id: doc.id, ...doc.data() }));
+                if(currentUserRole === 'admin' || currentUserRole === 'editor') updateMovementNameSelect(); 
+                updateCatalogList(); updateDashboard();
+            });
+        }
+
+        function loadMovements() {
+            db.collection('movements').orderBy('timestamp', 'desc').limit(150).onSnapshot(snapshot => {
+                movements = []; snapshot.forEach(doc => movements.push({ id: doc.id, ...doc.data() }));
+                updateMovementsTable(); updateDashboard();
+            });
+        }
+
+        // --- 5. GESTIÓN DE USUARIOS (SÓLO ADMIN) ---
         function loadUsersList() {
             db.collection('usuarios').orderBy('creado', 'desc').onSnapshot(snapshot => {
                 usersData = []; snapshot.forEach(doc => usersData.push({ id: doc.id, ...doc.data() }));
@@ -600,8 +651,7 @@
             });
         }
 
-        async function handleUserAdmin(e) {
-            if(e) e.preventDefault();
+        async function handleUserAdmin() {
             const id = document.getElementById('adminUserId').value;
             const name = document.getElementById('adminUserName').value.trim();
             const email = document.getElementById('adminUserEmail').value.trim().toLowerCase();
@@ -640,8 +690,8 @@
             document.getElementById('adminUserEmail').disabled = true;
             document.getElementById('adminUserRole').value = u.rol;
             
-            document.getElementById('passwordContainer').classList.add('hidden');
-            document.getElementById('cancelUserEdit').classList.remove('hidden');
+            document.getElementById('passwordContainer').style.display = 'none';
+            document.getElementById('cancelUserEdit').style.display = 'block';
             document.getElementById('userFormTitle').textContent = 'Editar Rol / Nombre';
             document.getElementById('userFormTitle').scrollIntoView({behavior: 'smooth'});
         }
@@ -650,8 +700,8 @@
             document.getElementById('userAdminForm').reset();
             document.getElementById('adminUserId').value = '';
             document.getElementById('adminUserEmail').disabled = false;
-            document.getElementById('passwordContainer').classList.remove('hidden');
-            document.getElementById('cancelUserEdit').classList.add('hidden');
+            document.getElementById('passwordContainer').style.display = 'block';
+            document.getElementById('cancelUserEdit').style.display = 'none';
             document.getElementById('userFormTitle').textContent = 'Agregar Nuevo Usuario';
         }
 
@@ -662,23 +712,7 @@
             }
         }
 
-        // --- 5. CARGA DE DATOS (INVENTARIO) ---
-        function loadArticles() {
-            db.collection('articles').onSnapshot(snapshot => {
-                articles = []; snapshot.forEach(doc => articles.push({ id: doc.id, ...doc.data() }));
-                if(currentUserRole === 'admin' || currentUserRole === 'editor') updateMovementNameSelect(); 
-                updateCatalogList(); updateDashboard();
-            });
-        }
-
-        function loadMovements() {
-            db.collection('movements').orderBy('timestamp', 'desc').limit(150).onSnapshot(snapshot => {
-                movements = []; snapshot.forEach(doc => movements.push({ id: doc.id, ...doc.data() }));
-                updateMovementsTable(); updateDashboard();
-            });
-        }
-
-        // --- 6. MOVIMIENTOS Y LÓGICA DE STOCKS ---
+        // --- 6. MOVIMIENTOS ---
         function updateMovementNameSelect() {
             const nameSelect = document.getElementById('movementNameSelect');
             const modelSelect = document.getElementById('movementModelSelect');
@@ -715,8 +749,7 @@
 
         function checkMovementForm() { document.getElementById('btnSaveMovement').disabled = !document.getElementById('movementModelSelect').value; }
 
-        async function handleMovement(e) {
-            if(e) e.preventDefault();
+        async function handleMovement() {
             const btn = document.getElementById('btnSaveMovement');
             btn.textContent = "Guardando..."; btn.disabled = true;
 
@@ -761,24 +794,29 @@
             `).join('') || '<tr><td colspan="7" class="px-6 py-12 text-center text-gray-500 font-semibold text-lg">No hay registros de movimientos</td></tr>';
         }
 
-        // --- 7. CATÁLOGO ---
-        function toggleCriticalFilter() {
+        // --- 7. CATÁLOGO MODAL Y VISTA ---
+        window.openArticleModal = function() {
+            document.getElementById('catalogForm').reset(); document.getElementById('articleId').value = '';
+            document.getElementById('catalogFormTitle').innerHTML = '<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg> Agregar Nuevo Equipo';
+            document.getElementById('articleModal').style.display = 'flex';
+        }
+
+        window.closeArticleModal = function() {
+            document.getElementById('articleModal').style.display = 'none'; document.getElementById('catalogForm').reset();
+        }
+
+        window.toggleCriticalFilter = function() {
             showOnlyCritical = !showOnlyCritical;
             const btn = document.getElementById('btnFilterCritical');
             if (showOnlyCritical) {
-                btn.classList.replace('bg-orange-500', 'bg-red-600');
-                btn.classList.replace('hover:bg-orange-600', 'hover:bg-red-700');
-                btn.innerHTML = '❌ Quitar Filtro Crítico';
+                btn.classList.replace('bg-orange-500', 'bg-red-600'); btn.classList.replace('hover:bg-orange-600', 'hover:bg-red-700'); btn.innerHTML = '❌ Quitar Filtro Crítico';
             } else {
-                btn.classList.replace('bg-red-600', 'bg-orange-500');
-                btn.classList.replace('hover:bg-red-700', 'hover:bg-orange-600');
-                btn.innerHTML = '⚠️ Ver Críticos';
+                btn.classList.replace('bg-red-600', 'bg-orange-500'); btn.classList.replace('hover:bg-red-700', 'hover:bg-orange-600'); btn.innerHTML = '⚠️ Ver Críticos';
             }
             updateCatalogList();
         }
 
-        async function handleArticle(e) {
-            if(e) e.preventDefault();
+        async function handleArticle() {
             const btn = document.getElementById('btnSaveArticle'); btn.textContent = "Guardando..."; btn.disabled = true;
             try {
                 const name = document.getElementById('articleName').value.trim();
@@ -798,16 +836,19 @@
                 
                 if(id) await db.collection('articles').doc(id).update(payload);
                 else await db.collection('articles').add({...payload, createdAt: firebase.firestore.FieldValue.serverTimestamp()});
-                resetArticleForm(); alert('Equipo guardado con éxito');
+                
+                closeArticleModal(); alert('Equipo guardado con éxito');
             } catch(error) { alert('Error al guardar el equipo.'); } 
-            finally { btn.textContent = "Guardar"; btn.disabled = false; }
+            finally { btn.textContent = "Guardar Equipo"; btn.disabled = false; }
         }
 
         function updateCatalogList() {
             const searchTerm = (document.getElementById('searchCatalog')?.value || '').toLowerCase();
+            const filterType = document.getElementById('filterTypeCatalog')?.value || 'all';
             const words = searchTerm.split(' ').filter(w => w); 
             
             let filteredAndSorted = articles.filter(a => {
+                if (filterType !== 'all' && (a.itemType || 'MISCELANEO') !== filterType) return false;
                 const combinedText = `${a.name||''} ${a.brand||''} ${a.model||''} ${a.partNumber||''} ${a.sapNumber||''} ${a.itemType||''}`.toLowerCase();
                 return words.every(word => combinedText.includes(word)); 
             });
@@ -818,35 +859,41 @@
             currentFilteredArticles = filteredAndSorted; 
 
             const editButtons = (id) => (currentUserRole === 'admin' || currentUserRole === 'editor') ? `
-                <div class="flex gap-2 mt-auto pt-3 md:mt-0 md:pt-0 md:absolute md:top-3 md:right-3">
+                <div class="flex gap-2 w-full md:w-auto mt-3 md:mt-0 justify-end flex-shrink-0">
                     <button onclick="window.editArticle('${id}')" class="px-3 py-1.5 bg-[#e2e8f0] hover:bg-[#cbd5e1] text-[#003366] text-[10px] font-bold rounded shadow-sm transition-colors uppercase tracking-wider">Editar</button>
                     <button onclick="if(confirm('¿Eliminar equipo por completo de la base de datos?')) db.collection('articles').doc('${id}').delete()" class="px-3 py-1.5 bg-red-100 hover:bg-red-200 text-red-600 text-[10px] font-bold rounded shadow-sm transition-colors uppercase tracking-wider">Borrar</button>
                 </div>` : '';
 
+            // Tarjetas Ultra Compactas (60% reducidas)
             document.getElementById('catalogList').innerHTML = filteredAndSorted.map(a => `
-                <div class="bg-white p-4 sm:p-5 rounded-lg border border-gray-200 shadow-sm hover:shadow-md transition-all flex flex-col md:flex-row gap-4 w-full relative overflow-hidden group">
-                    ${a.stock <= a.minStock ? '<div class="absolute left-0 top-0 bottom-0 w-1.5 bg-red-500"></div>' : '<div class="absolute left-0 top-0 bottom-0 w-1.5 bg-[#0099cc]"></div>'}
-                    <div class="flex-1 pl-2 w-full pr-0 md:pr-24">
-                        <div class="flex flex-col sm:flex-row sm:items-center gap-2 mb-3">
-                            <h4 class="font-black text-[#003366] text-sm sm:text-base uppercase tracking-wide truncate max-w-full">${a.name}</h4>
-                            <span class="inline-block px-2 py-0.5 bg-slate-200 text-slate-700 text-[9px] font-bold rounded-full border border-slate-300 whitespace-nowrap w-fit">${a.itemType||'MISCELANEO'}</span>
+                <div class="bg-white p-3 rounded-lg border border-gray-200 shadow-sm hover:shadow-md transition-all flex flex-col md:flex-row items-center gap-3 w-full relative group">
+                    ${a.stock <= a.minStock ? '<div class="absolute left-0 top-0 bottom-0 w-1.5 bg-red-500 rounded-l-lg"></div>' : '<div class="absolute left-0 top-0 bottom-0 w-1.5 bg-[#0099cc] rounded-l-lg"></div>'}
+                    
+                    <div class="flex-1 pl-4 flex flex-col md:flex-row md:items-center w-full gap-2 md:gap-4">
+                        <div class="md:w-1/4">
+                            <h4 class="font-black text-[#003366] text-sm uppercase truncate" title="${a.name}">${a.name}</h4>
+                            <span class="inline-block px-1.5 py-0.5 mt-0.5 bg-slate-200 text-slate-700 text-[9px] font-bold rounded border border-slate-300">${a.itemType||'MISCELANEO'}</span>
                         </div>
-                        <div class="flex flex-wrap gap-x-6 gap-y-1 text-xs text-gray-600">
-                            <div><span class="font-bold text-gray-400 text-[10px]">MARCA:</span> <span class="font-semibold text-gray-800">${a.brand||'-'}</span></div>
-                            <div><span class="font-bold text-gray-400 text-[10px]">MODELO:</span> <span class="font-semibold text-gray-800">${a.model||'-'}</span></div>
-                            <div><span class="font-bold text-gray-400 text-[10px]">P/N:</span> <span class="font-semibold text-gray-800">${a.partNumber||'-'}</span></div>
-                            <div><span class="font-bold text-gray-400 text-[10px]">SAP:</span> <span class="font-semibold text-gray-800">${a.sapNumber||'-'}</span></div>
-                            <div class="w-full mt-1 truncate" title="${a.observations||'-'}"><span class="font-bold text-gray-400 text-[10px]">OBS:</span> <span class="text-gray-500">${a.observations||'-'}</span></div>
+                        
+                        <div class="flex-1 grid grid-cols-2 md:grid-cols-4 gap-2 text-xs text-gray-600">
+                            <div class="truncate" title="${a.brand||'-'}"><span class="font-bold text-gray-400 text-[9px] uppercase block leading-none">MARCA</span> <span class="font-semibold text-gray-800">${a.brand||'-'}</span></div>
+                            <div class="truncate" title="${a.model||'-'}"><span class="font-bold text-gray-400 text-[9px] uppercase block leading-none">MODELO</span> <span class="font-semibold text-gray-800">${a.model||'-'}</span></div>
+                            <div class="truncate" title="${a.partNumber||'-'}"><span class="font-bold text-gray-400 text-[9px] uppercase block leading-none">P/N</span> <span class="font-semibold text-gray-800">${a.partNumber||'-'}</span></div>
+                            <div class="truncate" title="${a.sapNumber||'-'}"><span class="font-bold text-gray-400 text-[9px] uppercase block leading-none">SAP</span> <span class="font-semibold text-gray-800">${a.sapNumber||'-'}</span></div>
+                            <div class="col-span-2 md:col-span-4 truncate text-[10px]" title="${a.observations||'-'}"><span class="font-bold text-gray-400 mr-1">OBS:</span> ${a.observations||'-'}</div>
+                        </div>
+                    </div>
+                    
+                    <div class="flex flex-row md:flex-row items-center justify-between md:justify-end gap-4 w-full md:w-auto bg-slate-50 md:bg-transparent p-2 md:p-0 rounded md:border-l border-gray-200 md:pl-4">
+                        <div class="text-center">
+                            <span class="text-[9px] text-gray-400 uppercase font-bold block leading-tight">Stock</span>
+                            <span class="block text-2xl font-black leading-none ${a.stock <= a.minStock ? 'text-red-600' : 'text-[#003366]'}">${a.stock || 0}</span>
+                            <span class="block text-[9px] font-bold mt-1 px-1 rounded ${a.stock <= a.minStock ? 'bg-red-100 text-red-700' : 'text-gray-500'}">MÍN: ${a.minStock}</span>
                         </div>
                         ${editButtons(a.id)}
                     </div>
-                    <div class="flex flex-row md:flex-col items-center md:items-end justify-between md:justify-center bg-slate-50 md:bg-transparent p-3 md:p-0 rounded border md:border-none md:border-l border-gray-200 md:pl-6 min-w-[120px] flex-shrink-0 mt-2 md:mt-0">
-                        <span class="text-[10px] text-gray-400 uppercase tracking-widest font-bold mb-1">Stock</span>
-                        <span class="block text-3xl font-black leading-none ${a.stock <= a.minStock ? 'text-red-600' : 'text-[#003366]'}">${a.stock || 0}</span>
-                        <span class="block text-[10px] font-bold mt-2 px-1.5 py-0.5 rounded ${a.stock <= a.minStock ? 'bg-red-100 text-red-700' : 'bg-slate-200 text-gray-500'}">MÍN: ${a.minStock}</span>
-                    </div>
                 </div>
-            `).join('') || '<div class="text-center text-gray-500 py-12 font-bold text-sm">No se encontraron equipos con esa búsqueda.</div>';
+            `).join('') || '<div class="text-center text-gray-500 py-6 font-bold text-sm">No se encontraron equipos.</div>';
         }
 
         window.editArticle = function(id) {
@@ -861,12 +908,10 @@
             document.getElementById('initialStock').value = a.stock; 
             document.getElementById('minStock').value = a.minStock;
             document.getElementById('catalogObs').value = a.observations || '';
-            document.getElementById('cancelEdit').classList.remove('hidden'); 
-            document.getElementById('catalogFormTitle').textContent = 'Editar Equipo';
-            document.getElementById('catalogFormTitle').scrollIntoView({behavior: 'smooth'});
+            
+            document.getElementById('catalogFormTitle').innerHTML = '<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg> Editar Equipo';
+            document.getElementById('articleModal').style.display = 'flex';
         }
-
-        function resetArticleForm() { document.getElementById('catalogForm').reset(); document.getElementById('articleId').value = ''; document.getElementById('cancelEdit').classList.add('hidden'); document.getElementById('catalogFormTitle').textContent = 'Agregar Nuevo Equipo'; }
 
         function updateDashboard() {
             document.getElementById('totalItems').textContent = articles.length;
@@ -876,28 +921,9 @@
             }).length;
         }
 
-        function setupTabs() {
-            document.querySelectorAll('.tab-btn').forEach(btn => {
-                btn.addEventListener('click', () => {
-                    document.querySelectorAll('.tab-content').forEach(c => c.classList.add('hidden'));
-                    document.querySelectorAll('.tab-btn').forEach(b => { 
-                        b.classList.remove('bg-[#0099cc]', 'text-white', 'shadow-md'); 
-                        b.classList.add('text-gray-400', 'bg-transparent'); 
-                    });
-                    document.getElementById(btn.dataset.tab).classList.remove('hidden');
-                    btn.classList.remove('text-gray-400', 'bg-transparent'); 
-                    btn.classList.add('bg-[#0099cc]', 'text-white', 'shadow-md');
-
-                    if (window.innerWidth < 768 && !document.getElementById('sidebar').classList.contains('-translate-x-full')) {
-                        toggleSidebar(); 
-                    }
-                });
-            });
-        }
-        
         // --- 8. SISTEMA EXCEL (EXPORTACIÓN E IMPORTACIÓN) ---
         window.exportCatalogToExcel = function() {
-            if (articles.length === 0) return alert("No hay equipos registrados para exportar.");
+            if (articles.length === 0) return alert("No hay equipos registrados.");
             const data = articles.sort((a,b) => String(a.name||'').localeCompare(String(b.name||''))).map(a => ({
                 "EQUIPO / ACCESORIO / HERRAMIENTA": a.name, "TIPO DE EQUIPO": a.itemType||'MISCELANEO', "MARCA": a.brand, "MODELO": a.model, "N° PARTE": a.partNumber,
                 "CODIGO SAP (MCP)": a.sapNumber, "CANTIDAD ACTUAL": a.stock || 0, "ALERTA MINIMA": a.minStock || 0, "OBSERVACIONES / COMENTARIOS": a.observations
