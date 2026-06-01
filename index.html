@@ -10,7 +10,7 @@
     <script src="https://www.gstatic.com/firebasejs/10.13.1/firebase-firestore-compat.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <style>
-        .fade-in { animation: fadeIn 0.4s ease-out; }
+        .fade-in { animation: fadeIn 0.3s ease-out; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
         /* Scrollbar corporativo */
         ::-webkit-scrollbar { width: 6px; height: 6px; }
@@ -21,7 +21,7 @@
 </head>
 <body class="bg-slate-100 min-h-screen font-sans overflow-hidden">
 
-    <div id="authScreen" class="h-screen w-full flex items-center justify-center bg-[#003366] px-4 absolute inset-0 z-[100] fade-in overflow-y-auto" style="display: flex;">
+    <div id="authScreen" class="h-screen w-full flex items-center justify-center bg-[#003366] px-4 absolute inset-0 z-[100] fade-in overflow-y-auto">
         <div class="bg-white p-8 rounded-lg shadow-2xl w-full max-w-md my-auto border-t-4 border-[#0099cc]">
             <div class="text-center mb-8">
                 <svg class="w-16 h-16 text-[#0099cc] mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path></svg>
@@ -42,9 +42,7 @@
                     <div class="relative">
                         <input type="password" id="loginPassword" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#003366] pr-10 outline-none transition-all" placeholder="••••••••" required>
                         <button type="button" onclick="togglePassword('loginPassword', 'eyeLogin')" class="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-500 hover:text-[#0099cc] focus:outline-none transition-colors">
-                            <svg id="eyeLogin" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-                            </svg>
+                            <svg id="eyeLogin" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" /></svg>
                         </button>
                     </div>
                 </div>
@@ -178,7 +176,7 @@
 
                 <div class="max-w-7xl mx-auto">
                     
-                    <div id="dashboard" class="tab-content fade-in block">
+                    <div id="dashboard" class="tab-content fade-in" style="display: block;">
                         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
                             <div class="bg-white rounded-lg p-6 shadow-sm border-l-4 border-[#003366]">
                                 <p class="text-sm font-medium text-gray-500 uppercase tracking-wide">Total Equipos</p>
@@ -197,7 +195,7 @@
                         <div class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
                             <div class="p-5 sm:p-6 border-b border-gray-200 flex flex-col sm:flex-row justify-between items-center bg-slate-50 gap-4">
                                 <h2 class="text-lg font-bold text-[#003366] uppercase">📋 Historial de Movimientos</h2>
-                                <select id="movementFilter" onchange="updateMovementsTable()" class="px-4 py-2 border border-gray-300 rounded-lg text-sm font-semibold focus:outline-none focus:ring-1 focus:ring-[#003366] w-full sm:w-auto shadow-sm bg-white">
+                                <select id="movementFilter" class="px-4 py-2 border border-gray-300 rounded-lg text-sm font-semibold focus:outline-none focus:ring-1 focus:ring-[#003366] w-full sm:w-auto shadow-sm bg-white">
                                     <option value="all">Todos los movimientos</option>
                                     <option value="ingreso">Solo Ingresos (+)</option>
                                     <option value="salida">Solo Salidas (-)</option>
@@ -224,18 +222,18 @@
                         </div>
                     </div>
 
-                    <div id="movements" class="tab-content hidden fade-in">
+                    <div id="movements" class="tab-content fade-in" style="display: none;">
                         
                         <div id="sectionMassMovement" class="bg-white rounded-lg shadow-sm border border-gray-200 p-6 mb-8 max-w-4xl mx-auto admin-only" style="display: none;">
                             <h2 class="text-lg font-bold text-[#003366] mb-4 border-b pb-2">📊 Carga Masiva de Movimientos (Excel)</h2>
                             <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
                                 <button onclick="downloadMovementTemplate()" class="bg-slate-600 hover:bg-slate-700 text-white py-3 px-4 rounded-lg font-bold text-sm transition-colors w-full shadow-sm">⬇️ Descargar Plantilla</button>
                                 <div class="w-full relative">
-                                    <input type="file" id="excelUploadIngreso" accept=".xlsx, .xls" class="hidden" onchange="importExcelMovements(event, 'ingreso')">
+                                    <input type="file" id="excelUploadIngreso" accept=".xlsx, .xls" class="hidden">
                                     <button onclick="document.getElementById('excelUploadIngreso').click()" class="bg-green-600 hover:bg-green-700 text-white py-3 px-4 rounded-lg font-bold text-sm transition-colors w-full shadow-sm">⬆️ Subir Excel INGRESOS (+)</button>
                                 </div>
                                 <div class="w-full relative">
-                                    <input type="file" id="excelUploadSalida" accept=".xlsx, .xls" class="hidden" onchange="importExcelMovements(event, 'salida')">
+                                    <input type="file" id="excelUploadSalida" accept=".xlsx, .xls" class="hidden">
                                     <button onclick="document.getElementById('excelUploadSalida').click()" class="bg-red-600 hover:bg-red-700 text-white py-3 px-4 rounded-lg font-bold text-sm transition-colors w-full shadow-sm">⬆️ Subir Excel SALIDAS (-)</button>
                                 </div>
                             </div>
@@ -243,11 +241,11 @@
 
                         <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6 md:p-8 max-w-4xl mx-auto">
                             <h2 class="text-2xl font-bold text-[#003366] mb-6 border-b pb-4">Registrar Movimiento Manual</h2>
-                            <form id="movementForm" class="space-y-6" onsubmit="event.preventDefault(); handleMovement();">
+                            <form id="movementForm" class="space-y-6">
                                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                                     <div>
                                         <label class="block text-sm font-bold text-gray-700 mb-2">TIPO DE OPERACIÓN *</label>
-                                        <select id="movementType" onchange="updateMovementNameSelect()" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#003366] bg-slate-50 font-semibold outline-none transition-all" required>
+                                        <select id="movementType" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#003366] bg-slate-50 font-semibold outline-none transition-all" required>
                                             <option value="">Seleccione el tipo...</option>
                                             <option value="ingreso">🟢 INGRESO (Sumar al almacén)</option>
                                             <option value="salida">🔴 SALIDA (Asignar a terreno/persona)</option>
@@ -262,11 +260,11 @@
                                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                                     <div>
                                         <label class="block text-sm font-bold text-gray-700 mb-2">NOMBRE DEL EQUIPO *</label>
-                                        <select id="movementNameSelect" onchange="updateModelSelect()" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#003366] bg-slate-50 disabled:bg-gray-100 font-semibold outline-none transition-all" disabled required></select>
+                                        <select id="movementNameSelect" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#003366] bg-slate-50 disabled:bg-gray-100 font-semibold outline-none transition-all" disabled required></select>
                                     </div>
                                     <div>
                                         <label class="block text-sm font-bold text-gray-700 mb-2">MODELO ESPECÍFICO *</label>
-                                        <select id="movementModelSelect" onchange="checkMovementForm()" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#003366] bg-slate-50 disabled:bg-gray-100 font-semibold outline-none transition-all" disabled required></select>
+                                        <select id="movementModelSelect" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#003366] bg-slate-50 disabled:bg-gray-100 font-semibold outline-none transition-all" disabled required></select>
                                     </div>
                                 </div>
 
@@ -290,18 +288,17 @@
                         </div>
                     </div>
 
-                    <div id="catalog" class="tab-content hidden fade-in">
+                    <div id="catalog" class="tab-content fade-in" style="display: none;">
                         
                         <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-4 sm:p-6 mb-6 flex flex-col xl:flex-row gap-4 justify-between items-center xl:items-end w-full">
-                            
                             <div class="w-full xl:w-5/12 flex flex-col sm:flex-row gap-3">
                                 <div class="flex-1">
                                     <h2 class="text-xs font-bold text-gray-500 uppercase tracking-wider mb-1">Buscador Inteligente</h2>
-                                    <input type="text" id="searchCatalog" onkeyup="updateCatalogList()" placeholder="Buscar equipo, marca, modelo, P/N..." class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:border-[#0099cc] focus:outline-none focus:ring-1 focus:ring-[#0099cc] text-sm transition-all shadow-sm">
+                                    <input type="text" id="searchCatalog" placeholder="Buscar equipo, marca, modelo, P/N..." class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:border-[#0099cc] focus:outline-none focus:ring-1 focus:ring-[#0099cc] text-sm transition-all shadow-sm">
                                 </div>
                                 <div class="sm:w-1/3">
                                     <h2 class="text-xs font-bold text-gray-500 uppercase tracking-wider mb-1">Filtrar por Tipo</h2>
-                                    <select id="filterTypeCatalog" onchange="updateCatalogList()" class="w-full px-3 py-2.5 border border-gray-300 rounded-lg focus:border-[#0099cc] focus:outline-none focus:ring-1 focus:ring-[#0099cc] text-sm font-semibold text-gray-700 transition-all bg-white shadow-sm">
+                                    <select id="filterTypeCatalog" class="w-full px-3 py-2.5 border border-gray-300 rounded-lg focus:border-[#0099cc] focus:outline-none focus:ring-1 focus:ring-[#0099cc] text-sm font-semibold text-gray-700 transition-all bg-white shadow-sm">
                                         <option value="all">Todos los Tipos</option>
                                         <option value="EPP">EPP</option>
                                         <option value="SCI">SCI</option>
@@ -315,27 +312,26 @@
                             </div>
                             
                             <div class="w-full xl:w-7/12 flex flex-wrap gap-2 items-center justify-start xl:justify-end">
-                                <button id="btnFilterCritical" onclick="toggleCriticalFilter()" class="flex-1 sm:flex-none px-3 py-2.5 bg-orange-500 hover:bg-orange-600 text-white rounded-lg text-xs font-bold transition-colors shadow-sm whitespace-nowrap">⚠️ Ver Críticos</button>
-                                <button id="btnExportFiltered" onclick="exportFilteredCatalogToExcel()" class="flex-1 sm:flex-none px-3 py-2.5 bg-[#0099cc] hover:bg-[#007799] text-white rounded-lg text-xs font-bold transition-colors shadow-sm whitespace-nowrap">⬇️ Exp. Filtrados</button>
-                                <button id="btnExportAll" onclick="exportCatalogToExcel()" class="flex-1 sm:flex-none px-3 py-2.5 bg-green-600 hover:bg-green-700 text-white rounded-lg text-xs font-bold transition-colors shadow-sm whitespace-nowrap">⬇️ Exportar Todo</button>
+                                <button id="btnFilterCritical" class="flex-1 sm:flex-none px-3 py-2.5 bg-orange-500 hover:bg-orange-600 text-white rounded-lg text-xs font-bold transition-colors shadow-sm whitespace-nowrap">⚠️ Ver Críticos</button>
+                                <button id="btnExportFiltered" class="flex-1 sm:flex-none px-3 py-2.5 bg-[#0099cc] hover:bg-[#007799] text-white rounded-lg text-xs font-bold transition-colors shadow-sm whitespace-nowrap">⬇️ Exp. Filtrados</button>
+                                <button id="btnExportAll" class="flex-1 sm:flex-none px-3 py-2.5 bg-green-600 hover:bg-green-700 text-white rounded-lg text-xs font-bold transition-colors shadow-sm whitespace-nowrap">⬇️ Export Todo</button>
                                 
                                 <div id="sectionMassCatalog" class="admin-only w-full sm:w-auto flex flex-wrap gap-2 items-center sm:pl-3 sm:ml-1 sm:border-l border-gray-200 mt-2 sm:mt-0" style="display: none;">
-                                    <button onclick="downloadCatalogTemplate()" class="flex-1 sm:flex-none bg-slate-600 hover:bg-slate-700 text-white py-2.5 px-3 rounded-lg text-xs font-bold transition-colors shadow-sm whitespace-nowrap">⬇️ Plantilla</button>
-                                    <input type="file" id="excelUploadCatalog" accept=".xlsx, .xls" class="hidden" onchange="importExcelCatalog(event)">
+                                    <button id="btnDownloadCatalogExcel" class="flex-1 sm:flex-none bg-slate-600 hover:bg-slate-700 text-white py-2.5 px-3 rounded-lg text-xs font-bold transition-colors shadow-sm whitespace-nowrap">⬇️ Plantilla</button>
+                                    <input type="file" id="excelUploadCatalog" accept=".xlsx, .xls" class="hidden">
                                     <button onclick="document.getElementById('excelUploadCatalog').click()" class="flex-1 sm:flex-none bg-[#003366] hover:bg-[#002244] text-white py-2.5 px-3 rounded-lg text-xs font-bold transition-colors shadow-sm whitespace-nowrap">⬆️ Subir Excel</button>
                                 </div>
                             </div>
                         </div>
 
-                        <div id="catalogContainerClass" class="w-full bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden flex flex-col h-[75vh]">
+                        <div class="w-full bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden flex flex-col h-[75vh]">
                             <div class="p-4 sm:p-5 border-b border-gray-200 bg-slate-50 flex justify-between items-center flex-shrink-0">
                                 <h3 class="text-xl font-bold text-[#003366] flex items-center gap-2">
                                     <svg class="w-5 h-5 text-[#0099cc]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 10h16M4 14h16M4 18h16"></path></svg>
                                     Catálogo (A-Z)
                                 </h3>
                                 <button id="btnNewArticleModal" onclick="openArticleModal()" class="admin-editor-only bg-[#0099cc] hover:bg-[#007799] text-white px-4 py-2 rounded-lg font-bold text-sm transition-colors shadow-sm flex items-center gap-2" style="display: none;">
-                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
-                                    NUEVO EQUIPO (+)
+                                    + NUEVO EQUIPO
                                 </button>
                             </div>
                             <div class="p-4 bg-slate-50 flex-1 overflow-y-auto">
@@ -344,12 +340,11 @@
                         </div>
                     </div>
 
-                    <div id="users" class="tab-content hidden fade-in admin-only">
+                    <div id="users" class="tab-content fade-in admin-only" style="display: none;">
                         <div class="flex flex-col lg:flex-row gap-6">
-                            
                             <div class="lg:w-1/3 bg-white rounded-lg shadow-sm border border-gray-200 p-6 h-fit">
                                 <h2 class="text-xl font-bold text-[#003366] mb-6 border-b pb-4" id="userFormTitle">Agregar Nuevo Usuario</h2>
-                                <form id="userAdminForm" class="space-y-4" onsubmit="event.preventDefault(); handleUserAdmin();">
+                                <form id="userAdminForm" class="space-y-4">
                                     <input type="hidden" id="adminUserId">
                                     <div>
                                         <label class="block text-xs font-bold text-gray-700 mb-1">NOMBRE COMPLETO *</label>
@@ -374,21 +369,21 @@
                                         <label class="block text-xs font-bold text-gray-700 mb-1">ASIGNAR ROL *</label>
                                         <select id="adminUserRole" class="w-full px-3 py-2 border border-gray-300 rounded focus:border-[#0099cc] focus:outline-none focus:ring-1 focus:ring-[#0099cc] font-semibold transition-all bg-white" required>
                                             <option value="lector">Lector (Solo Ver)</option>
-                                            <option value="editor">Editor (No Cargas Masivas)</option>
+                                            <option value="editor">Editor (Agrega/Edita, No Masivos)</option>
                                             <option value="admin">Administrador (Total)</option>
                                         </select>
                                     </div>
                                     <div class="flex gap-2 pt-4 border-t border-gray-100">
                                         <button type="submit" id="btnSaveUser" class="flex-1 bg-[#003366] hover:bg-[#002244] text-white py-2 px-4 rounded-lg font-bold text-sm transition-colors shadow-md">Guardar Usuario</button>
-                                        <button type="button" id="cancelUserEdit" class="flex-1 bg-gray-200 text-gray-800 rounded-lg font-bold text-sm hover:bg-gray-300 transition-colors shadow-sm" onclick="resetUserForm()" style="display: none;">Cancelar</button>
+                                        <button type="button" id="cancelUserEdit" class="flex-1 bg-gray-200 text-gray-800 rounded-lg font-bold text-sm hover:bg-gray-300 transition-colors shadow-sm" style="display: none;">Cancelar</button>
                                     </div>
                                 </form>
                             </div>
 
                             <div class="lg:w-2/3 bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden flex flex-col">
                                 <div class="p-6 border-b border-gray-200 bg-slate-50">
-                                    <h3 class="text-xl font-bold text-[#003366]">Usuarios Registrados en el Sistema</h3>
-                                    <p class="text-xs text-gray-500 mt-1">Eliminar un usuario revoca su acceso inmediatamente.</p>
+                                    <h3 class="text-xl font-bold text-[#003366]">Usuarios Registrados</h3>
+                                    <p class="text-xs text-gray-500 mt-1">El correo y contraseña no se pueden cambiar desde aquí por seguridad. Eliminar a un usuario revoca su acceso inmediatamente.</p>
                                 </div>
                                 <div class="overflow-x-auto flex-1">
                                     <table class="w-full">
@@ -457,33 +452,25 @@
                 sidebar.classList.toggle('-translate-x-full');
                 if(overlay.style.display === 'none' || overlay.style.display === '') {
                     overlay.style.display = 'block';
-                } else {
-                    overlay.style.display = 'none';
-                }
-            } else {
-                sidebar.classList.toggle('md:hidden');
-            }
+                } else { overlay.style.display = 'none'; }
+            } else { sidebar.classList.toggle('md:hidden'); }
         }
 
-        // Sistema de Pestañas Estricto (Previene conflictos Tailwind)
+        // Sistema de Pestañas Estricto (JS Puro)
         window.switchTab = function(tabId) {
-            document.querySelectorAll('.tab-content').forEach(c => { c.style.display = 'none'; c.classList.add('hidden'); });
+            document.querySelectorAll('.tab-content').forEach(c => { c.style.display = 'none'; });
             document.querySelectorAll('.tab-btn').forEach(b => { 
                 b.classList.remove('bg-[#0099cc]', 'text-white', 'shadow-md'); 
                 b.classList.add('text-gray-400', 'hover:bg-[#003366]', 'hover:text-white');
             });
 
             const targetTab = document.getElementById(tabId);
-            if(targetTab) {
-                targetTab.classList.remove('hidden');
-                targetTab.style.display = 'block';
-            }
+            if(targetTab) { targetTab.style.display = 'block'; }
 
-            const activeBtn = document.querySelector(`.tab-btn[data-tab="${tabId}"]`);
-            if(activeBtn) {
-                activeBtn.classList.remove('text-gray-400', 'hover:bg-[#003366]', 'hover:text-white'); 
-                activeBtn.classList.add('bg-[#0099cc]', 'text-white', 'shadow-md');
-            }
+            document.querySelectorAll(`.tab-btn[data-tab="${tabId}"]`).forEach(btn => {
+                btn.classList.remove('text-gray-400', 'hover:bg-[#003366]', 'hover:text-white'); 
+                btn.classList.add('bg-[#0099cc]', 'text-white', 'shadow-md');
+            });
 
             if (window.innerWidth < 768) {
                 const sidebar = document.getElementById('sidebar');
@@ -491,18 +478,34 @@
             }
         }
 
-        // Inicialización Segura
+        // --- 2. PROTECCIÓN GLOBAL DE EVENTOS ---
         document.addEventListener('DOMContentLoaded', () => {
+            const safeAddListener = (id, event, handler) => { const el = document.getElementById(id); if (el) el.addEventListener(event, handler); };
+
+            safeAddListener('loginForm', 'submit', handleLogin);
             document.querySelectorAll('.btn-logout').forEach(b => b.addEventListener('click', () => auth.signOut()));
-            
-            // Asigna los Tabs Visualmente para iniciar
-            document.querySelectorAll('.tab-content').forEach(c => { c.style.display = 'none'; c.classList.add('hidden'); });
-            document.getElementById('dashboard').style.display = 'block';
-            document.getElementById('dashboard').classList.remove('hidden');
+
+            safeAddListener('movementForm', 'submit', handleMovement);
+            safeAddListener('movementType', 'change', updateMovementNameSelect);
+            safeAddListener('movementNameSelect', 'change', updateModelSelect);
+            safeAddListener('movementModelSelect', 'change', checkMovementForm);
+            safeAddListener('movementFilter', 'change', updateMovementsTable);
+
+            safeAddListener('catalogForm', 'submit', handleArticle);
+            safeAddListener('searchCatalog', 'keyup', updateCatalogList);
+            safeAddListener('filterTypeCatalog', 'change', updateCatalogList);
+
+            safeAddListener('userAdminForm', 'submit', handleUserAdmin);
+            safeAddListener('cancelUserEdit', 'click', resetUserForm);
+
+            safeAddListener('excelUploadCatalog', 'change', importExcelCatalog);
+            safeAddListener('excelUploadIngreso', 'change', (e) => importExcelMovements(e, 'ingreso'));
+            safeAddListener('excelUploadSalida', 'change', (e) => importExcelMovements(e, 'salida'));
         });
 
-        // --- 3. AUTENTICACIÓN Y ROLES ---
-        async function handleLogin() {
+        // --- 3. FUNCIONES DE AUTENTICACIÓN ---
+        async function handleLogin(e) {
+            if(e) e.preventDefault();
             const email = document.getElementById('loginEmail').value.trim().toLowerCase();
             const pass = document.getElementById('loginPassword').value;
             const btn = document.getElementById('btnLogin');
@@ -520,7 +523,9 @@
                             } catch (createErr) { alert("Error creando cuenta maestra. Activa 'Correo/Contraseña' en Firebase."); }
                         } else alert("❌ Error: " + err.message);
                     }
-                } else await auth.signInWithEmailAndPassword(email, pass);
+                } else {
+                    await auth.signInWithEmailAndPassword(email, pass);
+                }
             } catch(error) {
                 if(error.code === 'auth/operation-not-allowed') alert("❌ Activa 'Correo/Contraseña' en Firebase.");
                 else alert("❌ Correo o contraseña incorrectos.");
@@ -544,7 +549,7 @@
                         if (data.rol === 'pendiente') showPendingScreen();
                         else { currentUserRole = data.rol; startApp(data); }
                     }
-                } catch(err) { console.error(err); alert("🚨 Firebase bloqueó la lectura de permisos."); auth.signOut(); }
+                } catch(err) { console.error(err); alert("🚨 Firebase bloqueó la lectura."); auth.signOut(); }
             } else {
                 document.getElementById('authScreen').style.display = 'flex';
                 document.getElementById('pendingScreen').style.display = 'none';
@@ -567,31 +572,26 @@
             badge.textContent = userData.rol;
             badge.className = `px-2 py-1 text-white rounded text-[10px] sm:text-xs font-bold uppercase tracking-wider shadow-sm ${userData.rol === 'admin' ? 'bg-red-600' : (userData.rol === 'editor' ? 'bg-purple-600' : 'bg-[#0099cc]')}`;
 
-            // Control de Visibilidad por Rol mediante JS Estricto
-            const btnNavMovements = document.getElementById('navMovements');
-            const btnNavUsers = document.getElementById('navUsers');
-            const btnNewArticleModal = document.getElementById('btnNewArticleModal');
+            const adminEditorElements = document.querySelectorAll('.admin-editor-only');
+            const adminOnlyElements = document.querySelectorAll('.admin-only');
             const sectionMassCatalog = document.getElementById('sectionMassCatalog');
-            const sectionMassMovement = document.getElementById('sectionMassMovement');
+            const btnNewArticleModal = document.getElementById('btnNewArticleModal');
 
             if (userData.rol === 'admin') {
-                if(btnNavMovements) btnNavMovements.style.display = 'flex';
-                if(btnNavUsers) btnNavUsers.style.display = 'flex';
-                if(btnNewArticleModal) btnNewArticleModal.style.display = 'flex';
+                adminEditorElements.forEach(el => el.style.display = '');
+                adminOnlyElements.forEach(el => el.style.display = '');
                 if(sectionMassCatalog) sectionMassCatalog.style.display = 'flex';
-                if(sectionMassMovement) sectionMassMovement.style.display = 'block';
-            } else if (userData.rol === 'editor') {
-                if(btnNavMovements) btnNavMovements.style.display = 'flex';
-                if(btnNavUsers) btnNavUsers.style.display = 'none';
                 if(btnNewArticleModal) btnNewArticleModal.style.display = 'flex';
+            } else if (userData.rol === 'editor') {
+                adminEditorElements.forEach(el => el.style.display = '');
+                adminOnlyElements.forEach(el => el.style.display = 'none'); 
                 if(sectionMassCatalog) sectionMassCatalog.style.display = 'none';
-                if(sectionMassMovement) sectionMassMovement.style.display = 'none';
+                if(btnNewArticleModal) btnNewArticleModal.style.display = 'flex';
             } else {
-                if(btnNavMovements) btnNavMovements.style.display = 'none';
-                if(btnNavUsers) btnNavUsers.style.display = 'none';
-                if(btnNewArticleModal) btnNewArticleModal.style.display = 'none';
+                adminEditorElements.forEach(el => el.style.display = 'none');
+                adminOnlyElements.forEach(el => el.style.display = 'none');
                 if(sectionMassCatalog) sectionMassCatalog.style.display = 'none';
-                if(sectionMassMovement) sectionMassMovement.style.display = 'none';
+                if(btnNewArticleModal) btnNewArticleModal.style.display = 'none';
             }
             
             trackOnlineStatus(); loadArticles(); loadMovements(); 
@@ -612,23 +612,7 @@
             });
         }
 
-        // --- 4. CARGA DE DATOS (INVENTARIO) ---
-        function loadArticles() {
-            db.collection('articles').onSnapshot(snapshot => {
-                articles = []; snapshot.forEach(doc => articles.push({ id: doc.id, ...doc.data() }));
-                if(currentUserRole === 'admin' || currentUserRole === 'editor') updateMovementNameSelect(); 
-                updateCatalogList(); updateDashboard();
-            });
-        }
-
-        function loadMovements() {
-            db.collection('movements').orderBy('timestamp', 'desc').limit(150).onSnapshot(snapshot => {
-                movements = []; snapshot.forEach(doc => movements.push({ id: doc.id, ...doc.data() }));
-                updateMovementsTable(); updateDashboard();
-            });
-        }
-
-        // --- 5. GESTIÓN DE USUARIOS (SÓLO ADMIN) ---
+        // --- 4. GESTIÓN DE USUARIOS (SÓLO ADMIN) ---
         function loadUsersList() {
             db.collection('usuarios').orderBy('creado', 'desc').onSnapshot(snapshot => {
                 usersData = []; snapshot.forEach(doc => usersData.push({ id: doc.id, ...doc.data() }));
@@ -651,7 +635,8 @@
             });
         }
 
-        async function handleUserAdmin() {
+        async function handleUserAdmin(e) {
+            if(e) e.preventDefault();
             const id = document.getElementById('adminUserId').value;
             const name = document.getElementById('adminUserName').value.trim();
             const email = document.getElementById('adminUserEmail').value.trim().toLowerCase();
@@ -667,7 +652,6 @@
                     alert("Usuario modificado exitosamente.\nNota: El correo y contraseña no se pueden cambiar aquí por seguridad.");
                 } else {
                     if (!pass || pass.length < 6) { alert("La contraseña debe tener mínimo 6 caracteres."); btn.textContent = "Guardar Usuario"; btn.disabled = false; return; }
-                    
                     const userCred = await secondaryApp.auth().createUserWithEmailAndPassword(email, pass);
                     await db.collection('usuarios').doc(userCred.user.uid).set({
                         nombre: name, email: email, rol: role, creado: firebase.firestore.FieldValue.serverTimestamp()
@@ -707,12 +691,27 @@
 
         window.deleteUser = async function(uid) {
             if(confirm("¿Estás seguro de ELIMINAR a este usuario permanentemente? Se bloqueará su acceso inmediato.")) {
-                await db.collection('usuarios').doc(uid).delete(); 
-                alert("Usuario eliminado de la base de datos.");
+                await db.collection('usuarios').doc(uid).delete(); alert("Usuario eliminado.");
             }
         }
 
-        // --- 6. MOVIMIENTOS ---
+        // --- 5. CARGA DE DATOS (INVENTARIO) ---
+        function loadArticles() {
+            db.collection('articles').onSnapshot(snapshot => {
+                articles = []; snapshot.forEach(doc => articles.push({ id: doc.id, ...doc.data() }));
+                if(currentUserRole === 'admin' || currentUserRole === 'editor') updateMovementNameSelect(); 
+                updateCatalogList(); updateDashboard();
+            });
+        }
+
+        function loadMovements() {
+            db.collection('movements').orderBy('timestamp', 'desc').limit(150).onSnapshot(snapshot => {
+                movements = []; snapshot.forEach(doc => movements.push({ id: doc.id, ...doc.data() }));
+                updateMovementsTable(); updateDashboard();
+            });
+        }
+
+        // --- 6. MOVIMIENTOS Y LÓGICA DE STOCKS ---
         function updateMovementNameSelect() {
             const nameSelect = document.getElementById('movementNameSelect');
             const modelSelect = document.getElementById('movementModelSelect');
@@ -749,7 +748,8 @@
 
         function checkMovementForm() { document.getElementById('btnSaveMovement').disabled = !document.getElementById('movementModelSelect').value; }
 
-        async function handleMovement() {
+        async function handleMovement(e) {
+            if(e) e.preventDefault();
             const btn = document.getElementById('btnSaveMovement');
             btn.textContent = "Guardando..."; btn.disabled = true;
 
@@ -816,7 +816,8 @@
             updateCatalogList();
         }
 
-        async function handleArticle() {
+        async function handleArticle(e) {
+            if(e) e.preventDefault();
             const btn = document.getElementById('btnSaveArticle'); btn.textContent = "Guardando..."; btn.disabled = true;
             try {
                 const name = document.getElementById('articleName').value.trim();
@@ -859,56 +860,49 @@
             currentFilteredArticles = filteredAndSorted; 
 
             const editButtons = (id) => (currentUserRole === 'admin' || currentUserRole === 'editor') ? `
-                <div class="flex gap-2 w-full md:w-auto mt-3 md:mt-0 justify-end flex-shrink-0">
-                    <button onclick="window.editArticle('${id}')" class="px-3 py-1.5 bg-[#e2e8f0] hover:bg-[#cbd5e1] text-[#003366] text-[10px] font-bold rounded shadow-sm transition-colors uppercase tracking-wider">Editar</button>
-                    <button onclick="if(confirm('¿Eliminar equipo por completo de la base de datos?')) db.collection('articles').doc('${id}').delete()" class="px-3 py-1.5 bg-red-100 hover:bg-red-200 text-red-600 text-[10px] font-bold rounded shadow-sm transition-colors uppercase tracking-wider">Borrar</button>
+                <div class="flex gap-2 w-full md:w-auto mt-4 md:mt-0 justify-end flex-shrink-0">
+                    <button onclick="window.editArticle('${id}')" class="px-4 py-2 bg-[#e2e8f0] hover:bg-[#cbd5e1] text-[#003366] text-xs font-bold rounded shadow-sm transition-colors uppercase tracking-wider">Editar</button>
+                    <button onclick="if(confirm('¿Eliminar equipo por completo de la base de datos?')) db.collection('articles').doc('${id}').delete()" class="px-4 py-2 bg-red-100 hover:bg-red-200 text-red-600 text-xs font-bold rounded shadow-sm transition-colors uppercase tracking-wider">Borrar</button>
                 </div>` : '';
 
-            // Tarjetas Ultra Compactas (60% reducidas)
             document.getElementById('catalogList').innerHTML = filteredAndSorted.map(a => `
-                <div class="bg-white p-3 rounded-lg border border-gray-200 shadow-sm hover:shadow-md transition-all flex flex-col md:flex-row items-center gap-3 w-full relative group">
+                <div class="bg-white p-4 sm:p-6 rounded-lg border border-gray-200 shadow-sm hover:shadow-md transition-all flex flex-col md:flex-row items-center gap-4 w-full relative overflow-hidden group">
                     ${a.stock <= a.minStock ? '<div class="absolute left-0 top-0 bottom-0 w-1.5 bg-red-500 rounded-l-lg"></div>' : '<div class="absolute left-0 top-0 bottom-0 w-1.5 bg-[#0099cc] rounded-l-lg"></div>'}
                     
-                    <div class="flex-1 pl-4 flex flex-col md:flex-row md:items-center w-full gap-2 md:gap-4">
-                        <div class="md:w-1/4">
-                            <h4 class="font-black text-[#003366] text-sm uppercase truncate" title="${a.name}">${a.name}</h4>
-                            <span class="inline-block px-1.5 py-0.5 mt-0.5 bg-slate-200 text-slate-700 text-[9px] font-bold rounded border border-slate-300">${a.itemType||'MISCELANEO'}</span>
+                    <div class="flex-1 pl-4 flex flex-col md:flex-row md:items-center w-full gap-3 md:gap-5">
+                        <div class="md:w-[40%] flex-shrink-0 pr-4">
+                            <h4 class="font-black text-[#003366] text-base md:text-[18px] uppercase leading-snug line-clamp-2" title="${a.name}">${a.name}</h4>
+                            <span class="inline-block px-3 py-1.5 mt-3 bg-slate-200 text-slate-700 text-[11px] font-bold rounded border border-slate-300 shadow-sm">${a.itemType||'MISCELANEO'}</span>
                         </div>
                         
-                        <div class="flex-1 grid grid-cols-2 md:grid-cols-4 gap-2 text-xs text-gray-600">
-                            <div class="truncate" title="${a.brand||'-'}"><span class="font-bold text-gray-400 text-[9px] uppercase block leading-none">MARCA</span> <span class="font-semibold text-gray-800">${a.brand||'-'}</span></div>
-                            <div class="truncate" title="${a.model||'-'}"><span class="font-bold text-gray-400 text-[9px] uppercase block leading-none">MODELO</span> <span class="font-semibold text-gray-800">${a.model||'-'}</span></div>
-                            <div class="truncate" title="${a.partNumber||'-'}"><span class="font-bold text-gray-400 text-[9px] uppercase block leading-none">P/N</span> <span class="font-semibold text-gray-800">${a.partNumber||'-'}</span></div>
-                            <div class="truncate" title="${a.sapNumber||'-'}"><span class="font-bold text-gray-400 text-[9px] uppercase block leading-none">SAP</span> <span class="font-semibold text-gray-800">${a.sapNumber||'-'}</span></div>
-                            <div class="col-span-2 md:col-span-4 truncate text-[10px]" title="${a.observations||'-'}"><span class="font-bold text-gray-400 mr-1">OBS:</span> ${a.observations||'-'}</div>
+                        <div class="flex-1 grid grid-cols-2 lg:grid-cols-4 gap-x-5 gap-y-4 text-xs text-gray-600 border-t md:border-t-0 pt-4 md:pt-0 border-gray-100 md:pl-4 md:border-l">
+                            <div class="truncate" title="${a.brand||'-'}"><span class="font-bold text-gray-400 text-[10px] uppercase block mb-1">MARCA</span> <span class="font-semibold text-gray-800 text-[13px]">${a.brand||'-'}</span></div>
+                            <div class="truncate" title="${a.model||'-'}"><span class="font-bold text-gray-400 text-[10px] uppercase block mb-1">MODELO</span> <span class="font-semibold text-gray-800 text-[13px]">${a.model||'-'}</span></div>
+                            <div class="truncate" title="${a.partNumber||'-'}"><span class="font-bold text-gray-400 text-[10px] uppercase block mb-1">P/N</span> <span class="font-semibold text-gray-800 text-[13px]">${a.partNumber||'-'}</span></div>
+                            <div class="truncate" title="${a.sapNumber||'-'}"><span class="font-bold text-gray-400 text-[10px] uppercase block mb-1">SAP</span> <span class="font-semibold text-gray-800 text-[13px]">${a.sapNumber||'-'}</span></div>
+                            <div class="col-span-2 lg:col-span-4 mt-2" title="${a.observations||'-'}"><span class="font-bold text-gray-400 text-[10px] mr-2 uppercase">OBSERVACIONES:</span> <span class="text-[13px]">${a.observations||'-'}</span></div>
                         </div>
                     </div>
                     
-                    <div class="flex flex-row md:flex-row items-center justify-between md:justify-end gap-4 w-full md:w-auto bg-slate-50 md:bg-transparent p-2 md:p-0 rounded md:border-l border-gray-200 md:pl-4">
-                        <div class="text-center">
-                            <span class="text-[9px] text-gray-400 uppercase font-bold block leading-tight">Stock</span>
-                            <span class="block text-2xl font-black leading-none ${a.stock <= a.minStock ? 'text-red-600' : 'text-[#003366]'}">${a.stock || 0}</span>
-                            <span class="block text-[9px] font-bold mt-1 px-1 rounded ${a.stock <= a.minStock ? 'bg-red-100 text-red-700' : 'text-gray-500'}">MÍN: ${a.minStock}</span>
+                    <div class="flex flex-row md:flex-col items-center justify-between md:justify-end gap-3 w-full md:w-auto bg-slate-50 md:bg-transparent p-4 md:p-0 rounded md:border-l border-gray-200 md:pl-6 min-w-[150px] flex-shrink-0 mt-4 md:mt-0">
+                        <div class="text-center w-full">
+                            <span class="text-[11px] text-gray-400 uppercase font-bold block mb-1">Stock Actual</span>
+                            <span class="block text-[40px] font-black leading-none ${a.stock <= a.minStock ? 'text-red-600' : 'text-[#003366]'}">${a.stock || 0}</span>
+                            <span class="block text-[11px] font-bold mt-3 px-2 py-1 rounded ${a.stock <= a.minStock ? 'bg-red-100 text-red-700' : 'bg-slate-200 text-gray-600'} inline-block">ALERTA MÍN: ${a.minStock}</span>
                         </div>
                         ${editButtons(a.id)}
                     </div>
                 </div>
-            `).join('') || '<div class="text-center text-gray-500 py-6 font-bold text-sm">No se encontraron equipos.</div>';
+            `).join('') || '<div class="text-center text-gray-500 py-12 font-bold text-lg">No se encontraron equipos.</div>';
         }
 
         window.editArticle = function(id) {
             const a = articles.find(x => x.id === id); if(!a) return;
-            document.getElementById('articleId').value = id; 
-            document.getElementById('articleName').value = a.name; 
-            document.getElementById('itemType').value = a.itemType || '';
-            document.getElementById('brand').value = a.brand; 
-            document.getElementById('model').value = a.model; 
-            document.getElementById('partNumber').value = a.partNumber || ''; 
-            document.getElementById('sapNumber').value = a.sapNumber;
-            document.getElementById('initialStock').value = a.stock; 
-            document.getElementById('minStock').value = a.minStock;
-            document.getElementById('catalogObs').value = a.observations || '';
-            
+            document.getElementById('articleId').value = id; document.getElementById('articleName').value = a.name; 
+            document.getElementById('itemType').value = a.itemType || ''; document.getElementById('brand').value = a.brand; 
+            document.getElementById('model').value = a.model; document.getElementById('partNumber').value = a.partNumber || ''; 
+            document.getElementById('sapNumber').value = a.sapNumber; document.getElementById('initialStock').value = a.stock; 
+            document.getElementById('minStock').value = a.minStock; document.getElementById('catalogObs').value = a.observations || '';
             document.getElementById('catalogFormTitle').innerHTML = '<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg> Editar Equipo';
             document.getElementById('articleModal').style.display = 'flex';
         }
@@ -921,9 +915,9 @@
             }).length;
         }
 
-        // --- 8. SISTEMA EXCEL (EXPORTACIÓN E IMPORTACIÓN) ---
+        // --- 8. SISTEMA EXCEL ---
         window.exportCatalogToExcel = function() {
-            if (articles.length === 0) return alert("No hay equipos registrados.");
+            if (articles.length === 0) return alert("No hay equipos registrados para exportar.");
             const data = articles.sort((a,b) => String(a.name||'').localeCompare(String(b.name||''))).map(a => ({
                 "EQUIPO / ACCESORIO / HERRAMIENTA": a.name, "TIPO DE EQUIPO": a.itemType||'MISCELANEO', "MARCA": a.brand, "MODELO": a.model, "N° PARTE": a.partNumber,
                 "CODIGO SAP (MCP)": a.sapNumber, "CANTIDAD ACTUAL": a.stock || 0, "ALERTA MINIMA": a.minStock || 0, "OBSERVACIONES / COMENTARIOS": a.observations
@@ -957,19 +951,16 @@
                     
                     let success = 0; let omitted = 0;
                     for(let row of json) { 
-                        const name = (row['EQUIPO / ACCESORIO / HERRAMIENTA']||'').toString().trim();
-                        const model = (row['MODELO']||'').toString().trim();
+                        const name = (row['EQUIPO / ACCESORIO / HERRAMIENTA']||'').toString().trim(); const model = (row['MODELO']||'').toString().trim();
                         if(!name) continue;
 
-                        const exists = articles.find(a => String(a.name||'').toLowerCase() === name.toLowerCase() && String(a.model||'').toLowerCase() === model.toLowerCase());
-                        if(exists) { omitted++; continue; }
+                        if(articles.find(a => String(a.name||'').toLowerCase() === name.toLowerCase() && String(a.model||'').toLowerCase() === model.toLowerCase())) { omitted++; continue; }
 
                         const payload = { 
                             name: name, itemType: (row['TIPO DE EQUIPO']||'MISCELANEO').toString().trim(), brand: (row['MARCA']||'').toString().trim(), model: model, partNumber: (row['N° PARTE']||'').toString().trim(), sapNumber: (row['CODIGO SAP (MCP)']||'').toString().trim(), 
                             stock: parseInt(row['CANTIDAD ACTUAL'])||0, minStock: parseInt(row['ALERTA MINIMA'])||0, observations: (row['OBSERVACIONES / COMENTARIOS']||'').toString().trim(), createdAt: firebase.firestore.FieldValue.serverTimestamp() 
                         };
-                        const docRef = await db.collection('articles').add(payload);
-                        articles.push({ id: docRef.id, ...payload }); success++;
+                        const docRef = await db.collection('articles').add(payload); articles.push({ id: docRef.id, ...payload }); success++;
                     }
                     alert(`✅ Carga procesada.\nNuevos: ${success}\nOmitidos (Duplicados): ${omitted}`); document.getElementById('excelUploadCatalog').value = '';
                 } catch(error) { alert("Error leyendo Excel."); }
@@ -993,7 +984,6 @@
                     for(let i=0; i<json.length; i++) {
                         const row = json[i]; const name = (row['EQUIPO / ACCESORIO / HERRAMIENTA']||'').toString().trim(); const qty = parseInt(row['CANTIDAD']);
                         const rowModel = (row['MODELO']||'').toString().trim();
-
                         if(!name || isNaN(qty)) { errs.push(`Fila ${i+2}: Faltan datos obligatorios.`); continue; }
                         let art = articles.find(a => String(a.name||'').toLowerCase() === name.toLowerCase() && String(a.model||'').toLowerCase() === rowModel.toLowerCase());
                         
@@ -1006,8 +996,7 @@
                         } else {
                             if(type === 'salida' && (art.stock||0) < qty) { errs.push(`Fila ${i+2}: Stock insuficiente.`); continue; }
                             const newStock = (art.stock || 0) + (type === 'ingreso' ? qty : -qty);
-                            await db.collection('articles').doc(art.id).update({ stock: newStock });
-                            art.stock = newStock; 
+                            await db.collection('articles').doc(art.id).update({ stock: newStock }); art.stock = newStock; 
                         }
 
                         const obsFinal = (row['OBSERVACIONES / COMENTARIOS']||'').toString().trim() || 'Ingreso Masivo Excel';
@@ -1015,8 +1004,7 @@
                             articleId: art.id, articleName: art.name, articleModel: art.model||'', type: type, quantity: qty, newStock: art.stock,
                             respDelivery: (row['RESPONSABLE DE ENTREGA']||'').toString().trim(), respReception: (row['RESPONSABLE DE RECEPCION']||'').toString().trim(),
                             observations: obsFinal, timestamp: firebase.firestore.FieldValue.serverTimestamp(), registeredBy: currentUser.email
-                        });
-                        success++;
+                        }); success++;
                     }
                     alert(`✅ Procesado.\nÉxitos: ${success}\nErrores: ${errs.length}\n${errs.slice(0,10).join('\n')}`);
                     event.target.value = '';
