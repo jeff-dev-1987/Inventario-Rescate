@@ -32,7 +32,7 @@
                 </div>
             </div>
 
-            <form id="loginForm" class="space-y-5" onsubmit="event.preventDefault(); handleLogin();">
+            <form id="loginForm" class="space-y-5">
                 <div>
                     <label class="block text-sm font-bold text-gray-700 mb-1">Correo Electrónico</label>
                     <input type="email" id="loginEmail" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#003366] outline-none transition-all" placeholder="usuario@ejemplo.com" required>
@@ -131,7 +131,7 @@
                             </button>
                         </div>
                         <div class="p-6 overflow-y-auto flex-1 bg-slate-50">
-                            <form id="catalogForm" class="space-y-5" onsubmit="event.preventDefault(); handleArticle();">
+                            <form id="catalogForm" class="space-y-5">
                                 <input type="hidden" id="articleId">
                                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
                                     <div>
@@ -165,6 +165,15 @@
                                     <div><label class="block text-xs font-bold text-gray-700 mb-1">ALERTA MÍNIMA *</label><input type="number" id="minStock" class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:border-[#0099cc] focus:ring-1 focus:ring-[#0099cc] outline-none text-sm shadow-sm font-bold text-red-600" required></div>
                                 </div>
                                 <div><label class="block text-xs font-bold text-gray-700 mb-1">OBSERVACIONES / COMENTARIOS</label><textarea id="catalogObs" rows="2" class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:border-[#0099cc] focus:ring-1 focus:ring-[#0099cc] outline-none text-sm shadow-sm"></textarea></div>
+                                <div>
+                                    <label class="block text-xs font-bold text-gray-700 mb-1">UBICACIÓN *</label>
+                                    <select id="articleLocation" class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:border-[#0099cc] focus:ring-1 focus:ring-[#0099cc] outline-none text-sm shadow-sm font-semibold text-gray-700 bg-white" required>
+                                        <option value="">Seleccione ubicación...</option>
+                                        <option value="Almacen BLANCO - Area Satelital">Almacen BLANCO - Area Satelital</option>
+                                        <option value="Almacen ROJO - Area Satelital">Almacen ROJO - Area Satelital</option>
+                                        <option value="Almacen BLANCO - AK11">Almacen BLANCO - AK11</option>
+                                    </select>
+                                </div>
                                 <div class="flex gap-3 pt-5 mt-2 border-t border-gray-200">
                                     <button type="submit" id="btnSaveArticle" class="flex-1 bg-[#0099cc] hover:bg-[#007799] text-white py-3 px-4 rounded-lg font-bold text-sm transition-colors shadow-md">Guardar Equipo</button>
                                     <button type="button" onclick="closeArticleModal()" class="flex-1 bg-gray-300 text-gray-800 rounded-lg font-bold text-sm hover:bg-gray-400 transition-colors shadow-sm">Cancelar</button>
@@ -291,12 +300,12 @@
                     <div id="catalog" class="tab-content fade-in" style="display: none;">
                         
                         <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-4 sm:p-6 mb-6 flex flex-col xl:flex-row gap-4 justify-between items-center xl:items-end w-full">
-                            <div class="w-full xl:w-5/12 flex flex-col sm:flex-row gap-3">
+                            <div class="w-full xl:w-6/12 flex flex-col sm:flex-row gap-3">
                                 <div class="flex-1">
                                     <h2 class="text-xs font-bold text-gray-500 uppercase tracking-wider mb-1">Buscador Inteligente</h2>
                                     <input type="text" id="searchCatalog" placeholder="Buscar equipo, marca, modelo, P/N..." class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:border-[#0099cc] focus:outline-none focus:ring-1 focus:ring-[#0099cc] text-sm transition-all shadow-sm">
                                 </div>
-                                <div class="sm:w-1/3">
+                                <div class="sm:w-1/4">
                                     <h2 class="text-xs font-bold text-gray-500 uppercase tracking-wider mb-1">Filtrar por Tipo</h2>
                                     <select id="filterTypeCatalog" class="w-full px-3 py-2.5 border border-gray-300 rounded-lg focus:border-[#0099cc] focus:outline-none focus:ring-1 focus:ring-[#0099cc] text-sm font-semibold text-gray-700 transition-all bg-white shadow-sm">
                                         <option value="all">Todos los Tipos</option>
@@ -309,9 +318,18 @@
                                         <option value="MISCELANEO">MISCELANEO</option>
                                     </select>
                                 </div>
+                                <div class="sm:w-1/4">
+                                    <h2 class="text-xs font-bold text-gray-500 uppercase tracking-wider mb-1">Filtrar por Ubicación</h2>
+                                    <select id="filterLocationCatalog" class="w-full px-3 py-2.5 border border-gray-300 rounded-lg focus:border-[#0099cc] focus:outline-none focus:ring-1 focus:ring-[#0099cc] text-sm font-semibold text-gray-700 transition-all bg-white shadow-sm">
+                                        <option value="all">Todas las Ubicaciones</option>
+                                        <option value="Almacen BLANCO - Area Satelital">Almacen BLANCO - Area Satelital</option>
+                                        <option value="Almacen ROJO - Area Satelital">Almacen ROJO - Area Satelital</option>
+                                        <option value="Almacen BLANCO - AK11">Almacen BLANCO - AK11</option>
+                                    </select>
+                                </div>
                             </div>
                             
-                            <div class="w-full xl:w-7/12 flex flex-wrap gap-2 items-center justify-start xl:justify-end">
+                            <div class="w-full xl:w-6/12 flex flex-wrap gap-2 items-center justify-start xl:justify-end">
                                 <button id="btnFilterCritical" onclick="toggleCriticalFilter()" class="flex-1 sm:flex-none px-3 py-2.5 bg-orange-500 hover:bg-orange-600 text-white rounded-lg text-xs font-bold transition-colors shadow-sm whitespace-nowrap">⚠️ Ver Críticos</button>
                                 <button id="btnExportFiltered" onclick="exportFilteredCatalogToExcel()" class="flex-1 sm:flex-none px-3 py-2.5 bg-[#0099cc] hover:bg-[#007799] text-white rounded-lg text-xs font-bold transition-colors shadow-sm whitespace-nowrap">⬇️ Exp. Filtrados</button>
                                 <button id="btnExportAll" onclick="exportCatalogToExcel()" class="flex-1 sm:flex-none px-3 py-2.5 bg-green-600 hover:bg-green-700 text-white rounded-lg text-xs font-bold transition-colors shadow-sm whitespace-nowrap">⬇️ Export Todo</button>
@@ -495,6 +513,7 @@
             safeAddListener('catalogForm', 'submit', handleArticle);
             safeAddListener('searchCatalog', 'keyup', updateCatalogList);
             safeAddListener('filterTypeCatalog', 'change', updateCatalogList);
+            safeAddListener('filterLocationCatalog', 'change', updateCatalogList); // MODIFICADO: Cambiado de keyup a change
 
             safeAddListener('userAdminForm', 'submit', handleUserAdmin);
             safeAddListener('cancelUserEdit', 'click', resetUserForm);
@@ -506,7 +525,7 @@
 
         // --- 3. FUNCIONES DE AUTENTICACIÓN ---
         async function handleLogin(e) {
-            if(e) e.preventDefault();
+            if(e) e.preventDefault(); 
             const email = document.getElementById('loginEmail').value.trim().toLowerCase();
             const pass = document.getElementById('loginPassword').value;
             const btn = document.getElementById('btnLogin');
@@ -833,7 +852,8 @@
                     name: name, itemType: itemType, brand: document.getElementById('brand').value.trim() || '', 
                     model: model, partNumber: document.getElementById('partNumber').value.trim() || '',
                     sapNumber: document.getElementById('sapNumber').value.trim() || '', stock: parseInt(document.getElementById('initialStock').value), 
-                    minStock: parseInt(document.getElementById('minStock').value), observations: document.getElementById('catalogObs').value.trim() || ''
+                    minStock: parseInt(document.getElementById('minStock').value), observations: document.getElementById('catalogObs').value.trim() || '',
+                    location: document.getElementById('articleLocation').value // MODIFICADO: Guarda valor del select
                 };
                 
                 if(id) await db.collection('articles').doc(id).update(payload);
@@ -847,10 +867,12 @@
         function updateCatalogList() {
             const searchTerm = (document.getElementById('searchCatalog')?.value || '').toLowerCase();
             const filterType = document.getElementById('filterTypeCatalog')?.value || 'all';
+            const filterLocation = document.getElementById('filterLocationCatalog')?.value || 'all'; // MODIFICADO: Obtiene valor de lista desplegable
             const words = searchTerm.split(' ').filter(w => w); 
             
             let filteredAndSorted = articles.filter(a => {
                 if (filterType !== 'all' && (a.itemType || 'MISCELANEO') !== filterType) return false;
+                if (filterLocation !== 'all' && (a.location || '') !== filterLocation) return false; // MODIFICADO: Coincidencia exacta de ubicación
                 const combinedText = `${a.name||''} ${a.brand||''} ${a.model||''} ${a.partNumber||''} ${a.sapNumber||''} ${a.itemType||''}`.toLowerCase();
                 return words.every(word => combinedText.includes(word)); 
             });
@@ -860,7 +882,6 @@
             filteredAndSorted.sort((a,b) => String(a.name || '').localeCompare(String(b.name || '')));
             currentFilteredArticles = filteredAndSorted; 
 
-            // AQUÍ: Reducción del tamaño a ~60% cambiando padding (px-2.5 py-1), fuente (text-[10px]) y margen superior
             const editButtons = (id) => (currentUserRole === 'admin' || currentUserRole === 'editor') ? `
                 <div class="flex gap-1.5 w-full md:w-auto mt-3 md:mt-0 justify-end flex-shrink-0">
                     <button onclick="window.editArticle('${id}')" class="px-2.5 py-1 bg-[#e2e8f0] hover:bg-[#cbd5e1] text-[#003366] text-[10px] font-bold rounded shadow-sm transition-colors uppercase tracking-wider">Editar</button>
@@ -883,6 +904,7 @@
                             <div class="truncate" title="${a.partNumber||'-'}"><span class="font-bold text-gray-400 text-[10px] uppercase block mb-1">P/N</span> <span class="font-semibold text-gray-800 text-[13px]">${a.partNumber||'-'}</span></div>
                             <div class="truncate" title="${a.sapNumber||'-'}"><span class="font-bold text-gray-400 text-[10px] uppercase block mb-1">SAP</span> <span class="font-semibold text-gray-800 text-[13px]">${a.sapNumber||'-'}</span></div>
                             <div class="col-span-2 lg:col-span-4 mt-2" title="${a.observations||'-'}"><span class="font-bold text-gray-400 text-[10px] mr-2 uppercase">OBSERVACIONES:</span> <span class="text-[13px]">${a.observations||'-'}</span></div>
+                            <div class="col-span-2 lg:col-span-4 mt-1" title="${a.location||'-'}"><span class="font-bold text-gray-400 text-[10px] mr-2 uppercase">UBICACIÓN:</span> <span class="text-[13px] font-semibold text-gray-700">${a.location||'-'}</span></div>
                         </div>
                     </div>
                     
@@ -905,6 +927,7 @@
             document.getElementById('model').value = a.model; document.getElementById('partNumber').value = a.partNumber || ''; 
             document.getElementById('sapNumber').value = a.sapNumber; document.getElementById('initialStock').value = a.stock; 
             document.getElementById('minStock').value = a.minStock; document.getElementById('catalogObs').value = a.observations || '';
+            document.getElementById('articleLocation').value = a.location || ''; // MODIFICADO: Selecciona la ubicación correcta al editar
             document.getElementById('catalogFormTitle').innerHTML = '<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg> Editar Equipo';
             document.getElementById('articleModal').style.display = 'flex';
         }
@@ -922,7 +945,7 @@
             if (articles.length === 0) return alert("No hay equipos registrados para exportar.");
             const data = articles.sort((a,b) => String(a.name||'').localeCompare(String(b.name||''))).map(a => ({
                 "EQUIPO / ACCESORIO / HERRAMIENTA": a.name, "TIPO DE EQUIPO": a.itemType||'MISCELANEO', "MARCA": a.brand, "MODELO": a.model, "N° PARTE": a.partNumber,
-                "CODIGO SAP (MCP)": a.sapNumber, "CANTIDAD ACTUAL": a.stock || 0, "ALERTA MINIMA": a.minStock || 0, "OBSERVACIONES / COMENTARIOS": a.observations
+                "CODIGO SAP (MCP)": a.sapNumber, "CANTIDAD ACTUAL": a.stock || 0, "ALERTA MINIMA": a.minStock || 0, "OBSERVACIONES / COMENTARIOS": a.observations, "UBICACIÓN": a.location || ''
             }));
             const wb = XLSX.utils.book_new(); XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(data), "Catálogo General");
             XLSX.writeFile(wb, "Inventario_Chinalco_Completo.xlsx");
@@ -932,14 +955,14 @@
             if (currentFilteredArticles.length === 0) return alert("No hay resultados en el filtro actual.");
             const data = currentFilteredArticles.map(a => ({
                 "EQUIPO / ACCESORIO / HERRAMIENTA": a.name, "TIPO DE EQUIPO": a.itemType||'MISCELANEO', "MARCA": a.brand, "MODELO": a.model, "N° PARTE": a.partNumber,
-                "CODIGO SAP (MCP)": a.sapNumber, "CANTIDAD ACTUAL": a.stock || 0, "ALERTA MINIMA": a.minStock || 0, "OBSERVACIONES / COMENTARIOS": a.observations
+                "CODIGO SAP (MCP)": a.sapNumber, "CANTIDAD ACTUAL": a.stock || 0, "ALERTA MINIMA": a.minStock || 0, "OBSERVACIONES / COMENTARIOS": a.observations, "UBICACIÓN": a.location || ''
             }));
             const wb = XLSX.utils.book_new(); XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(data), "Equipos Filtrados");
             XLSX.writeFile(wb, "Inventario_Filtrado_Chinalco.xlsx");
         }
 
         window.downloadCatalogTemplate = function() { 
-            const wb = XLSX.utils.book_new(); XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet([["EQUIPO / ACCESORIO / HERRAMIENTA", "TIPO DE EQUIPO", "MARCA", "MODELO", "N° PARTE", "CODIGO SAP (MCP)", "CANTIDAD ACTUAL", "ALERTA MINIMA", "OBSERVACIONES / COMENTARIOS"]]), "Catálogo"); 
+            const wb = XLSX.utils.book_new(); XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet([["EQUIPO / ACCESORIO / HERRAMIENTA", "TIPO DE EQUIPO", "MARCA", "MODELO", "N° PARTE", "CODIGO SAP (MCP)", "CANTIDAD ACTUAL", "ALERTA MINIMA", "OBSERVACIONES / COMENTARIOS", "UBICACIÓN"]]), "Catálogo"); 
             XLSX.writeFile(wb, "Plantilla_Catalogo_Chinalco.xlsx"); 
         }
 
@@ -960,7 +983,7 @@
 
                         const payload = { 
                             name: name, itemType: (row['TIPO DE EQUIPO']||'MISCELANEO').toString().trim(), brand: (row['MARCA']||'').toString().trim(), model: model, partNumber: (row['N° PARTE']||'').toString().trim(), sapNumber: (row['CODIGO SAP (MCP)']||'').toString().trim(), 
-                            stock: parseInt(row['CANTIDAD ACTUAL'])||0, minStock: parseInt(row['ALERTA MINIMA'])||0, observations: (row['OBSERVACIONES / COMENTARIOS']||'').toString().trim(), createdAt: firebase.firestore.FieldValue.serverTimestamp() 
+                            stock: parseInt(row['CANTIDAD ACTUAL'])||0, minStock: parseInt(row['ALERTA MINIMA'])||0, observations: (row['OBSERVACIONES / COMENTARIOS']||'').toString().trim(), location: (row['UBICACIÓN']||'').toString().trim(), createdAt: firebase.firestore.FieldValue.serverTimestamp() 
                         };
                         const docRef = await db.collection('articles').add(payload); articles.push({ id: docRef.id, ...payload }); success++;
                     }
