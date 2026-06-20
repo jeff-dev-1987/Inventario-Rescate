@@ -202,13 +202,23 @@
                         </div>
 
                         <div class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
-                            <div class="p-5 sm:p-6 border-b border-gray-200 flex flex-col sm:flex-row justify-between items-center bg-slate-50 gap-4">
+                            <div class="p-5 sm:p-6 border-b border-gray-200 flex flex-col lg:flex-row justify-between items-center bg-slate-50 gap-4">
                                 <h2 class="text-lg font-bold text-[#003366] uppercase">📋 Historial de Movimientos</h2>
-                                <select id="movementFilter" class="px-4 py-2 border border-gray-300 rounded-lg text-sm font-semibold focus:outline-none focus:ring-1 focus:ring-[#003366] w-full sm:w-auto shadow-sm bg-white">
-                                    <option value="all">Todos los movimientos</option>
-                                    <option value="ingreso">Solo Ingresos (+)</option>
-                                    <option value="salida">Solo Salidas (-)</option>
-                                </select>
+                                <div class="flex flex-col sm:flex-row gap-3 w-full lg:w-auto items-center">
+                                    <div class="flex items-center gap-2">
+                                        <span class="text-xs font-bold text-gray-500 uppercase">Desde:</span>
+                                        <input type="date" id="dateFromMovements" class="px-3 py-2 border border-gray-300 rounded-lg text-sm font-semibold focus:outline-none focus:ring-1 focus:ring-[#003366] bg-white shadow-sm">
+                                    </div>
+                                    <div class="flex items-center gap-2">
+                                        <span class="text-xs font-bold text-gray-500 uppercase">Hasta:</span>
+                                        <input type="date" id="dateToMovements" class="px-3 py-2 border border-gray-300 rounded-lg text-sm font-semibold focus:outline-none focus:ring-1 focus:ring-[#003366] bg-white shadow-sm">
+                                    </div>
+                                    <select id="movementFilter" class="px-4 py-2 border border-gray-300 rounded-lg text-sm font-semibold focus:outline-none focus:ring-1 focus:ring-[#003366] w-full sm:w-auto shadow-sm bg-white">
+                                        <option value="all">Todos los movimientos</option>
+                                        <option value="ingreso">Solo Ingresos (+)</option>
+                                        <option value="salida">Solo Salidas (-)</option>
+                                    </select>
+                                </div>
                             </div>
                             <div class="overflow-x-auto">
                                 <table class="w-full">
@@ -508,12 +518,17 @@
             safeAddListener('movementType', 'change', updateMovementNameSelect);
             safeAddListener('movementNameSelect', 'change', updateModelSelect);
             safeAddListener('movementModelSelect', 'change', checkMovementForm);
+            
+            // Listeners Filtros de Movimientos
             safeAddListener('movementFilter', 'change', updateMovementsTable);
+            safeAddListener('dateFromMovements', 'change', updateMovementsTable);
+            safeAddListener('dateToMovements', 'change', updateMovementsTable);
 
+            // Listeners Catálogo
             safeAddListener('catalogForm', 'submit', handleArticle);
             safeAddListener('searchCatalog', 'keyup', updateCatalogList);
             safeAddListener('filterTypeCatalog', 'change', updateCatalogList);
-            safeAddListener('filterLocationCatalog', 'change', updateCatalogList);
+            safeAddListener('filterLocationCatalog', 'change', updateCatalogList); 
 
             safeAddListener('userAdminForm', 'submit', handleUserAdmin);
             safeAddListener('cancelUserEdit', 'click', resetUserForm);
@@ -800,7 +815,24 @@
 
         function updateMovementsTable() {
             const filter = document.getElementById('movementFilter').value;
-            const filtered = movements.filter(m => filter === 'all' || m.type === filter);
+            const dateFrom = document.getElementById('dateFromMovements').value; 
+            const dateTo = document.getElementById('dateToMovements').value;
+
+            const filtered = movements.filter(m => {
+                // Filtro por tipo
+                if (filter !== 'all' && m.type !== filter) return false;
+
+                // Filtro por fechas
+                if (dateFrom || dateTo) {
+                    if (!m.timestamp) return true; // Si aún se está guardando, dejarlo visible
+                    const d = m.timestamp.toDate();
+                    const mDateStr = `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+                    if (dateFrom && mDateStr < dateFrom) return false;
+                    if (dateTo && mDateStr > dateTo) return false;
+                }
+                return true;
+            });
+
             document.getElementById('movementsTable').innerHTML = filtered.map(m => `
                 <tr class="hover:bg-slate-50 border-b transition-colors">
                     <td class="px-6 py-4 text-sm font-medium text-gray-700 whitespace-nowrap">${m.timestamp ? m.timestamp.toDate().toLocaleString('es-PE', {day:'2-digit', month:'2-digit', year:'numeric', hour:'2-digit', minute:'2-digit'}) : 'Guardando...'}</td>
@@ -843,17 +875,25 @@
                 const name = document.getElementById('articleName').value.trim();
                 const model = document.getElementById('model').value.trim();
                 const itemType = document.getElementById('itemType').value;
+                const location = document.getElementById('articleLocation').value;
                 const id = document.getElementById('articleId').value;
                 
-                const exists = articles.find(a => String(a.name||'').toLowerCase() === name.toLowerCase() && String(a.model||'').toLowerCase() === model.toLowerCase() && a.id !== id);
-                if (exists) { alert('⚠️ Error: Ya existe un equipo con este mismo Nombre y Modelo en el catálogo.'); return; }
+                // MODIFICADO: Ahora valida también la ubicación
+                const exists = articles.find(a => 
+                    String(a.name||'').toLowerCase() === name.toLowerCase() && 
+                    String(a.model||'').toLowerCase() === model.toLowerCase() && 
+                    String(a.location||'').toLowerCase() === location.toLowerCase() &&
+                    a.id !== id
+                );
+
+                if (exists) { alert('⚠️ Error: Ya existe un equipo con este mismo Nombre, Modelo y Ubicación en el catálogo.'); return; }
 
                 const payload = {
                     name: name, itemType: itemType, brand: document.getElementById('brand').value.trim() || '', 
                     model: model, partNumber: document.getElementById('partNumber').value.trim() || '',
                     sapNumber: document.getElementById('sapNumber').value.trim() || '', stock: parseInt(document.getElementById('initialStock').value), 
                     minStock: parseInt(document.getElementById('minStock').value), observations: document.getElementById('catalogObs').value.trim() || '',
-                    location: document.getElementById('articleLocation').value // MODIFICADO: Mantiene valor de lista
+                    location: location
                 };
                 
                 if(id) await db.collection('articles').doc(id).update(payload);
@@ -867,12 +907,12 @@
         function updateCatalogList() {
             const searchTerm = (document.getElementById('searchCatalog')?.value || '').toLowerCase();
             const filterType = document.getElementById('filterTypeCatalog')?.value || 'all';
-            const filterLocation = document.getElementById('filterLocationCatalog')?.value || 'all'; // MODIFICADO: Lee valor de select
+            const filterLocation = document.getElementById('filterLocationCatalog')?.value || 'all'; 
             const words = searchTerm.split(' ').filter(w => w); 
             
             let filteredAndSorted = articles.filter(a => {
                 if (filterType !== 'all' && (a.itemType || 'MISCELANEO') !== filterType) return false;
-                if (filterLocation !== 'all' && (a.location || '') !== filterLocation) return false; // MODIFICADO: Filtra exactamente por la opción
+                if (filterLocation !== 'all' && (a.location || '') !== filterLocation) return false; 
                 const combinedText = `${a.name||''} ${a.brand||''} ${a.model||''} ${a.partNumber||''} ${a.sapNumber||''} ${a.itemType||''}`.toLowerCase();
                 return words.every(word => combinedText.includes(word)); 
             });
@@ -927,7 +967,7 @@
             document.getElementById('model').value = a.model; document.getElementById('partNumber').value = a.partNumber || ''; 
             document.getElementById('sapNumber').value = a.sapNumber; document.getElementById('initialStock').value = a.stock; 
             document.getElementById('minStock').value = a.minStock; document.getElementById('catalogObs').value = a.observations || '';
-            document.getElementById('articleLocation').value = a.location || ''; // MODIFICADO: Lee la opción desde db al editar
+            document.getElementById('articleLocation').value = a.location || '';
             document.getElementById('catalogFormTitle').innerHTML = '<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg> Editar Equipo';
             document.getElementById('articleModal').style.display = 'flex';
         }
@@ -977,13 +1017,19 @@
                     let success = 0; let omitted = 0;
                     for(let row of json) { 
                         const name = (row['EQUIPO / ACCESORIO / HERRAMIENTA']||'').toString().trim(); const model = (row['MODELO']||'').toString().trim();
+                        const location = (row['UBICACIÓN']||'').toString().trim(); // MODIFICADO: Lee ubicación
                         if(!name) continue;
 
-                        if(articles.find(a => String(a.name||'').toLowerCase() === name.toLowerCase() && String(a.model||'').toLowerCase() === model.toLowerCase())) { omitted++; continue; }
+                        // MODIFICADO: Validación masiva también incluye ubicación
+                        if(articles.find(a => 
+                            String(a.name||'').toLowerCase() === name.toLowerCase() && 
+                            String(a.model||'').toLowerCase() === model.toLowerCase() && 
+                            String(a.location||'').toLowerCase() === location.toLowerCase()
+                        )) { omitted++; continue; }
 
                         const payload = { 
                             name: name, itemType: (row['TIPO DE EQUIPO']||'MISCELANEO').toString().trim(), brand: (row['MARCA']||'').toString().trim(), model: model, partNumber: (row['N° PARTE']||'').toString().trim(), sapNumber: (row['CODIGO SAP (MCP)']||'').toString().trim(), 
-                            stock: parseInt(row['CANTIDAD ACTUAL'])||0, minStock: parseInt(row['ALERTA MINIMA'])||0, observations: (row['OBSERVACIONES / COMENTARIOS']||'').toString().trim(), location: (row['UBICACIÓN']||'').toString().trim(), createdAt: firebase.firestore.FieldValue.serverTimestamp() 
+                            stock: parseInt(row['CANTIDAD ACTUAL'])||0, minStock: parseInt(row['ALERTA MINIMA'])||0, observations: (row['OBSERVACIONES / COMENTARIOS']||'').toString().trim(), location: location, createdAt: firebase.firestore.FieldValue.serverTimestamp() 
                         };
                         const docRef = await db.collection('articles').add(payload); articles.push({ id: docRef.id, ...payload }); success++;
                     }
